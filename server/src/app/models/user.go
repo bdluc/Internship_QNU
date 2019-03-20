@@ -8,10 +8,9 @@ const (
 )
 
 type User struct {
-	ID        bson.ObjectId `bson:"_id,omitempty"`
+	ID        bson.ObjectId `bson:"_id,omitempty"` //id of Trainee, Mentor, Sup
 	UserName  string        `bson:"UserName"`
 	Password  string        `bson:"Password"`
-	Role      int           `bson:"Role"` //1:Trainee, 2:Mentor, 3:Sup
-	RoleID    bson.ObjectId `bson:"RoleId"`
+	Role      int           `bson:"Role"`      //1:Trainee, 2:Mentor, 3:Sup
 	IsDeleted bool          `bson:"IsDeleted"` // true: deleted, false: no
 }

@@ -19,6 +19,5 @@ type Mentor struct {
 	DoB          time.Time     `bson:"DayofBirth"`
 	Department   string        `bson:"Department"`
 	SupervisorID bson.ObjectId `bson:"SupervisorID"`
-	//CourseIDs    []bson.ObjectId `bson:"CourseIDs"`
-	IsDeleted bool `bson:"IsDeleted"` // true: deleted, false: not
+	IsDeleted    bool          `bson:"IsDeleted"` // true: deleted, false: not
 }
