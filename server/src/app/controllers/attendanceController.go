@@ -7,7 +7,7 @@ import (
 
 	"gopkg.in/mgo.v2/bson"
 
-	"gopkg.in/mgo.v2"
+	mgo "gopkg.in/mgo.v2"
 
 	"../common"
 	"../models"
