@@ -38,6 +38,8 @@ func setupRouter() *gin.Engine {
 	r.Use(cors())
 	//write here
 	r.GET("/users", controllers.ListUsers)
+	r.POST("/user", controllers.CreateUser)
+	r.PUT("/intern", controllers.AddIntern)
 	return r
 }
 
