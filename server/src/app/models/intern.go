@@ -7,10 +7,10 @@ import (
 )
 
 const (
-	CollectionTrainee = "trainee"
+	CollectionIntern = "intern"
 )
 
-type Trainee struct {
+type Intern struct {
 	ID          bson.ObjectId `bson:"_id,omitempty"`
 	Name        string        `bson:"Name"`
 	PhoneNumber string        `bson:"PhoneNumber"`
