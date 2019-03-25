@@ -1,14 +1,15 @@
 package controllers
 
 import (
+	"encoding/json"
+	"net/http"
+
 	"../common"
 	"../models"
-	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"net/http"
 )
 
 // Add an mentor
@@ -66,7 +67,6 @@ func UpdateMentor(c *gin.Context) {
 	c.JSON(http.StatusOK, nil)
 }
 
-
 //Delete an mentor
 
 func DeleteMentor(c *gin.Context) {
@@ -95,7 +95,6 @@ func ListMentor(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, mentors)
 }
-
 
 // Get mentor by id
 func getMentorByID(c *gin.Context, id string) (error, *models.Mentor) {

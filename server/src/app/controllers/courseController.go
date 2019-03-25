@@ -95,18 +95,6 @@ func DeleteCourse(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
-func getMentorByID(c *gin.Context, id string) (error, *models.Mentor) {
-	database := c.MustGet("db").(*mgo.Database)
-	oID := bson.ObjectIdHex(id)
-	mentor := models.Mentor{}
-	err := database.C(models.CollectionMentor).FindId(oID).One(&mentor)
-
-	if err != nil {
-		return err, nil
-	}
-	return err, &mentor
-}
-
 func GetCoursesByMentorID(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
 	collection := database.C(models.CollectionCourse)
