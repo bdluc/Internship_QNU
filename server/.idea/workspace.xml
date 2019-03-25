@@ -2,79 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="53eaca32-ac07-48dd-8909-2124bcdc9f94" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../Hello World.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/asset-manifest.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/manifest.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/precache-manifest.9965d44f27b38419eab191318b16459c.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/service-worker.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/css/1.abc8b899.chunk.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/css/1.abc8b899.chunk.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/css/main.6cd71111.chunk.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/css/main.6cd71111.chunk.css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/js/1.3be1a403.chunk.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/js/1.3be1a403.chunk.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/js/main.d2e38a91.chunk.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/js/main.d2e38a91.chunk.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/js/runtime~main.229c360f.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/js/runtime~main.229c360f.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/Roboto-Bold.39b2c303.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/Roboto-Bold.dc81817d.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/Roboto-Bold.e31fcf18.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/Roboto-Bold.ecdd509c.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/Roboto-Light.3b813c2a.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/Roboto-Light.46e48ce0.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/Roboto-Light.69f8a061.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/Roboto-Light.a990f611.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/Roboto-Medium.4d9f3f9e.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/Roboto-Medium.574fd0b5.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/Roboto-Medium.894a2ede.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/Roboto-Medium.fc78759e.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/Roboto-Regular.2751ee43.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/Roboto-Regular.30799efa.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/Roboto-Regular.ba3dcd89.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/Roboto-Regular.df7b648c.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/Roboto-Thin.7500519d.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/Roboto-Thin.94998475.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/Roboto-Thin.954bbdeb.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/Roboto-Thin.dfe56a87.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/arrow_left.11911410.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/arrow_right.8ef6a08c.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/fontawesome-webfont.674f50d2.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/fontawesome-webfont.912ec66d.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/fontawesome-webfont.af7ae505.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/fontawesome-webfont.b06871f2.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/fontawesome-webfont.fee66e71.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/img-1.8f030e49.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/build/static/media/mdb-react.d3e3273c.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/license.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/package-lock.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/public/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/public/manifest.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/src/App.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/src/App.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/src/App.test.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/src/assets/img-1.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/src/assets/mdb-react.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/src/assets/s.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/src/components/Footer.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/src/components/Routes.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/src/components/pages/AttendencePage.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/src/components/pages/CourcePage.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/src/components/pages/InternsPage.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/src/components/pages/LoginPage.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/src/components/pages/MentorPage.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/src/components/pages/NotFoundPage.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/src/components/sideNavigation.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/src/components/topNavigation.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/src/index.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/src/index.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/src/logo.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/src/registerServiceWorker.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../clientex/yarn.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/main.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -87,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/app/main.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="231">
-              <caret line="30" column="32" selection-start-line="30" selection-start-column="32" selection-end-line="30" selection-end-column="32" />
+            <state relative-caret-position="169">
+              <caret line="30" column="32" lean-forward="true" selection-start-line="30" selection-start-column="32" selection-end-line="30" selection-end-column="32" />
             </state>
           </provider>
         </entry>
@@ -167,54 +95,7 @@
           <expand>
             <path>
               <item name="server" type="b2602c69:ProjectViewProjectNode" />
-              <item name="server" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="server" type="b2602c69:ProjectViewProjectNode" />
-              <item name="server" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="server" type="b2602c69:ProjectViewProjectNode" />
-              <item name="server" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="server" type="b2602c69:ProjectViewProjectNode" />
-              <item name="server" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="common" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="server" type="b2602c69:ProjectViewProjectNode" />
-              <item name="server" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="controllers" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="server" type="b2602c69:ProjectViewProjectNode" />
-              <item name="server" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="server" type="b2602c69:ProjectViewProjectNode" />
               <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-            </path>
-            <path>
-              <item name="server" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="GOPATH &lt;server&gt;" type="20ee2d1f:SyntheticLibraryElementNode" />
-            </path>
-            <path>
-              <item name="server" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="GOPATH &lt;server&gt;" type="20ee2d1f:SyntheticLibraryElementNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -231,6 +112,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -352,8 +234,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/app/main.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="231">
-          <caret line="30" column="32" selection-start-line="30" selection-start-column="32" selection-end-line="30" selection-end-column="32" />
+        <state relative-caret-position="169">
+          <caret line="30" column="32" lean-forward="true" selection-start-line="30" selection-start-column="32" selection-end-line="30" selection-end-column="32" />
         </state>
       </provider>
     </entry>
