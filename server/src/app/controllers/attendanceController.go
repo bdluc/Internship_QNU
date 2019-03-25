@@ -82,21 +82,32 @@ func GetTraineeAttendances(c *gin.Context) {
 type AttendanceMentor struct {
 	Id          string
 	Name        string
+	course      string
 	Attendances []models.Attendance
 }
 
 func getAttendancesByMentorId(c *gin.Context, idMentor bson.ObjectId) []AttendanceMentor {
 	database := c.MustGet("db").(*mgo.Database)
-	trainees := []models.Trainee{}
-	err := database.C(models.CollectionTrainee).Find(bson.M{"MentorID": idMentor, "IsDeleted": false}).All(&trainees)
+	courses := []models.Course{}
+	err := database.C(models.CollectionCourse).Find(bson.M{"MentorID": idMentor, "IsDeleted": false}).All(&courses)
 	if common.IsError(c, err, "Could not get trainees") {
 		return nil
 	}
-	resp := []AttendanceMentor{}
 
-	for _, trainee := range trainees {
+	courseTrainee := make(map[string]models.Trainee)
+	for _, course := range courses {
+		trainee := models.Trainee{}
+		err = database.C(models.CollectionTrainee).Find(bson.M{"CourseID": course.ID, "IsDeleted": false}).One(&trainee)
+		if common.IsError(c, err, "Could not get trainees") {
+			return nil
+		}
+		courseTrainee[course.CourseName] = trainee
+	}
+
+	resp := []AttendanceMentor{}
+	for course, trainee := range courseTrainee {
 		attens := getAttendancesByTraineeId(c, trainee.ID)
-		data := AttendanceMentor{Id: trainee.ID.Hex(), Name: trainee.Name, Attendances: attens}
+		data := AttendanceMentor{Id: trainee.ID.Hex(), Name: trainee.Name, course: course, Attendances: attens}
 		resp = append(resp, data)
 	}
 	return resp
@@ -150,16 +161,27 @@ func getDailyAttendancesByTraineeId(c *gin.Context, idTrainee bson.ObjectId, dat
 
 func getDailyAttendancesByMentorId(c *gin.Context, idMentor bson.ObjectId, date time.Time) []AttendanceMentor {
 	database := c.MustGet("db").(*mgo.Database)
-	trainees := []models.Trainee{}
-	err := database.C(models.CollectionTrainee).Find(bson.M{"MentorID": idMentor, "IsDeleted": false}).All(&trainees)
+	courses := []models.Course{}
+	err := database.C(models.CollectionCourse).Find(bson.M{"MentorID": idMentor, "IsDeleted": false}).All(&courses)
 	if common.IsError(c, err, "Could not get trainees") {
 		return nil
 	}
+
+	courseTrainee := make(map[string]models.Trainee)
+	for _, course := range courses {
+		trainee := models.Trainee{}
+		err = database.C(models.CollectionTrainee).Find(bson.M{"CourseID": course.ID, "IsDeleted": false}).One(&trainee)
+		if common.IsError(c, err, "Could not get trainees") {
+			return nil
+		}
+		courseTrainee[course.CourseName] = trainee
+	}
+
 	resp := []AttendanceMentor{}
 
-	for _, trainee := range trainees {
+	for course, trainee := range courseTrainee {
 		atten := getDailyAttendancesByTraineeId(c, trainee.ID, date)
-		data := AttendanceMentor{Id: trainee.ID.Hex(), Name: trainee.Name, Attendances: atten}
+		data := AttendanceMentor{Id: trainee.ID.Hex(), Name: trainee.Name, course: course, Attendances: atten}
 		resp = append(resp, data)
 	}
 	return resp
