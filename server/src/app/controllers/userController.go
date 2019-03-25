@@ -11,7 +11,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-//list user
+// List all users
 func ListUsers(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
 
@@ -23,9 +23,10 @@ func ListUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, users)
 }
 
-//update an user
-func UpdateUser(c *gin.Context) {
+// Create an user
+func CreateUser(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
+
 	user := models.User{}
 	buf, _ := c.GetRawData()
 	err := json.Unmarshal(buf, &user)
@@ -33,41 +34,21 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
-	err = database.C(models.CollectionUser).UpdateId(user.ID, user)
+	err = database.C(models.CollectionUser).Insert(user)
 	if common.CheckError(c, err) {
 		return
 	}
 
-	c.JSON(http.StatusOK, nil)
+	c.JSON(http.StatusCreated, nil)
 }
 
-//add intern
-func AddIntern(c *gin.Context) {
-
-	type Intern struct {
-		user    models.User
-		trainee models.Trainee
-	}
-
+// Delete an user
+func DeleteUser(c *gin.Context, id bson.ObjectId) bool {
 	database := c.MustGet("db").(*mgo.Database)
 
-	intern := Intern{}
-	buf, _ := c.GetRawData()
-	err := json.Unmarshal(buf, &intern)
+	err := database.C(models.CollectionUser).Update(bson.M{"RoleId": id}, bson.M{"$set": bson.M{"IsDeleted": true}})
 	if common.CheckError(c, err) {
-		return
+		return false
 	}
-	intern.user.ID = bson.NewObjectId()
-	intern.trainee.ID = intern.user.ID
-	err = database.C(models.CollectionUser).Insert(intern.user)
-	if common.CheckError(c, err) {
-		return
-	}
-
-	err = database.C(models.CollectionTrainee).Insert(intern.trainee)
-	if common.CheckError(c, err) {
-		return
-	}
-
-	c.JSON(201, nil)
+	return true
 }
