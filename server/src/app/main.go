@@ -38,8 +38,20 @@ func setupRouter() *gin.Engine {
 	r.Use(cors())
 	//write here
 	r.GET("/users", controllers.ListUsers)
-	r.POST("/user", controllers.CreateUser)
+	// r.POST("/user", controllers.CreateUser)
 	r.PUT("/intern", controllers.AddIntern)
+
+	//attendance
+	r.GET("/attendance/:id", controllers.GetAttendance)
+	r.GET("/attendances", controllers.GetListAttendances)
+	r.GET("/attendance/:id/trainee", controllers.GetTraineeAttendances)
+	r.GET("/attendance/:id/mentor", controllers.GetAttendancesByMentor)
+	r.GET("/attendance/:id/supervisor", controllers.GetAttendancesBySupervisor)
+	r.GET("/attendance/:id/mentor/daily", controllers.GetDailyAttendanceByMentor)
+	r.GET("/attendance/:id/supervisor/daily", controllers.GetDailyAttendanceBySupervisor)
+	r.POST("/attendance", controllers.CreateAttendance)
+	r.PUT("/attendance", controllers.UpdateAttendance)
+	r.DELETE("/attendance/:id", controllers.DeleteAttendance)
 	return r
 }
 
