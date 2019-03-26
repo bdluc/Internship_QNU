@@ -94,14 +94,14 @@ func getAttendancesByMentorId(c *gin.Context, idMentor bson.ObjectId) []Attendan
 		return nil
 	}
 
-	courseTrainee := make(map[string][]models.Trainee)
+	courseTrainee := make(map[string][]models.Intern)
 	for _, course := range courses {
-		trainees := []models.Trainee{}
-		err = database.C(models.CollectionTrainee).Find(bson.M{"CourseID": course.ID, "IsDeleted": false}).All(&trainees)
+		interns := []models.Intern{}
+		err = database.C(models.CollectionIntern).Find(bson.M{"CourseID": course.ID, "IsDeleted": false}).All(&interns)
 		if common.IsError(c, err, "Could not get trainees") {
 			return nil
 		}
-		courseTrainee[course.CourseName] = trainees
+		courseTrainee[course.CourseName] = interns
 	}
 
 	resp := []AttendanceMentor{}
@@ -145,10 +145,10 @@ func GetAttendancesBySupervisor(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
-func getDailyAttendancesByTraineeId(c *gin.Context, idTrainee bson.ObjectId, date time.Time) []models.Attendance {
+func getDailyAttendancesByTraineeId(c *gin.Context, idTrainee bson.ObjectId, date1 time.Time, date2 time.Time) []models.Attendance {
 	database := c.MustGet("db").(*mgo.Database)
 	atten := []models.Attendance{}
-	err := database.C(models.CollectionAttendance).Find(bson.M{"TraineeId": idTrainee, "IsDeleted": false, "Date": date}).All(&atten)
+	err := database.C(models.CollectionAttendance).Find(bson.M{"TraineeId": idTrainee, "IsDeleted": false, "$or": []bson.M{{"Date": date1}, {"Date": date2}}}).All(&atten)
 	if err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusNotFound, gin.H{
@@ -160,7 +160,7 @@ func getDailyAttendancesByTraineeId(c *gin.Context, idTrainee bson.ObjectId, dat
 	return atten
 }
 
-func getDailyAttendancesByMentorId(c *gin.Context, idMentor bson.ObjectId, date time.Time) []AttendanceMentor {
+func getDailyAttendancesByMentorId(c *gin.Context, idMentor bson.ObjectId, date1 time.Time, date2 time.Time) []AttendanceMentor {
 	database := c.MustGet("db").(*mgo.Database)
 	courses := []models.Course{}
 	err := database.C(models.CollectionCourse).Find(bson.M{"MentorID": idMentor, "IsDeleted": false}).All(&courses)
@@ -168,21 +168,21 @@ func getDailyAttendancesByMentorId(c *gin.Context, idMentor bson.ObjectId, date 
 		return nil
 	}
 
-	courseTrainee := make(map[string][]models.Trainee)
+	courseTrainee := make(map[string][]models.Intern)
 	for _, course := range courses {
-		trainees := []models.Trainee{}
-		err = database.C(models.CollectionTrainee).Find(bson.M{"CourseID": course.ID, "IsDeleted": false}).All(&trainees)
+		interns := []models.Intern{}
+		err = database.C(models.CollectionIntern).Find(bson.M{"CourseID": course.ID, "IsDeleted": false}).All(&interns)
 		if common.IsError(c, err, "Could not get trainees") {
 			return nil
 		}
-		courseTrainee[course.CourseName] = trainees
+		courseTrainee[course.CourseName] = interns
 	}
 
 	resp := []AttendanceMentor{}
 
 	for course, trainees := range courseTrainee {
 		for _, trainee := range trainees {
-			atten := getDailyAttendancesByTraineeId(c, trainee.ID, date)
+			atten := getDailyAttendancesByTraineeId(c, trainee.ID, date1, date2)
 			data := AttendanceMentor{Id: trainee.ID.Hex(), Name: trainee.Name, Course: course, Attendances: atten}
 			resp = append(resp, data)
 		}
@@ -190,11 +190,16 @@ func getDailyAttendancesByMentorId(c *gin.Context, idMentor bson.ObjectId, date 
 	return resp
 }
 
+func getCurentDate(currentTime time.Time, h int) time.Time {
+	return time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), h, 0, 0, 0, time.Local)
+}
+
 func GetDailyAttendanceByMentor(c *gin.Context) {
 	currentTime := time.Now()
-	daily := time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 0, 0, 0, 0, time.UTC)
+	daily1 := getCurentDate(currentTime, 8)
+	daily2 := getCurentDate(currentTime, 13)
 	idMentor := bson.ObjectIdHex(c.Param("id"))
-	resp := getDailyAttendancesByMentorId(c, idMentor, daily)
+	resp := getDailyAttendancesByMentorId(c, idMentor, daily1, daily2)
 	c.JSON(http.StatusOK, resp)
 
 }
@@ -202,7 +207,9 @@ func GetDailyAttendanceByMentor(c *gin.Context) {
 func GetDailyAttendanceBySupervisor(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
 	currentTime := time.Now()
-	daily := time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 0, 0, 0, 0, time.UTC)
+	daily1 := getCurentDate(currentTime, 8)
+	daily2 := getCurentDate(currentTime, 13)
+
 	idSupervisor := bson.ObjectIdHex(c.Param("id"))
 	mentors := []models.Mentor{}
 	err := database.C(models.CollectionMentor).Find(bson.M{"SupervisorID": idSupervisor, "IsDeleted": false}).All(&mentors)
@@ -213,7 +220,7 @@ func GetDailyAttendanceBySupervisor(c *gin.Context) {
 	resp := []AttendanceSupervisor{}
 	for _, mentor := range mentors {
 		temp := AttendanceSupervisor{}
-		temp.AttendancesByMentor = getDailyAttendancesByMentorId(c, mentor.ID, daily)
+		temp.AttendancesByMentor = getDailyAttendancesByMentorId(c, mentor.ID, daily1, daily2)
 		temp.Name = mentor.Name
 		resp = append(resp, temp)
 	}
@@ -234,7 +241,7 @@ func CreateAttendance(c *gin.Context) {
 	}
 
 	currentTime := time.Now()
-	atten.Date = time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 0, 0, 0, 0, time.UTC)
+	atten.Date = time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 8, 0, 0, 0, time.Local)
 	check := models.Attendance{}
 	err = database.C(models.CollectionAttendance).Find(bson.M{"TraineeId": atten.TraineeId, "Date": atten.Date}).One(&check)
 	if err == nil && currentTime.Hour() < 13 {
@@ -244,7 +251,7 @@ func CreateAttendance(c *gin.Context) {
 		})
 		return
 	} else if currentTime.Hour() > 13 {
-		atten.Date = time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 13, 0, 0, 0, time.UTC)
+		atten.Date = time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 13, 0, 0, 0, time.Local)
 		err = database.C(models.CollectionAttendance).Find(bson.M{"TraineeId": atten.TraineeId, "Date": atten.Date}).One(&check)
 		if err == nil {
 			c.JSON(http.StatusNotFound, gin.H{
@@ -283,7 +290,7 @@ func UpdateAttendance(c *gin.Context) {
 	}
 
 	fmt.Print(atten.Date.Hour())
-	if atten.Date.Hour() != 0 && atten.Date.Hour() != 13 {
+	if atten.Date.Hour() != 8 && atten.Date.Hour() != 13 {
 		c.JSON(http.StatusNotFound, gin.H{
 			common.Status:  "error",
 			common.Message: "attendance invalid",

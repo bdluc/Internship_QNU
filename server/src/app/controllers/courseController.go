@@ -147,15 +147,15 @@ func GetCourseByName(c *gin.Context) {
 
 func GetCourseByTrainee(c *gin.Context, id string) (error, *models.Course) {
 	database := c.MustGet("db").(*mgo.Database)
-	trainee := models.Trainee{}
+	intern := models.Intern{}
 	oID := bson.ObjectIdHex(id)
-	err := database.C(models.CollectionTrainee).FindId(oID).One(&trainee)
+	err := database.C(models.CollectionIntern).FindId(oID).One(&intern)
 	if err != nil {
 		return err, nil
 	}
 
 	course := models.Course{}
-	errCourse := database.C(models.CollectionCourse).FindId(trainee.CourseID).One(&course)
+	errCourse := database.C(models.CollectionCourse).FindId(intern.CourseID).One(&course)
 	if errCourse != nil {
 		return errCourse, nil
 	}
