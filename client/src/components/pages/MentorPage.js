@@ -1,72 +1,65 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
+import React from 'react'
+import { Row, Col, View, Card, CardBody, Table, TableHead, TableBody, MDBIcon} from 'mdbreact';
+import Fab from '@material-ui/core/Fab';
+import DeleteIcon from '@material-ui/icons/Delete';
+import Icon from '@material-ui/core/Icon';
 
-const styles = {
-    root: {
-        width: '100%',
-        overflowX: 'auto',
-    },
-    table: {
-        minWidth: 700,
-    },
-};
 
-let id = 0;
-function createData(name, calories, fat, carbs, protein) {
-    id += 1;
-    return { id, name, calories, fat, carbs, protein };
-}
-
-const data = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
-
-function SimpleTable(props) {
-    const { classes } = props;
-
-    return (
-        <Paper className={classes.root}>
-            <Table className={classes.table}>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Dessert (100g serving)</TableCell>
-                        <TableCell align="right">Calories</TableCell>
-                        <TableCell align="right">Fat (g)</TableCell>
-                        <TableCell align="right">Carbs (g)</TableCell>
-                        <TableCell align="right">Protein (g)</TableCell>
-                    </TableRow>
+const MentorPage = () => {
+  return (
+    <React.Fragment>
+      <Row>
+        <Col md="12">
+          <Card className="mt-5">
+            <View className="gradient-card-header blue darken-2">
+              <h4 className="h4-responsive text-white">Basic tables</h4>
+            </View>
+            <CardBody>
+              <Table>
+                <TableHead color="primary-color" textWhite>
+                  <tr>
+                    <th>#</th>
+                    <th>First</th>
+                    <th>Last</th>
+                    <th>Delete</th>
+                    <th>Edit</th>
+                  </tr>
                 </TableHead>
                 <TableBody>
-                    {data.map(n => (
-                        <TableRow key={n.id}>
-                            <TableCell component="th" scope="row">
-                                {n.name}
-                            </TableCell>
-                            <TableCell align="right">{n.calories}</TableCell>
-                            <TableCell align="right">{n.fat}</TableCell>
-                            <TableCell align="right">{n.carbs}</TableCell>
-                            <TableCell align="right">{n.protein}</TableCell>
-                        </TableRow>
-                    ))}
+                  <tr>
+                    <td>1</td>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td><Fab size="small">
+                      <DeleteIcon />
+                    </Fab></td>
+                    <th><Fab color="secondary" aria-label="Edit">
+                    <MDBIcon far icon="edit" /> </Fab></th>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>Jacob</td>
+                    <td>Thornton</td>
+                    <td><Fab size="small" >
+                      <DeleteIcon />
+                    </Fab></td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>Larry</td>
+                    <td>the Bird</td>
+                    <td><Fab size="small" href="#" >
+                      <DeleteIcon />
+                    </Fab></td>
+                  </tr>
                 </TableBody>
-            </Table>
-        </Paper>
-    );
+              </Table>
+            </CardBody>
+          </Card>
+        </Col>
+      </Row>
+    </React.Fragment>
+  )
 }
 
-SimpleTable.propTypes = {
-    classes: PropTypes.object.isRequired,
-};
-
-export default withStyles(styles)(SimpleTable);
+export default MentorPage;
