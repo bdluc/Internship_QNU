@@ -20,6 +20,10 @@ type Course struct {
 	IsDeleted  bool            `bson:"IsDeleted"` // true: deleted, false: not
 }
 
+// type IDMentor struct {
+// 	ID bson.ObjectId `bson:"_id,omitempty"`
+// }
+
 type CourseDetail struct {
 	TrainingOutline string    `bson:"TrainingOutline"`
 	Content         string    `bson:"Content"`
