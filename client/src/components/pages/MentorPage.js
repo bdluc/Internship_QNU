@@ -1,9 +1,10 @@
 import React from 'react'
-import { Row, Col, View, Card, CardBody, Table, TableHead, TableBody, MDBIcon} from 'mdbreact';
+import { Row, Col, Card, CardBody, Table, TableHead, TableBody } from 'mdbreact';
 import Fab from '@material-ui/core/Fab';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-
+import CreateIcon from '@material-ui/icons/Create';
+// import AddIcon from '@material-ui/icons/Add';
+import AddMentor from './sections/AddMentor'
 
 const MentorPage = () => {
   return (
@@ -11,12 +12,19 @@ const MentorPage = () => {
       <Row>
         <Col md="12">
           <Card className="mt-5">
-            <View className="gradient-card-header blue darken-2">
-              <h4 className="h4-responsive text-white">Basic tables</h4>
-            </View>
+      
             <CardBody>
+            <tr>
+                {/* <td><Fab size="small" style={{backgroundColor:"#92B558"}} aria-label="Add">
+        <AddIcon />
+      </Fab></td> */}
+              <AddMentor></AddMentor>
+                </tr>
+                <hr></hr>
               <Table>
+
                 <TableHead color="primary-color" textWhite>
+
                   <tr>
                     <th>#</th>
                     <th>First</th>
@@ -30,27 +38,22 @@ const MentorPage = () => {
                     <td>1</td>
                     <td>Mark</td>
                     <td>Otto</td>
-                    <td><Fab size="small">
-                      <DeleteIcon />
-                    </Fab></td>
-                    <th><Fab color="secondary" size="small" aria-label="Edit">
-                    <FontAwesomeIcon icon="igloo" /></Fab></th>
+                    <td><Fab color="primary" size="small" aria-label="Edit"><CreateIcon /></Fab></td>
+                    <td><Fab size="small" href="#" ><DeleteIcon /></Fab></td>
                   </tr>
                   <tr>
                     <td>2</td>
                     <td>Jacob</td>
                     <td>Thornton</td>
-                    <td><Fab size="small" >
-                      <DeleteIcon />
-                    </Fab></td>
+                    <td><Fab color="primary" size="small" aria-label="Edit"><CreateIcon /></Fab></td>
+                    <td><Fab size="small" href="#" ><DeleteIcon /></Fab></td>
                   </tr>
                   <tr>
                     <td>3</td>
                     <td>Larry</td>
                     <td>the Bird</td>
-                    <td><Fab size="small" href="#" >
-                      <DeleteIcon />
-                    </Fab></td>
+                    <td><Fab color="primary" size="small" aria-label="Edit"><CreateIcon /></Fab></td>
+                    <td><Fab size="small" href="#" ><DeleteIcon /></Fab></td>
                   </tr>
                 </TableBody>
               </Table>
