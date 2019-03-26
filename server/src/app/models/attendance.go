@@ -17,3 +17,14 @@ type Attendance struct {
 	Status    string        `bson:"Status"`
 	IsDeleted bool          `bson:"IsDeleted"` // true: deleted, false: not
 }
+
+type DailyAttendance struct {
+	Id         string `json:"id"`
+	Attendance string `json:"attendance"`
+}
+
+type UpdateAttendance struct {
+	Id         string `json:"id"`
+	Date       string `json:"date"`
+	Attendance string `json:"attendance"`
+}
