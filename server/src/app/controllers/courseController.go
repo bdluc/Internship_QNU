@@ -225,6 +225,12 @@ func GetCourseByTrainee(c *gin.Context) {
 	// 	return err, nil
 	// }
 	trainee := getTraineeByID(c, c.Param("id"))
+	trainee := models.Intern{}
+	oID := bson.ObjectIdHex(id)
+	err := database.C(models.CollectionIntern).FindId(oID).One(&trainee)
+	if err != nil {
+		return err, nil
+	}
 
 	course := models.Course{}
 	errCourse := database.C(models.CollectionCourse).FindId(trainee.CourseID).One(&course)

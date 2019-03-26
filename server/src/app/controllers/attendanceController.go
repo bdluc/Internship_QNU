@@ -8,7 +8,7 @@ import (
 
 	"gopkg.in/mgo.v2/bson"
 
-	"gopkg.in/mgo.v2"
+	mgo "gopkg.in/mgo.v2"
 
 	"../common"
 	"../models"
@@ -87,8 +87,8 @@ type AttendanceMentor struct {
 
 func getAttendancesByMentorId(c *gin.Context, idMentor bson.ObjectId) []AttendanceMentor {
 	database := c.MustGet("db").(*mgo.Database)
-	trainees := []models.Trainee{}
-	err := database.C(models.CollectionTrainee).Find(bson.M{"MentorID": idMentor, "IsDeleted": false}).All(&trainees)
+	trainees := []models.Intern{}
+	err := database.C(models.CollectionIntern).Find(bson.M{"MentorID": idMentor, "IsDeleted": false}).All(&trainees)
 	if common.IsError(c, err, "Could not get trainees") {
 		return nil
 	}
@@ -150,8 +150,8 @@ func getDailyAttendancesByTraineeId(c *gin.Context, idTrainee bson.ObjectId, dat
 
 func getDailyAttendancesByMentorId(c *gin.Context, idMentor bson.ObjectId, date time.Time) []AttendanceMentor {
 	database := c.MustGet("db").(*mgo.Database)
-	trainees := []models.Trainee{}
-	err := database.C(models.CollectionTrainee).Find(bson.M{"MentorID": idMentor, "IsDeleted": false}).All(&trainees)
+	trainees := []models.Intern{}
+	err := database.C(models.CollectionIntern).Find(bson.M{"MentorID": idMentor, "IsDeleted": false}).All(&trainees)
 	if common.IsError(c, err, "Could not get trainees") {
 		return nil
 	}

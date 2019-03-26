@@ -1,9 +1,10 @@
 import React from 'react';
-import { MDBBtn, MDBTable, MDBTableBody, MDBTableHead, MDBIcon, MDBInput} from 'mdbreact';
-// import Fab from '@material-ui/core/Fab';
+import { MDBBtn, MDBTable, MDBTableBody, MDBTableHead, MDBIcon, MDBInput } from 'mdbreact';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
 
 const MentorPage = (props) => {
-  const columns = [ 
+  const columns = [
     {
       label: '#',
       field: 'id',
@@ -66,12 +67,12 @@ const MentorPage = (props) => {
     {
       'id': 1,
       'name': 'Nguyen Van A',
-      'phone':'0342239381',
-      'email':'vana@gmail.com',
-      'gender':'male',
-      'dob':'09/02/1992',
-      'department':'DC99',
-      'supervisor':'SD22dcc',
+      'phone': '0342239381',
+      'email': 'vana@gmail.com',
+      'gender': 'male',
+      'dob': '09/02/1992',
+      'department': 'DC99',
+      'supervisor': 'SD22dcc',
       // 'isdetected':<MDBInput type="checkbox" id="checkbox1" className="mb-5"/>,
       'edit': <MDBBtn color="orange" rounded size="sm" ><MDBIcon icon="edit" /></MDBBtn>,
       'delete': <MDBBtn color="red" rounded size="sm"  ><MDBIcon icon="minus" /></MDBBtn>
@@ -80,12 +81,12 @@ const MentorPage = (props) => {
     {
       'id': 2,
       'name': 'Nguyen Van B',
-      'phone':'0342239381',
-      'email':'vana@gmail.com',
-      'gender':'male',
-      'dob':'09/02/1992',
-      'department':'DC99',
-      'supervisor':'SD22dcc',
+      'phone': '0342239381',
+      'email': 'vana@gmail.com',
+      'gender': 'male',
+      'dob': '09/02/1992',
+      'department': 'DC99',
+      'supervisor': 'SD22dcc',
       // 'isdetected':  <MDBInput  type="checkbox" id="checkbox1" />      ,
       'edit': <MDBBtn color="orange" rounded size="sm" ><MDBIcon icon="edit" /></MDBBtn>,
       'delete': <MDBBtn color="red" rounded size="sm"  ><MDBIcon icon="minus" /></MDBBtn>
@@ -95,8 +96,9 @@ const MentorPage = (props) => {
 
   return (
     <div>
-      <MDBBtn color='green' rounded  size="sm"><MDBIcon icon="plus" /></MDBBtn>
-
+      <Fab  style={{ backgroundColor: 'red'}} color="primary" aria-label="Add">
+        <AddIcon />
+      </Fab>
       <MDBTable btn >
 
         <MDBTableHead columns={columns} />
