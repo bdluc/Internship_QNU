@@ -147,9 +147,9 @@ func GetCourseByName(c *gin.Context) {
 
 func GetCourseByTrainee(c *gin.Context, id string) (error, *models.Course) {
 	database := c.MustGet("db").(*mgo.Database)
-	trainee := models.Trainee{}
+	trainee := models.Intern{}
 	oID := bson.ObjectIdHex(id)
-	err := database.C(models.CollectionTrainee).FindId(oID).One(&trainee)
+	err := database.C(models.CollectionIntern).FindId(oID).One(&trainee)
 	if err != nil {
 		return err, nil
 	}
