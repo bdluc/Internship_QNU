@@ -2,7 +2,7 @@ import React from 'react'
 import { Row, Col, View, Card, CardBody, Table, TableHead, TableBody, MDBIcon} from 'mdbreact';
 import Fab from '@material-ui/core/Fab';
 import DeleteIcon from '@material-ui/icons/Delete';
-import Icon from '@material-ui/core/Icon';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 
 const MentorPage = () => {
@@ -33,8 +33,8 @@ const MentorPage = () => {
                     <td><Fab size="small">
                       <DeleteIcon />
                     </Fab></td>
-                    <th><Fab color="secondary" aria-label="Edit">
-                    <MDBIcon far icon="edit" /> </Fab></th>
+                    <th><Fab color="secondary" size="small" aria-label="Edit">
+                    <FontAwesomeIcon icon="igloo" /></Fab></th>
                   </tr>
                   <tr>
                     <td>2</td>
