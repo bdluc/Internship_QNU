@@ -57,10 +57,10 @@ func GetListAttendances(c *gin.Context) {
 
 }
 
-func getAttendancesByTraineeId(c *gin.Context, idTrainee bson.ObjectId) []models.Attendance {
+func getAttendancesByInternID(c *gin.Context, idTrainee bson.ObjectId) []models.Attendance {
 	database := c.MustGet("db").(*mgo.Database)
 	attens := []models.Attendance{}
-	err := database.C(models.CollectionAttendance).Find(bson.M{"TraineeId": idTrainee, "IsDeleted": false}).All(&attens)
+	err := database.C(models.CollectionAttendance).Find(bson.M{"InternID": idTrainee, "IsDeleted": false}).All(&attens)
 	if err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusNotFound, gin.H{
@@ -74,7 +74,7 @@ func getAttendancesByTraineeId(c *gin.Context, idTrainee bson.ObjectId) []models
 
 func GetTraineeAttendances(c *gin.Context) {
 	idTrainee := bson.ObjectIdHex(c.Param("id"))
-	attens := getAttendancesByTraineeId(c, idTrainee)
+	attens := getAttendancesByInternID(c, idTrainee)
 	c.JSON(http.StatusOK, attens)
 
 }
@@ -107,7 +107,7 @@ func getAttendancesByMentorId(c *gin.Context, idMentor bson.ObjectId) []Attendan
 	resp := []AttendanceMentor{}
 	for course, trainees := range courseTrainee {
 		for _, trainee := range trainees {
-			attens := getAttendancesByTraineeId(c, trainee.ID)
+			attens := getAttendancesByInternID(c, trainee.ID)
 			data := AttendanceMentor{Id: trainee.ID.Hex(), Name: trainee.Name, Course: course, Attendances: attens}
 			resp = append(resp, data)
 		}
@@ -145,10 +145,10 @@ func GetAttendancesBySupervisor(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
-func getDailyAttendancesByTraineeId(c *gin.Context, idTrainee bson.ObjectId, date1 time.Time, date2 time.Time) []models.Attendance {
+func getDailyAttendancesByInternID(c *gin.Context, idTrainee bson.ObjectId, date1 time.Time, date2 time.Time) []models.Attendance {
 	database := c.MustGet("db").(*mgo.Database)
 	atten := []models.Attendance{}
-	err := database.C(models.CollectionAttendance).Find(bson.M{"TraineeId": idTrainee, "IsDeleted": false, "$or": []bson.M{{"Date": date1}, {"Date": date2}}}).All(&atten)
+	err := database.C(models.CollectionAttendance).Find(bson.M{"InternID": idTrainee, "IsDeleted": false, "$or": []bson.M{{"Date": date1}, {"Date": date2}}}).All(&atten)
 	if err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusNotFound, gin.H{
@@ -182,7 +182,7 @@ func getDailyAttendancesByMentorId(c *gin.Context, idMentor bson.ObjectId, date1
 
 	for course, trainees := range courseTrainee {
 		for _, trainee := range trainees {
-			atten := getDailyAttendancesByTraineeId(c, trainee.ID, date1, date2)
+			atten := getDailyAttendancesByInternID(c, trainee.ID, date1, date2)
 			data := AttendanceMentor{Id: trainee.ID.Hex(), Name: trainee.Name, Course: course, Attendances: atten}
 			resp = append(resp, data)
 		}
@@ -243,7 +243,7 @@ func CreateAttendance(c *gin.Context) {
 	currentTime := time.Now()
 	atten.Date = time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 8, 0, 0, 0, time.Local)
 	check := models.Attendance{}
-	err = database.C(models.CollectionAttendance).Find(bson.M{"TraineeId": atten.TraineeId, "Date": atten.Date}).One(&check)
+	err = database.C(models.CollectionAttendance).Find(bson.M{"InternID": atten.InternID, "Date": atten.Date}).One(&check)
 	if err == nil && currentTime.Hour() < 13 {
 		c.JSON(http.StatusNotFound, gin.H{
 			common.Status:  "error",
@@ -252,7 +252,7 @@ func CreateAttendance(c *gin.Context) {
 		return
 	} else if currentTime.Hour() > 13 {
 		atten.Date = time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 13, 0, 0, 0, time.Local)
-		err = database.C(models.CollectionAttendance).Find(bson.M{"TraineeId": atten.TraineeId, "Date": atten.Date}).One(&check)
+		err = database.C(models.CollectionAttendance).Find(bson.M{"InternID": atten.InternID, "Date": atten.Date}).One(&check)
 		if err == nil {
 			c.JSON(http.StatusNotFound, gin.H{
 				common.Status:  "error",
@@ -299,7 +299,7 @@ func UpdateAttendance(c *gin.Context) {
 	}
 
 	check := models.Attendance{}
-	err = database.C(models.CollectionAttendance).Find(bson.M{"TraineeId": atten.TraineeId, "Date": atten.Date}).One(&check)
+	err = database.C(models.CollectionAttendance).Find(bson.M{"$not": bson.M{"_id": atten.ID}, "InternID": atten.ID, "Date": atten.Date}).One(&check)
 	if err == nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			common.Status:  "error",

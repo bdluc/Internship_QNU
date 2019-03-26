@@ -13,7 +13,7 @@ const (
 type Attendance struct {
 	ID        bson.ObjectId `bson:"_id,omitempty"`
 	Date      time.Time     `bson:"Date"`
-	TraineeId bson.ObjectId `bson:"TraineeId"`
+	InternID  bson.ObjectId `bson:"InternID"`
 	Status    string        `bson:"Status"`
 	IsDeleted bool          `bson:"IsDeleted"` // true: deleted, false: not
 }
