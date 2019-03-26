@@ -7,10 +7,10 @@ import (
 )
 
 const (
-	CollectionTrainee = "trainee"
+	CollectionIntern = "intern"
 )
 
-type Trainee struct {
+type Intern struct {
 	ID          bson.ObjectId `bson:"_id,omitempty"`
 	Name        string        `bson:"Name"`
 	PhoneNumber string        `bson:"PhoneNumber"`
@@ -20,6 +20,5 @@ type Trainee struct {
 	University  string        `bson:"University"`
 	Faculty     string        `bson:"Faculty"`
 	CourseID    bson.ObjectId `bson:"CourseID"`
-	MentorID    bson.ObjectId `bson:"MentorID"`
 	IsDeleted   bool          `bson:"IsDeleted"` // true: deleted, false: not
 }

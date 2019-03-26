@@ -36,8 +36,30 @@ func setupRouter() *gin.Engine {
 	r.Use(middlewares.Connect)
 	r.Use(middlewares.ErrorHandler)
 	r.Use(cors())
-	//write here
+
+	//User
+	r.PUT("/user", controllers.CreateUser)
 	r.GET("/users", controllers.ListUsers)
+	r.POST("/user", controllers.CreateUser)
+	r.PUT("/intern", controllers.AddIntern)
+
+	//intern
+	r.POST("/intern", controllers.AddIntern)
+	r.PUT("/intern", controllers.EditIntern)
+	r.DELETE("/intern/:id", controllers.DeleteIntern)
+	r.GET("/intern", controllers.ListIntern)
+	r.GET("/intern/:id", controllers.GetIntern)
+
+	//Mentor
+
+	r.GET("/mentor")
+
+	//intern
+	r.POST("/intern", controllers.AddIntern)
+	r.PUT("/intern", controllers.EditIntern)
+	r.DELETE("/intern/:id", controllers.DeleteIntern)
+	r.GET("/intern", controllers.ListIntern)
+	r.GET("/intern/:id", controllers.GetIntern)
 
 	//attendance
 	r.GET("/attendance/:id", controllers.GetAttendance)
@@ -57,7 +79,7 @@ func setupRouter() *gin.Engine {
 	r.GET("/course/:id", controllers.GetCourse)
 	r.GET("/courses/:id", controllers.GetCoursesByMentorID)
 	r.GET("/coursename/:name", controllers.GetCourseByName)
-	r.GET("/course/:id/trainee", controllers.GetCourseByTrainee)
+	r.GET("/course/:id/trainee", controllers.GetCourseByIntern)
 	r.POST("/course", controllers.CreateCourse)
 	r.PUT("/course", controllers.UpdateCourse)
 	r.DELETE("course", controllers.DeleteCourse)
