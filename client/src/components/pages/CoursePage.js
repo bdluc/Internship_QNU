@@ -3,7 +3,7 @@ import { Row, Col, Card, CardBody, Table, TableHead, TableBody } from 'mdbreact'
 import Fab from '@material-ui/core/Fab';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CreateIcon from '@material-ui/icons/Create';
-import AddIcon from '@material-ui/icons/Add';
+import AddCource from './sections/AddCource';
 
 
 const CourcePage = () => {
@@ -15,9 +15,9 @@ const CourcePage = () => {
       
             <CardBody>
             <tr>
-                <td><Fab size="small" style={{backgroundColor:"#92B558"}} aria-label="Add">
-        <AddIcon />
-      </Fab></td>
+                <td>
+                  <AddCource></AddCource>
+                </td>
 
                 </tr>
                 <hr></hr>
