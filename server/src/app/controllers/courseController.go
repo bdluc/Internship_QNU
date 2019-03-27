@@ -33,7 +33,10 @@ func ListCourses(c *gin.Context) {
 				"CourseName": 1,
 				"StartDate":  1,
 				"EndDate":    1,
-				"MentorName": "Mentor.Name",
+
+				"Detail":     1,
+				"MentorID":   1,
+				"MentorName": "$Mentor.Name",
 			}},
 	}
 
@@ -95,6 +98,7 @@ func DeleteCourse(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
+
 func GetCoursesByMentorID(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
 	collection := database.C(models.CollectionCourse)
@@ -103,6 +107,9 @@ func GetCoursesByMentorID(c *gin.Context) {
 	common.CheckError(c, err)
 
 	query := []bson.M{
+		{
+			"$unwind": "$MentorID",
+		},
 		{
 			"$lookup": bson.M{ // lookup the documents table here
 				"from":         "mentor",
@@ -145,20 +152,23 @@ func GetCourseByName(c *gin.Context) {
 	c.JSON(http.StatusOK, course)
 }
 
-func GetCourseByTrainee(c *gin.Context, id string) (error, *models.Course) {
-	database := c.MustGet("db").(*mgo.Database)
-	trainee := models.Trainee{}
-	oID := bson.ObjectIdHex(id)
-	err := database.C(models.CollectionTrainee).FindId(oID).One(&trainee)
-	if err != nil {
-		return err, nil
-	}
 
-	course := models.Course{}
-	errCourse := database.C(models.CollectionCourse).FindId(trainee.CourseID).One(&course)
-	if errCourse != nil {
-		return errCourse, nil
+func GetCourseByIntern(c *gin.Context) {
+	database := c.MustGet("db").(*mgo.Database)
+	// trainee := models.Trainee{}
+	// oID := bson.ObjectIdHex(id)
+	// err := database.C(models.CollectionTrainee).FindId(oID).One(&trainee)
+	// if err != nil {
+	// 	return err, nil
+	// }
+	err, intern := getInternByID(c, c.Param("id"))
+	if err != nil {
+		return
 	}
+	course := models.Course{}
+
+	errCourse := database.C(models.CollectionCourse).FindId(intern.CourseID).One(&course)
+	common.CheckError(c, errCourse)
 
 	return nil, &course
 }
