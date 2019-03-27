@@ -20,5 +20,6 @@ type Intern struct {
 	University  string        `bson:"University"`
 	Faculty     string        `bson:"Faculty"`
 	CourseID    bson.ObjectId `bson:"CourseID"`
+	MentorID    bson.ObjectId `bson:"MentorID"`
 	IsDeleted   bool          `bson:"IsDeleted"` // true: deleted, false: not
 }

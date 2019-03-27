@@ -14,15 +14,11 @@ import (
 func ListCourses(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
 	query := []bson.M{
-
-		{
-			"$unwind": "$MentorID",
-		},
 		{
 			"$lookup": bson.M{
 				"from":         "mentor",
-				"localField":   "MentorID",
-				"foreignField": "_id",
+				"localField":   "_id",
+				"foreignField": "MentorID",
 				"as":           "Mentor",
 			}},
 		{
@@ -31,13 +27,13 @@ func ListCourses(c *gin.Context) {
 		{
 			"$match": bson.M{
 				"IsDeleted": false,
-				// "MentorID":  "Mentor.ID",
 			}},
 		{
 			"$project": bson.M{
 				"CourseName": 1,
 				"StartDate":  1,
 				"EndDate":    1,
+
 				"Detail":     1,
 				"MentorID":   1,
 				"MentorName": "$Mentor.Name",
@@ -58,9 +54,8 @@ func CreateCourse(c *gin.Context) {
 	buf, _ := c.GetRawData()
 
 	err := json.Unmarshal(buf, &course)
-	if common.CheckError(c, err) {
-		return
-	}
+	common.CheckError(c, err)
+
 	err = database.C(models.CollectionCourse).Insert(course)
 	common.CheckError(c, err)
 	c.JSON(http.StatusCreated, nil)
@@ -101,11 +96,6 @@ func DeleteCourse(c *gin.Context) {
 	common.CheckError(c, err)
 
 	c.JSON(http.StatusNoContent, nil)
-}
-
-func GetCourse(c *gin.Context) {
-	course := getCourseByID(c, c.Param("id"))
-	c.JSON(http.StatusOK, course)
 }
 
 func GetCoursesByMentorID(c *gin.Context) {
@@ -174,6 +164,7 @@ func GetCourseByIntern(c *gin.Context) {
 		return
 	}
 	course := models.Course{}
+
 	errCourse := database.C(models.CollectionCourse).FindId(intern.CourseID).One(&course)
 	common.CheckError(c, errCourse)
 
