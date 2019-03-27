@@ -88,6 +88,7 @@ type AttendanceMentor struct {
 
 func getAttendancesByMentorId(c *gin.Context, idMentor bson.ObjectId) []AttendanceMentor {
 	database := c.MustGet("db").(*mgo.Database)
+
 	courses := []models.Course{}
 	err := database.C(models.CollectionCourse).Find(bson.M{"MentorID": idMentor, "IsDeleted": false}).All(&courses)
 	if common.IsError(c, err, "Could not get courses") {
@@ -162,6 +163,7 @@ func getDailyAttendancesByTraineeId(c *gin.Context, idTrainee bson.ObjectId, dat
 
 func getDailyAttendancesByMentorId(c *gin.Context, idMentor bson.ObjectId, date1 time.Time, date2 time.Time) []AttendanceMentor {
 	database := c.MustGet("db").(*mgo.Database)
+
 	courses := []models.Course{}
 	err := database.C(models.CollectionCourse).Find(bson.M{"MentorID": idMentor, "IsDeleted": false}).All(&courses)
 	if common.IsError(c, err, "Could not get courses") {
