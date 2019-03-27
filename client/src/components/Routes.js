@@ -3,6 +3,8 @@ import { Route, Switch } from 'react-router-dom';
 import MentorPage from './pages/MentorPage';
 import InternshipPage from './pages/InternshipPage'
 import CoursePage from './pages/CoursePage'
+import CoursePages from './pages/CoursePages'
+
 import Attendance from './pages/Attendance'
 import Login from './pages/LoginPage'
 
@@ -15,6 +17,8 @@ class Routes extends React.Component {
         <Route path='/mentor' exact component={MentorPage} />
         <Route path='/internship' exact component={InternshipPage}  />
         <Route path='/course' exact component={CoursePage}  />
+        <Route path='/courses' exact component={CoursePages}  />
+
         <Route path='/attendance' exact component={Attendance}  />
         <Route path='/login' exact component={Login}  />
 
