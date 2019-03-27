@@ -116,3 +116,11 @@ func GetIntern(c *gin.Context) {
 }
 
 //list all intern in course
+func GetInternByCourse(c *gin.Context) {
+	database := c.MustGet("db").(*mgo.Database)
+	internDb := models.Intern{}
+	errIntern := database.C(models.CollectionIntern).Find(bson.M{"CourseID": c.Param("course")}).All(&internDb)
+	common.CheckError(c, errIntern)
+
+	c.JSON(http.StatusOK, internDb)
+}

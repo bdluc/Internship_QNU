@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"../common"
@@ -29,6 +30,7 @@ func CreateUser(c *gin.Context) {
 
 	user := models.User{}
 	buf, _ := c.GetRawData()
+	fmt.Println(c.GetRawData())
 	err := json.Unmarshal(buf, &user)
 	if common.CheckError(c, err) {
 		return

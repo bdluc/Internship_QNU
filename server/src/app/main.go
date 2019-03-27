@@ -52,7 +52,8 @@ func setupRouter() *gin.Engine {
 	r.DELETE("/intern/:id", controllers.DeleteIntern)
 	r.GET("/intern", controllers.ListIntern)
 	r.GET("/intern/:id", controllers.GetIntern)
-	
+	r.GET("/intern/:course", controllers.GetInternByCourse)
+
 	//attendance
 	r.GET("/attendance/:id", controllers.GetAttendance)
 	r.GET("/attendances", controllers.GetListAttendances)

@@ -19,6 +19,6 @@ type Intern struct {
 	DoB         time.Time     `bson:"DayofBirth"`
 	University  string        `bson:"University"`
 	Faculty     string        `bson:"Faculty"`
-	CourseID    bson.ObjectId `bson:"CourseID"`
+	CourseID    bson.ObjectId `bson:"CourseID,omitempty"`
 	IsDeleted   bool          `bson:"IsDeleted"` // true: deleted, false: not
 }
