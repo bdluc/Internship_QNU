@@ -37,6 +37,7 @@ func setupRouter() *gin.Engine {
 	r.Use(middlewares.ErrorHandler)
 	r.Use(cors())
 
+
 	//User
 	r.PUT("/user", controllers.CreateUser)
 	r.GET("/users", controllers.ListUsers)
@@ -44,7 +45,11 @@ func setupRouter() *gin.Engine {
 
 	//Mentor
 
-	r.GET("/mentor")
+	r.POST("/mentor", controllers.CreateMentor)
+	r.PUT("/mentor", controllers.UpdateMentor)
+	r.DELETE("/mentor/:id", controllers.DeleteMentor)
+	r.GET("/mentors", controllers.ListMentor)
+
 
 	//intern
 	r.POST("/intern", controllers.AddIntern)
@@ -67,6 +72,7 @@ func setupRouter() *gin.Engine {
 	r.DELETE("/attendance/:id", controllers.DeleteAttendance)
 <<<<<<< HEAD
 =======
+
 
 	//course
 	r.GET("/courses", controllers.ListCourses)

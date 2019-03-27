@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2"
 )
 
 var (
@@ -20,7 +20,6 @@ const (
 	// database.
 	MongoDBUrl   = "localhost:27017"
 	DatabaseName = "internship_db"
-	// DatabaseName = "new_db_2"
 )
 
 // Connect connects to mongodb

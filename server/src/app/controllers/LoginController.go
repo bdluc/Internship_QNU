@@ -5,8 +5,6 @@ import (
 
 	"../models"
 	"github.com/gin-gonic/gin"
-	// "gorilla/mux"
-	// "gorilla/securecookie"
 )
 
 //login handle for login
