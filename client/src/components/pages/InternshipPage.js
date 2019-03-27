@@ -3,7 +3,8 @@ import { Row, Col, Card, CardBody, Table, TableHead, TableBody } from 'mdbreact'
 import Fab from '@material-ui/core/Fab';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CreateIcon from '@material-ui/icons/Create';
-import AddIcon from '@material-ui/icons/Add';
+import AddIntern from './sections/AddIntern';
+import PickCoure from './sections/PickCoure';
 
 
 const InternshipPage = () => {
@@ -15,10 +16,8 @@ const InternshipPage = () => {
       
             <CardBody>
             <tr>
-                <td><Fab size="small" style={{backgroundColor:"#92B558"}} aria-label="Add">
-        <AddIcon />
-      </Fab></td>
-
+                <td><AddIntern></AddIntern></td>
+                <td><PickCoure></PickCoure></td>
                 </tr>
                 <hr></hr>
               <Table>
