@@ -30,12 +30,10 @@ func AddIntern(c *gin.Context) {
 
 	intern.user.ID = bson.NewObjectId()
 	intern.intern.ID = intern.user.ID
-	// create an intern
 	err = database.C(models.CollectionUser).Insert(intern.user)
 	if common.CheckError(c, err) {
 		return
 	}
-	//create an intern
 	err = database.C(models.CollectionIntern).Insert(intern.intern)
 	if common.CheckError(c, err) {
 		return
