@@ -190,5 +190,5 @@ func GetDetailCourseByIntern(c *gin.Context) {
 	errCourse := database.C(models.CollectionCourse).FindId(intern.CourseID).One(&course)
 	common.CheckError(c, errCourse)
 
-	c.JSON(http.StatusOK, course)
+	c.JSON(http.StatusOK, course.Detail)
 }
