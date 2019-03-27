@@ -11,42 +11,6 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-// func ListCourses(c *gin.Context) {
-// 	database := c.MustGet("db").(*mgo.Database)
-// 	query := []bson.M{
-// 		{
-// 			"$lookup": bson.M{
-// 				"from":         "mentor",
-// 				"localField":   "_id",
-// 				"foreignField": "MentorID",
-// 				"as":           "Mentor",
-// 			}},
-// 		{
-// 			"$unwind": "$Mentor",
-// 		},
-// 		{
-// 			"$match": bson.M{
-// 				"IsDeleted": false,
-// 				// "MentorID":  "Mentor.ID",
-// 			}},
-// 		{
-// 			"$project": bson.M{
-// 				"CourseName": 1,
-// 				"StartDate":  1,
-// 				"EndDate":    1,
-// 				"Detail":     1,
-// 				"MentorName": "Mentor.Name",
-// 			}},
-// 	}
-
-// 	pipe := database.C(models.CollectionCourse).Pipe(query)
-// 	resp := []bson.M{}
-// 	err := pipe.All(&resp)
-
-// 	common.CheckError(c, err)
-// 	c.JSON(http.StatusOK, resp)
-// }
-
 func ListCourses(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
 	query := []bson.M{
@@ -61,9 +25,9 @@ func ListCourses(c *gin.Context) {
 				"foreignField": "_id",
 				"as":           "Mentor",
 			}},
-		// {
-		// 	"$unwind": "$Mentor",
-		// },
+		{
+			"$unwind": "$Mentor",
+		},
 		{
 			"$match": bson.M{
 				"IsDeleted": false,
@@ -76,7 +40,7 @@ func ListCourses(c *gin.Context) {
 				"EndDate":    1,
 				"Detail":     1,
 				"MentorID":   1,
-				// "MentorName": "Mentor.Name",
+				"MentorName": "$Mentor.Name",
 			}},
 	}
 
@@ -153,6 +117,9 @@ func GetCoursesByMentorID(c *gin.Context) {
 
 	query := []bson.M{
 		{
+			"$unwind": "$MentorID",
+		},
+		{
 			"$lookup": bson.M{ // lookup the documents table here
 				"from":         "mentor",
 				"localField":   "MentorID",
@@ -206,7 +173,6 @@ func GetCourseByIntern(c *gin.Context) {
 	if err != nil {
 		return
 	}
-
 	course := models.Course{}
 	errCourse := database.C(models.CollectionCourse).FindId(intern.CourseID).One(&course)
 	common.CheckError(c, errCourse)
