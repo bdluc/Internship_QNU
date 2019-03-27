@@ -34,7 +34,7 @@ export default class AddIntern extends React.Component {
                     onClose={this.handleClose}
                     aria-labelledby="form-dialog-title"
                 >
-                    <DialogTitle id="form-dialog-title">Add mentor form</DialogTitle>
+                    <DialogTitle id="form-dialog-title">Add intern form</DialogTitle>
                     <DialogContent >
                     Hi, Please input your mentor information! We are Lab8 Mentor!
                     {/* Hi, Please input your mentor information!                     Hi, Please input your mentor information! 

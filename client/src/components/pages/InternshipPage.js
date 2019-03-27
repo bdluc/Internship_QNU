@@ -24,31 +24,19 @@ const InternshipPage = () => {
 
                 <TableHead color="primary-color" textWhite>
 
-                  <tr>
-                    <th>STT</th>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>PhoneNumber</th>
-                    <th>Email</th>
-                    <th>Gender</th>
-                    <th>DayofBirth</th>
-                    <th>University</th>
-                    <th>Faculty</th>
-                    <th>Delete</th>
-                    <th>Edit</th>
+                <tr>
+                    <th>#</th>
+                    <th>First</th>
+                    <th>Last</th>
+                    <th>Date</th>
+                    <th>Week</th>
                   </tr>
                 </TableHead>
                 <TableBody>
-                  <tr>
+                <tr>
                     <td>1</td>
-                    <td>TMA1</td>
-                    <td>An</td>
-                    <td>0369585108</td>
-                    <td>TMA@gmail.com</td>
-                    <td>English</td>
-                    <td>13-04-1997</td>
-                    <td>Quy Nhơn</td>
-                    <td>Sing</td>
+                    <td>Mark</td>
+                    <td>Otto</td>
                     <td><Fab color="primary" size="small" aria-label="Edit"><CreateIcon /></Fab></td>
                     <td><Fab size="small" href="#" ><DeleteIcon /></Fab></td>
                   </tr>
