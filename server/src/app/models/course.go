@@ -11,13 +11,13 @@ const (
 )
 
 type Course struct {
-	ID         bson.ObjectId  `bson:"_id,omitempty"`
-	CourseName string         `bson:"CourseName"`
-	StartDate  time.Time      `bson:"StartDate"`
-	EndDate    time.Time      `bson:"EndDate"`
-	Detail     []CourseDetail `bson:"Detail"`
-	MentorID   bson.ObjectId  `bson:"MentorID"`
-	IsDeleted  bool           `bson:"IsDeleted"` // true: deleted, false: not
+	ID         bson.ObjectId   `bson:"_id,omitempty"`
+	CourseName string          `bson:"CourseName"`
+	StartDate  time.Time       `bson:"StartDate"`
+	EndDate    time.Time       `bson:"EndDate"`
+	Detail     []CourseDetail  `bson:"Detail"`
+	MentorID   bson.ObjectId `bson:"MentorID"`
+	IsDeleted  bool            `bson:"IsDeleted"` // true: deleted, false: not
 }
 
 type CourseDetail struct {
