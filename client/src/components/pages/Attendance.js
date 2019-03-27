@@ -2,6 +2,7 @@ import React from 'react';
 import './attendance.css';
 import Table from './components/mentor/Table'
 import BarChart from './components/BarChart'
+import $ from 'jquery';
 
 //https://github.com/patientslikeme/react-calendar-heatmap
 
@@ -25,8 +26,33 @@ class AttendancePage extends React.Component {
             showError: false,
             showData: true
         };
-        // this.getStudents();
+        this.getStudents();
   }
+
+  getStudents() {
+    $.ajax({
+        url: "http://localhost:8080/attendance/" + "5c9998a7ba3c261ba46034c1" +"/mentor",
+        type: "GET",
+        success: function (response) {
+            // var arr = []
+            // for (var i = 0; i < response.length; i++) {
+            //     arr.push({
+            //         "Name": response[i].Name,
+            //         "Id": response[i].Id,
+            //         "Data": [],
+            //         "months": [],
+            //         "startDate": "",
+            //         "endDate": ""
+            //     });
+            // }
+            this.setState({traineesData: response, currentStudentId: response[0].Id});
+            //this.getAttendancesData();
+        }.bind(this),
+        error: function (xhr, status) {
+            this.setState({showData: false});
+        }.bind(this)
+    });
+}
 
   onSelectChange(event) {
 
@@ -93,6 +119,89 @@ class AttendancePage extends React.Component {
   }
 
 
+  createEmptyRow() {
+    var rowData = [];
+    for(var i = 0; i < 7; i++){
+        rowData.push({
+            date: "",
+            attendance: "N.A",
+            weekDay: this.getWeekDay(i)
+        });
+    }
+    return rowData;
+  }
+
+  getWeekDay(num) {
+      var weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+      return weekDays[num];
+  }
+
+  getStudentById(id) {
+      for (var i = 0; i < this.state.traineesData.length; i++) {
+          if (this.state.traineesData[i].Id === id) {
+              return this.state.traineesData[i];
+          }
+      }
+
+      return null;
+  }
+
+  getStudentByName(name) {
+      for (var i = 0; i < this.state.traineesData.length; i++) {
+          if (this.state.traineesData[i].Name === name) {
+              return this.state.traineesData[i];
+          }
+      }
+
+      return null;
+  }
+
+  createMonthsData(startDate, endDate) {
+    var startMonth, startYear, endMonth, endYear;
+    startMonth = this.getMonth(startDate);
+    startYear = this.getYear(startDate);
+    endMonth = this.getMonth(endDate);
+    endYear = this.getYear(endDate);
+
+    var arr = [];
+    if (startYear === endYear) {           
+        for (var i = startMonth; i <= endMonth; i++) {
+            var strMonth = this.getMonthString(i) + " " + startYear.toString();
+            arr.push(strMonth);
+        }
+    } else {
+        for (var i = startMonth; i <= 12; i++) {
+            var strMonth = this.getMonthString(i) + " " + startYear.toString();
+            arr.push(strMonth);
+        }
+        for (var i = 1; i <= endMonth; i++) {
+            var strMonth = this.getMonthString(i) + " " + endYear.toString();
+            arr.push(strMonth);
+        }
+    }
+
+    return arr;
+}
+
+  getYear(strDate) {
+    return parseInt(strDate.substring(0, 4));
+  }
+
+  getMonth(strDate) {
+      return parseInt(strDate.substring(5, 7));
+  }
+
+  getDay(strDate) {
+      return parseInt(strDate.substring(8, 10));
+  }
+
+  getMonthString(iMonth) {
+      var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      if (!(iMonth >= 1 && iMonth <= 12)) {
+          return "";
+      }
+      return months[iMonth - 1];
+  }
 
   render() {
     return (
