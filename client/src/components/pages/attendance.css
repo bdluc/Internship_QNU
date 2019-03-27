@@ -1,0 +1,123 @@
+.custom-table {
+    background-color: white;
+    table-layout: fixed;
+}
+
+.custom-table th, td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.custom-table1 {
+    table-layout: fixed;
+}
+
+.custom-table1 th{
+    text-align: left; 
+    padding-left: 10%;
+    vertical-align: middle;
+}
+
+.custom-table1 td{
+    text-align: left; 
+    padding-left: 10%;
+    vertical-align: middle;
+}
+
+.custom-table-header {
+    color: #fff !important;
+    background-color: #4285f4 !important;
+    font-weight: bold;
+}
+
+.custom-ok {
+    color: #dff0d8;
+}
+
+.custom-danger {
+    color: #f8d7da;
+}
+
+.custom-warning {
+    color: #fff3cd;
+}
+
+
+.custom-green {
+    background-color: #dff0d8;
+}
+
+.custom-dropdown{
+    margin-bottom: 10px;
+    width: 20%;
+}
+
+.custom-icon-green{
+    color: green;
+}
+
+.custom-icon-red{
+    color: red;
+}
+
+.custom-icon-blue{
+    color: blue;
+}
+
+.custom-icon-gray{
+    color: gray;
+}
+
+.center {
+    margin: auto;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+}
+.month-header {
+    font-size: 22px;
+}
+
+.weekday {
+    font-weight: bold;
+}
+
+.arrow-hover {
+    color: lightgreen;
+}
+
+.left-arrow {
+    float: left;
+}
+
+.right-arrow {
+    float: right;
+}
+
+.td-dropdown {
+    width: 32%;
+}
+
+.td-dropdown2 {
+    width: 19%;
+}
+
+.custom-bold {
+    font-weight: bold;
+}
+
+.custom-submit {
+    width: 15%;
+}
+
+.custom-left {
+    left: 30%;
+}
+
+.custom-margin {
+    margin-left: 10px;
+}
+
+.custom-top {
+    margin-top: 10px;
+}
