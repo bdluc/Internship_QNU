@@ -18,7 +18,7 @@ var (
 const (
 	// MongoDBUrl is the default mongodb url that will be used to connect to the
 	// database.
-	MongoDBUrl   = "localhost"
+	MongoDBUrl   = "localhost:27017"
 	DatabaseName = "internship_db"
 )
 

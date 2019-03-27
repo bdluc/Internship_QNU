@@ -98,7 +98,6 @@ func DeleteCourse(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
-
 func GetCoursesByMentorID(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
 	collection := database.C(models.CollectionCourse)
@@ -152,7 +151,6 @@ func GetCourseByName(c *gin.Context) {
 	c.JSON(http.StatusOK, course)
 }
 
-
 func GetCourseByIntern(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
 	// trainee := models.Trainee{}
@@ -170,5 +168,5 @@ func GetCourseByIntern(c *gin.Context) {
 	errCourse := database.C(models.CollectionCourse).FindId(intern.CourseID).One(&course)
 	common.CheckError(c, errCourse)
 
-	return nil, &course
+	c.JSON(http.StatusOK, course)
 }
