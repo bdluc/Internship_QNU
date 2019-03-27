@@ -30,12 +30,10 @@ func AddIntern(c *gin.Context) {
 
 	intern.user.ID = bson.NewObjectId()
 	intern.intern.ID = intern.user.ID
-	// create an intern
 	err = database.C(models.CollectionUser).Insert(intern.user)
 	if common.CheckError(c, err) {
 		return
 	}
-	//create an intern
 	err = database.C(models.CollectionIntern).Insert(intern.intern)
 	if common.CheckError(c, err) {
 		return
@@ -119,7 +117,7 @@ func GetIntern(c *gin.Context) {
 func GetInternByCourse(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
 	internDb := models.Intern{}
-	errIntern := database.C(models.CollectionIntern).Find(bson.M{"CourseID": c.Param("course")}).All(&internDb)
+	errIntern := database.C(models.CollectionIntern).Find(bson.M{"CourseID": c.Param("id")}).All(&internDb)
 	common.CheckError(c, errIntern)
 
 	c.JSON(http.StatusOK, internDb)
