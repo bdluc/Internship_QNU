@@ -179,3 +179,16 @@ func GetCourseByIntern(c *gin.Context) {
 
 	c.JSON(http.StatusOK, course)
 }
+
+func GetDetailCourseByIntern(c *gin.Context) {
+	database := c.MustGet("db").(*mgo.Database)
+	err, intern := getInternByID(c, c.Param("id"))
+	if err != nil {
+		return
+	}
+	course := models.Course{}
+	errCourse := database.C(models.CollectionCourse).FindId(intern.CourseID).One(&course)
+	common.CheckError(c, errCourse)
+
+	c.JSON(http.StatusOK, course.Detail)
+}

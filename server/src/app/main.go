@@ -72,6 +72,7 @@ func setupRouter() *gin.Engine {
 	r.GET("/courses/:id", controllers.GetCoursesByMentorID)
 	r.GET("/coursename/:name", controllers.GetCourseByName)
 	r.GET("/course/:id/intern", controllers.GetCourseByIntern)
+	r.GET("/coursedetail/:id/intern", controllers.GetDetailCourseByIntern)
 	r.POST("/course", controllers.CreateCourse)
 	r.PUT("/course", controllers.UpdateCourse)
 	r.DELETE("course", controllers.DeleteCourse)
