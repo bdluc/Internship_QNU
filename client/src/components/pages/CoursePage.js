@@ -5,6 +5,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import CreateIcon from '@material-ui/icons/Create';
 import AddIcon from '@material-ui/icons/Add';
 
+import AddCourse from './sections/AddCourse'
 import React, { Component } from 'react';
 
 class CourcePage extends Component {
@@ -42,6 +43,7 @@ class CourcePage extends Component {
                 <tr>
                   <td><Fab size="small" style={{ backgroundColor: "#92B558" }} aria-label="Add">
                     <AddIcon />
+                    <AddCourse></AddCourse>
                   </Fab></td>
 
                 </tr>
