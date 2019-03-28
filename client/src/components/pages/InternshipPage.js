@@ -31,65 +31,64 @@ class InternshipPage extends Component {
 
   }
 
-render() {
-  const DATE_OPTIONS = { year: 'numeric', month: 'numeric', day: 'numeric' };
-  return (
-    <div>
-    <React.Fragment>
-      <Row>
-        <Col md="12">
-          <Card className="mt-5">
-      
-            <CardBody>
-            <tr>
-                <td><AddIntern></AddIntern></td>
-                <td><PickCoure></PickCoure></td>
-                </tr>
-                <hr></hr>
-              <Table>
+  render() {
+    const DATE_OPTIONS = { year: 'numeric', month: 'numeric', day: 'numeric' };
+    return (
+      <div>
+        <React.Fragment>
+          <Row>
+            <Col md="12">
+              <Card className="mt-5">
 
-                <TableHead color="primary-color" textWhite>
+                <CardBody>
+                  <tr>
+                    <td><AddIntern></AddIntern></td>
+                    <td><PickCoure></PickCoure></td>
+                  </tr>
+                  <hr></hr>
+                  <Table>
 
-                <tr>
-                    <th>#</th>
-                    <th>First</th>
-                    <th>Last</th>
-                    <th>Date</th>
-                    <th>Week</th>
-                  </tr>
-                </TableHead>
-                <TableBody>
-                <tr>
-                    <td>1</td>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td><Fab color="primary" size="small" aria-label="Edit"><CreateIcon /></Fab></td>
-                    <td><Fab size="small" href="#" ><DeleteIcon /></Fab></td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td><Fab color="primary" size="small" aria-label="Edit"><CreateIcon /></Fab></td>
-                    <td><Fab size="small" href="#" ><DeleteIcon /></Fab></td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td>Larry</td>
-                    <td>the Bird</td>
-                    <td><Fab color="primary" size="small" aria-label="Edit"><CreateIcon /></Fab></td>
-                    <td><Fab size="small" href="#" ><DeleteIcon /></Fab></td>
-                  </tr>
-                </TableBody>
-              </Table>
-            </CardBody>
-          </Card>
-        </Col>
-      </Row>
-    </React.Fragment>
-    </div>
-  )
-}
+                    <TableHead color="primary-color" textWhite>
+
+                      <tr>
+                        <th>STT</th>
+                        <th>Name</th>
+                        <th>DayofBirth</th>
+                        <th>Email</th>
+                        <th>University</th>
+                        <th>Faculty</th>
+                        <th>PhoneNumber</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                      </tr>
+                    </TableHead>
+                 
+                    <TableBody>
+                      {this.state.Intern.map((item, index) =>
+                        (
+                          <tr key={index}>
+                            <th>{index}</th>
+                            <th>{item.Name}</th>
+                            <th>{(new Date(item.DoB)).toLocaleDateString('en-US', DATE_OPTIONS)}</th>
+                            <th>{item.Email}</th>
+                            <th>{item.University}</th>
+                            <th>{item.Faculty}</th>
+                            <th>{item.PhoneNumber}</th>
+                            <th><Fab color="primary" size="small" aria-label="Edit"><CreateIcon /></Fab></th>
+                            <th><Fab size="small" href="#" ><DeleteIcon /></Fab></th>
+                          </tr>
+                        )
+                      )}
+                    </TableBody>
+                  </Table>
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
+        </React.Fragment>
+      </div>
+    )
+  }
 }
 
 export default InternshipPage;

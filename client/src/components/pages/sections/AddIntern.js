@@ -37,6 +37,7 @@ export default class AddIntern extends React.Component {
                     <DialogTitle id="form-dialog-title">Add intern form</DialogTitle>
                     <DialogContent >
                     Hi, Please input your mentor information! We are Lab8 Mentor!
+                    <hr></hr>
                     {/* Hi, Please input your mentor information!                     Hi, Please input your mentor information! 
 
                         <div className="form-group">
