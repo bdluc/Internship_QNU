@@ -1,14 +1,40 @@
-import React from 'react'
+// import React from 'react'
 import { Row, Col, Card, CardBody, Table, TableHead, TableBody } from 'mdbreact';
 import Fab from '@material-ui/core/Fab';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CreateIcon from '@material-ui/icons/Create';
 import AddIntern from './sections/AddIntern';
+import React, { Component } from 'react';
 import PickCoure from './sections/PickCoure';
 
 
-const InternshipPage = () => {
+
+class InternshipPage extends Component {
+  constructor() {
+    super();
+    this.state = {
+      Intern: []
+    };
+  }
+
+  componentDidMount() {
+
+    fetch('http://localhost:8080/intern')
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        this.setState({
+          Intern: result
+        });
+      })
+
+
+  }
+
+render() {
+  const DATE_OPTIONS = { year: 'numeric', month: 'numeric', day: 'numeric' };
   return (
+    <div>
     <React.Fragment>
       <Row>
         <Col md="12">
@@ -61,7 +87,9 @@ const InternshipPage = () => {
         </Col>
       </Row>
     </React.Fragment>
+    </div>
   )
+}
 }
 
 export default InternshipPage;

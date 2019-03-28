@@ -46,7 +46,7 @@ func CreateIntern(c *gin.Context) {
 }
 
 //edit intern
-func EditIntern(c *gin.Context) {
+func UpdateIntern(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
 
 	intern := models.Intern{}
