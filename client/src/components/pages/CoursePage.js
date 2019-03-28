@@ -3,7 +3,7 @@ import { Row, Col, Card, CardBody, Table, TableHead, TableBody } from 'mdbreact'
 import Fab from '@material-ui/core/Fab';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CreateIcon from '@material-ui/icons/Create';
-import AddIcon from '@material-ui/icons/Add';
+import AddCource from './sections/AddCource';
 
 import AddCourse from './sections/AddCourse'
 import React, { Component } from 'react';
@@ -45,6 +45,7 @@ class CourcePage extends Component {
                     <AddIcon />
                     <AddCourse></AddCourse>
                   </Fab></td>
+
 
                 </tr>
                 <hr></hr>
