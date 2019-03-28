@@ -60,19 +60,12 @@ class AttendancePage extends React.Component {
         trainees[i].months = this.createMonthsData(trainees[i].StartDate, trainees[i].EndDate);
     }
     if (this.state.months.length === 0) {
-        var now = new Date()
-        var monthNow = now.getMonth();
-        var yearNow = now.getFullYear();
-        var curtMonth = this.getMonthString(monthNow + 1) + " " + yearNow
-        if(!trainees[0].months.includes(curtMonth)){
-            curtMonth = trainees[0].months[0]
-            monthNow = this.getMonth(trainees[0].StartDate) - 1
-        }
+        var month = this.getCurrentMonth()
         this.setState({
             months: trainees[0].months,
-            currentMonth: curtMonth,
-            tableData: this.loadTableData(trainees[0].Id, monthNow, yearNow),
-            chartData: this.loadChartData(trainees[0].Id, monthNow, yearNow)
+            currentMonth: month.Month,
+            tableData: this.loadTableData(this.state.currentStudentId, month.MonthNow, month.YearNow),
+            chartData: this.loadChartData(this.state.currentStudentId, month.MonthNow, month.YearNow)
         });
     }else{
         var curMonth = this.state.currentMonth.substring(0, this.state.currentMonth.lastIndexOf(" "));
@@ -80,21 +73,44 @@ class AttendancePage extends React.Component {
         var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         var month = months.indexOf(curMonth);
         this.setState({
-            tableData: this.loadTableData(this.statecurrentStudentId, month, parseInt(curYear)),
-            chartData: this.loadChartData(this.statecurrentStudentId, month, parseInt(curYear))
+            tableData: this.loadTableData(this.state.currentStudentId, month, parseInt(curYear)),
+            chartData: this.loadChartData(this.state.currentStudentId, month, parseInt(curYear))
         });
     
     }
-
-
   }
 
   onSelectChange(event) {
-
+    var curValue = event.target.value;
+    var month = this.getCurrentMonth();
+        this.setState({currentMonth: month.Month});
+        if (curValue === "Calendar"){
+            this.setState({
+                tableData: this.loadTableData(this.state.currentStudentId, month.MonthNow, month.YearNow),
+                showChart: false
+            });
+        } else {
+            this.setState({
+                chartData: this.loadChartData(this.state.currentStudentId, month.MonthNow, month.YearNow),
+                showChart: true
+            });
+        }
+        this.setState({showSuccess: false, showError: false});
   }
 
   onSelectStudentChange(event){
-
+    var curValue = event.target.value;
+    var traineeData = this.getStudentByName(curValue);
+    var month = this.getCurrentMonth();
+    this.setState({
+        currentStudentId: traineeData.Id,
+        months: this.createMonthsData(traineeData.StartDate, traineeData.EndDate),
+        currentMonth: month.Month,
+        tableData: this.loadTableData(traineeData.Id, month.MonthNow, month.YearNow),
+        chartData: this.loadChartData(traineeData.Id, month.MonthNow, month.YearNow),
+        showSuccess: false,
+        showError: false
+    });
   }
 
   onLeftArrowHover(){
@@ -365,6 +381,23 @@ class AttendancePage extends React.Component {
           return "";
       }
       return months[iMonth - 1];
+  }
+
+  getCurrentMonth(){
+    var trainees = this.state.traineesData;
+    var now = new Date()
+        var monthNow = now.getMonth();
+        var yearNow = now.getFullYear();
+        var curtMonth = this.getMonthString(monthNow + 1) + " " + yearNow
+        if(!trainees[0].months.includes(curtMonth)){
+            curtMonth = trainees[0].months[0]
+            monthNow = this.getMonth(trainees[0].StartDate) - 1
+        }
+        return {
+            Month: curtMonth,
+            MonthNow: monthNow,
+            YearNow: yearNow
+        };
   }
 
   render() {
