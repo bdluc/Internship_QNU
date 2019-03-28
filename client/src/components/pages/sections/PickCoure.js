@@ -70,24 +70,24 @@ class PickCoure extends React.Component {
 
     return (
       <form className={classes.root} autoComplete="off">
-       
+
         <FormControl className={classes.margin}>
-          <InputLabel htmlFor="age-customized-select" className={classes.bootstrapFormLabel} placeholder="Course">
+          <InputLabel htmlFor="age-customized-select" className={classes.bootstrapFormLabel}>
             Course
           </InputLabel>
           <Select
             value={this.state.age}
             onChange={this.handleChange}
             input={<BootstrapInput name="age" id="age-customized-select" />}
+            type={{width:'50px'}}
           >
-            <MenuItem value="uuu">
-All            </MenuItem>
+            <MenuItem value={0} selected>All</MenuItem>
             <MenuItem value={10}>Golang</MenuItem>
             <MenuItem value={20}>FrontEnd</MenuItem>
             <MenuItem value={30}>BackEnd</MenuItem>
           </Select>
         </FormControl>
-        
+
       </form>
     );
   }
