@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { Navbar, NavbarBrand, NavbarNav, NavbarToggler, Collapse, MDBIcon } from 'mdbreact';
-import Fab from '@material-ui/core/Fab';
+import { Navbar, NavbarBrand, NavbarNav, NavbarToggler, Collapse } from 'mdbreact';
+// import Fab from '@material-ui/core/Fab';
+import { NavLink } from 'react-router-dom';
+import { ListGroupItem, Fa } from 'mdbreact';
 
 
 
@@ -39,9 +41,16 @@ class TopNavigation extends Component {
                     </NavbarNav>
                     <NavbarNav right>
                     
-                    <Fab href="/login" variant="extended" >
+                    {/* <Fab href="/mentor" activeClassName="activeClass" variant="extended" >
                     <MDBIcon icon="sign-in-alt" />                                                              Login
-                    </Fab>
+                    </Fab> */}
+
+<NavLink  to="/login" activeClassName="activeClass">
+                        <ListGroupItem>
+                            <Fa icon="user" className="mr-3"/>
+                            Login
+                        </ListGroupItem>
+                    </NavLink>
                     </NavbarNav>
                 </Collapse>
             </Navbar>
