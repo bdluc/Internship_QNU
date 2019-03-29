@@ -3,6 +3,7 @@ import { Row, Col, Card, CardBody, Table, TableHead, TableBody } from 'mdbreact'
 import Fab from '@material-ui/core/Fab';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CreateIcon from '@material-ui/icons/Create';
+// import AddIcon from '@material-ui/icons/Add';
 import AddCource from './sections/AddCource';
 import AddIcon from '@material-ui/icons/Add';
 import AddCourse from './sections/AddCourse'
@@ -42,7 +43,7 @@ class CourcePage extends Component {
               <CardBody>
                 <tr>
                   <td><Fab size="small" style={{ backgroundColor: "#92B558" }} aria-label="Add">
-                    <AddIcon />
+                    {/* <AddIcon /> */}
                     <AddCourse></AddCourse>
                   </Fab></td>
 
@@ -66,12 +67,12 @@ class CourcePage extends Component {
                       (
                         <tr key={index}>
                           <th>{index}</th>
-                          <th>{item.CourseName}</th>
-                          <th>{(new Date(item.StartDate)).toLocaleDateString('en-US', DATE_OPTIONS)}</th>
+                          <th>{item.Name}</th>
+                          {/* <th>{(new Date(item.StartDate)).toLocaleDateString('en-US', DATE_OPTIONS)}</th>
                           <th>{(new Date(item.EndDate)).toLocaleDateString('en-US', DATE_OPTIONS)}</th>
                           <th>{item.MentorName}</th>
                           <th><Fab color="primary" size="small" aria-label="Edit"><CreateIcon /></Fab></th>
-                          <th><Fab size="small" href="#" ><DeleteIcon /></Fab></th>
+                          <th><Fab size="small" href="#" ><DeleteIcon /></Fab></th> */}
                         </tr>
                       )
                     )}
