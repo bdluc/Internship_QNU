@@ -57,7 +57,7 @@ class MentorPage extends React.Component {
   }
 
   GetMentorList() {
-    const DATE_OPTIONS = { year: 'numeric', month: 'short', day: 'numeric' };
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
     fetch('http://localhost:8080/mentors')
       .then(response => response.json())
       .then(data => {
@@ -66,7 +66,7 @@ class MentorPage extends React.Component {
         data.map(row => {
           NewData.push([cnt, row.ID, row.Name, row.PhoneNumber, row.Email, row.Gender ? "Male" : "Female",
             // format datetime
-            (new Date(row.DoB)).toLocaleDateString('en-US', DATE_OPTIONS),
+            (new Date(row.DoB)).toLocaleDateString('en-US', options),
             row.Department, row.SupervisorID])
           cnt++
           return NewData
