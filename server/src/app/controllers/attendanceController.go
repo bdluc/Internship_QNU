@@ -83,8 +83,6 @@ type AttendanceMentor struct {
 	Id          string
 	Name        string
 	Course      string
-	StartDate   time.Time
-	EndDate     time.Time
 	Attendances []models.Attendance
 }
 
@@ -97,29 +95,23 @@ func getAttendancesByMentorId(c *gin.Context, idMentor bson.ObjectId) []Attendan
 		return nil
 	}
 
-	//courseTrainee := []models.Intern
-	resp := []AttendanceMentor{}
+	courseTrainee := make(map[string][]models.Intern)
 	for _, course := range courses {
 		interns := []models.Intern{}
 		err = database.C(models.CollectionIntern).Find(bson.M{"CourseID": course.ID, "IsDeleted": false}).All(&interns)
 		if common.IsError(c, err, "Could not get trainees") {
 			return nil
 		}
-		for _, intern := range interns {
-			resp = append(resp, AttendanceMentor{
-				Id:          intern.ID.Hex(),
-				Name:        intern.Name,
-				Course:      course.CourseName,
-				StartDate:   course.StartDate,
-				EndDate:     course.EndDate,
-				Attendances: []models.Attendance{},
-			})
-		}
-
+		courseTrainee[course.CourseName] = interns
 	}
-	for i, trainee := range resp {
-		attens := getAttendancesByInternID(c, bson.ObjectIdHex(trainee.Id))
-		resp[i].Attendances = attens
+
+	resp := []AttendanceMentor{}
+	for course, trainees := range courseTrainee {
+		for _, trainee := range trainees {
+			attens := getAttendancesByInternID(c, trainee.ID)
+			data := AttendanceMentor{Id: trainee.ID.Hex(), Name: trainee.Name, Course: course, Attendances: attens}
+			resp = append(resp, data)
+		}
 	}
 	return resp
 }
