@@ -1,19 +1,11 @@
 import React from 'react'
 import {
-  Row, Col, Card, CardBody, MDBIcon, MDBModalBody, MDBInput, MDBBtn, MDBModal, MDBModalHeader,
+  Row, Col, Card, CardBody, MDBIcon, MDBModalBody, MDBInput, MDBBtn, MDBModal,
 } from 'mdbreact';
-// import Fab from '@material-ui/core/Fab';
-// import DeleteIcon from '@material-ui/icons/Delete';
-// import CreateIcon from '@material-ui/icons/Create';
-// import AddIcon from '@material-ui/icons/Add';
-// import AddMentor from './sections/AddMentor'
-
+import TextField from '@material-ui/core/TextField';
 import MUIDataTable from "mui-datatables";
 import DatePickers from './sections/DatePickers'
 import { withStyles } from '@material-ui/core/styles';
-// import AppBar from '@material-ui/core/AppBar';
-// import Tabs from '@material-ui/core/Tabs';
-// import NoSsr from '@material-ui/core/NoSsr';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 
@@ -115,32 +107,38 @@ class MentorPage extends React.Component {
 
   handlerAddMentor = () => {
     if (this.state.icon === "edit") {
-      this.toggleMentor()
-    } else {
-      const dt = this.state.dob.split(/-|\s/)
-      let date = new Date(dt[2], dt[1], dt[0])
-      const data = {
-        "Name": this.state.name,
-        "PhoneNumber": this.state.phone,
-        "Email": this.state.email,
-        "Gender": this.state.gender === "Male" ? true : false,
-        "DoB": date,
-        "Department": this.state.department,
-        "SupervisorID": "5c1a11b49ef458a033e70628",
-        "IsDeleted": false
-      }
-      fetch("http://localhost:8080/mentor",
-        {
-          method: "POST",
-          mode: "no-cors",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data)
-        })
+      fetch("http://localhost:8080/mentor/" + this.state.id, {
+        method: 'DELETE',
+        mode: 'cors'
+      })
         .then(this.GetMentorList())
       this.toggleMentor()
     }
+    const dt = this.state.dob.split(/-|\s/)
+    let date = new Date(dt[2], dt[1], dt[0])
+    const data = {
+      "Name": this.state.name,
+      "PhoneNumber": this.state.phone,
+      "Email": this.state.email,
+      "Gender": this.state.gender === "Male" ? true : false,
+      "DoB": date,
+      "Department": this.state.department,
+      "SupervisorID": "5c1a11b49ef458a033e70628",
+      "IsDeleted": false
+    }
+    fetch("http://localhost:8080/mentor",
+      {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      .then(this.GetMentorList())
+    this.toggleMentor()
+
+
   }
 
 
@@ -154,6 +152,9 @@ class MentorPage extends React.Component {
     this.toggleMentor()
   }
 
+  // handlerEditMentor = () => {
+
+  // }
 
   columnsMentor = [
     {
@@ -226,9 +227,9 @@ class MentorPage extends React.Component {
   optionsMentor = {
     filterType: "dropdown",
     responsive: "scroll",
-    download: false,
-    print: false,
-    selectableRows: false,
+    download : false,
+    print : false,
+    selectableRows : false,
     textLabels: {
       body: {
         noMatch: "Sorry, no matching records found",
@@ -271,7 +272,6 @@ class MentorPage extends React.Component {
         gender: rowData[5],
         dob: rowData[6],
         department: rowData[7],
-        title: "EDIT INFORMATION",
         icon: "edit",
         isUpdate: true,
         checkValidate: true
@@ -348,7 +348,9 @@ class MentorPage extends React.Component {
   render() {
     // const { classes } = this.props;
     // const { value } = this.state;
-    // const options =
+    // const options =    this.state.mentorList.map((value, key) => {
+    //   return (<option key={key} value={value[1]}>{value[1]}</option>)
+    // })
     this.state.mentorList.map((value, key) => {
       return (<option key={key} value={value[1]}>{value[1]}</option>)
     })
@@ -362,8 +364,7 @@ class MentorPage extends React.Component {
                 <MDBBtn
                   className="mb-3 blue darken-2"
                   onClick={this.addMentor}>
-                  <MDBIcon icon="plus" className="ml-1" />
-                  Add New Mentor
+                  Add
                       </MDBBtn>
 
                 <hr></hr>
@@ -384,40 +385,49 @@ class MentorPage extends React.Component {
             toggle={this.toggleMentor}
             size="md"
             cascading>
-            <MDBModalHeader
-              toggle={this.toggleMentor}
-              titleClass="d-inline title"
-              className="text-center light-blue darken-3 white-text">
-              <MDBIcon icon={this.state.icon} />
-              {this.state.title}
-            </MDBModalHeader>
+
             <MDBModalBody>
-              <MDBInput error={this.state.errorName} label="Name" icon="user" name="name" value={this.state.name} onChange={this.handleChangeValue.bind(this)} />
-              <MDBInput label="Phone" icon="phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
-              <MDBInput label="Email" icon="envelope" iconClass="dark-grey" name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
-              <MDBInput label="Gender" icon="transgender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)} />
-              
-              <DatePickers 
-              label="Day of Birth" 
-              icon="birthday-cake" 
-              name="dob" 
-              value={this.state.dob} 
-              onChange={this.handleChangeValue.bind(this)}
+              <MDBInput fullWidth size="" label="Name" name="name" value={this.state.name} onChange={this.handleChangeValue.bind(this)} />
+              <MDBInput fullWidth label="Phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
+              <MDBInput fullWidth label="Email" iconClass="dark-grey" name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
+              <MDBInput label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)} />
+              <DatePickers
+                label="Day of Birth"
+                name="dob"
+                value={this.state.dob}
+                onChange={this.handleChangeValue.bind(this)}
               />
-              <MDBInput label="Department" icon="university" name="department" value={this.state.department} onChange={this.handleChangeValue.bind(this)} />
+              <TextField label="Department" icon="university" name="department" value={this.state.department} onChange={this.handleChangeValue.bind(this)} />
               <div className="text-center mt-1-half">
-                <MDBBtn
-                  className="mb-2 blue darken-2"
-                  onClick={this.handlerAddMentor}>
-                  send
+                {
+                  this.state.isUpdate === false &&
+                  <MDBBtn
+                    className="mb-2 blue darken-2"
+                    onClick={this.handlerAddMentor}
+                  >
+                    Create
                   <MDBIcon icon="send" className="ml-1" />
-                </MDBBtn>
+                  </MDBBtn>
+                }
                 {
                   this.state.isUpdate &&
+
+
+                  <MDBBtn
+                    className="mb-2 blue darken-2"
+                    onClick={this.handlerAddMentor}>
+                    Update
+                  <MDBIcon icon="edit" className="ml-1" />
+                  </MDBBtn>
+                }
+                {
+                  this.state.isUpdate &&
+
+
                   <MDBBtn
                     className="mb-2 blue darken-2"
                     onClick={this.handlerDeleteMentor}>
-                    delete
+                    Delete
                   <MDBIcon icon="trash" className="ml-1" />
                   </MDBBtn>
                 }

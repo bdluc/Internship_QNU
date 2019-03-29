@@ -46,6 +46,7 @@ func setupRouter() *gin.Engine {
 
 	r.POST("/mentor", controllers.CreateMentor)
 	r.PUT("/mentor", controllers.UpdateMentor)
+	// r.POST("/mentor/:id", controllers.UpdateMentor )
 	r.DELETE("/mentor/:id", controllers.DeleteMentor)
 	r.GET("/mentors", controllers.ListMentors)
 
