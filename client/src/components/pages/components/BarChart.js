@@ -7,7 +7,7 @@ class ChartsPage extends React.Component {
         super(props);
         this.state = {
             dataBar: {
-                labels: ["Present", "Absent", "Absent(reason)", "N.A"],
+                labels: ["2Present", "Present", "Absent", "Absent(reason)", "N.A"],
                 datasets: [
                     {
                         label: 'Statistic',
@@ -43,7 +43,7 @@ class ChartsPage extends React.Component {
     componentWillReceiveProps(newProps) {
         this.setState({
            dataBar: {
-                labels: ["Present", "Absent", "Absent(reason)", "N.A"],
+                labels: ["2Present", "Present", "Absent", "Absent(reason)", "N.A"],
                 datasets: [
                     {
                         label: 'Statistic',

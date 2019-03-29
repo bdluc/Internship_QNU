@@ -165,17 +165,14 @@ class AttendancePage extends React.Component {
     this.setState({showSuccess: false, showError: false});
   }
 
-  getSessionsInMonth(month, year) {
-    var date = new Date(year, month, 1, 8);
-    var sessions = [];
+  getDaysInMonth(month, year) {
+    var date = new Date(year, month, 1);
+    var days = [];
     while (date.getMonth() === month) {
-        sessions.push(new Date(date));
-        date.setHours(13)
-        sessions.push(new Date(date));
+        days.push(new Date(date));
         date.setDate(date.getDate() + 1);
-        date.setHours(8)
     }
-    return sessions;
+    return days;
   }
 
   loadMonthData(id, monthValue, type) {
@@ -191,34 +188,29 @@ class AttendancePage extends React.Component {
   }
 
   loadTableData(id, month, year) {
-    var sessions = this.getSessionsInMonth(month, year);
+    var days = this.getDaysInMonth(month, year);
     var tableData = [];
     var rowData = this.createEmptyRow();
     var weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-    for(var i = 0; i < sessions.length; i++){
-        var strSession = sessions[i].toDateString();
-        var weekDay = strSession.substring(0,3);
-        var day = strSession.substring(8,10);
-        var session = sessions[i].getHours()
-        if(weekDay === "Mon" && i !== 0 && i % 2 === 0){
+    for(var i = 0; i < days.length; i++){
+        var strDay = days[i].toDateString();
+        var weekDay = strDay.substring(0,3);
+        var day = strDay.substring(8,10);
+
+        if(weekDay === "Mon" && i !== 0){
             tableData.push(rowData);
             rowData =  this.createEmptyRow();
 
         }
-        
-        var index = weekDays.indexOf(weekDay) * 2;
-        if(i % 2 !== 0)
-            index = index + 1;
-        rowData[index].session = "am"
-        if(sessions[i].getHours() == 13)
-            rowData[index].session = "pm";
+
+        var index = weekDays.indexOf(weekDay);
         rowData[index].date = day;
         if (weekDay !== "Sat" && weekDay !== "Sun") {
-            rowData[index].attendance = this.getAttendanceData(id, session ,parseInt(day), month, year);
+            rowData[index].attendance = this.getAttendanceData(id, parseInt(day), month, year);
         }
 
-        if(i === sessions.length - 1){
+        if(i === days.length - 1){
             tableData.push(rowData);
         }
     }
@@ -228,16 +220,19 @@ class AttendancePage extends React.Component {
 
   loadChartData(id, month, year) {
     var arr = [];
-    var pCount, aCount, arCount, naCount;
-    pCount = aCount = arCount = naCount = 0;
+    var ppCount, pCount, aCount, arCount, naCount;
+    ppCount = pCount = aCount = arCount = naCount = 0;
 
-    var days = this.getSessionsInMonth(month, year);
+    var days = this.getDaysInMonth(month, year);
     for (var i = 0; i < days.length; i++) {
         if (days[i].getDay() === 6 || days[i].getDay() === 0) {
             naCount++;
         } else {
-            var result = this.getAttendanceData(id, days[i].getHours(), days[i].getDate(), month, year);
+            var result = this.getAttendanceData(id, days[i].getDate(), month, year);
             switch(result) {
+                case "PP":
+                    ppCount++;
+                    break;
                 case "P" :
                     pCount++;
                     break;
@@ -257,6 +252,7 @@ class AttendancePage extends React.Component {
         }
     }
 
+    arr.push(ppCount);
     arr.push(pCount);
     arr.push(aCount);
     arr.push(arCount);
@@ -265,18 +261,38 @@ class AttendancePage extends React.Component {
   }
 
   handleCellChange(value) {
-
-  }
+    var row = value.id.substring(value.id.lastIndexOf("tr") + 2, value.id.lastIndexOf("-"));
+    var col = value.id.substring(value.id.lastIndexOf("td") + 2);
+    var tableData = this.state.tableData;
+    var curAttendance = tableData[row][col].attendance;
+    var curDay = tableData[row][col].date;
+    if (value.attendance !== curAttendance) {
+        var requestObject = {
+            
+        };
+        $.ajax({
+            url: "#",
+            type: "POST",
+            data: JSON.stringify(requestObject),
+            success: function (response) {
+                this.setState({showSuccess: true, showError: false});
+                //this.getAttendancesData();
+            }.bind(this),
+            error: function (xhr, status) {
+                this.setState({showSuccess: false, showError: true});
+            }.bind(this)
+        });
+    }
+}
 
 
   createEmptyRow() {
     var rowData = [];
-    for(var i = 0; i < 14; i++){
+    for(var i = 0; i < 7; i++){
         rowData.push({
-            session: "",
             date: "",
             attendance: "N.A",
-            weekDay: this.getWeekDay(Math.floor(i/2))
+            weekDay: this.getWeekDay(i)
         });
     }
     return rowData;
@@ -307,7 +323,7 @@ class AttendancePage extends React.Component {
       return null;
   }
 
-  getAttendanceData(id, session,day, month, year) {
+  getAttendanceData(id, day, month, year) {
     var traineeData = this.getStudentById(id);
     if (traineeData === null) {
         return "N.A";
@@ -322,21 +338,20 @@ class AttendancePage extends React.Component {
     endMonth = this.getMonth(endDate) - 1;
     endDay = this.getDay(endDate);
 
-    var start = new Date(startYear, startMonth, startDay, 0);
-    var end = new Date(endYear, endMonth, endDay, 13);
-    var mid = new Date(year, month, day, session);
+    var start = new Date(startYear, startMonth, startDay);
+    var end = new Date(endYear, endMonth, endDay);
+    var mid = new Date(year, month, day);
     var today = new Date();
 
     if (mid >= start && mid <= end) {
         if (mid >= start && mid <= today) {
             for (var i = 0; i < traineeData.Attendances.length; i++) {
                 var strDate = traineeData.Attendances[i].Date;
-                var date = new Date(this.getYear(strDate), this.getMonth(strDate)-1, this.getDay(strDate), this.getSession(strDate));
+                var date = new Date(this.getYear(strDate), this.getMonth(strDate)-1, this.getDay(strDate));
                 if (mid.getTime() === date.getTime()) {
                     return traineeData.Attendances[i].Status;
                 }
             }
-            
             return "N.A"
         } else {
             return "N.A"
