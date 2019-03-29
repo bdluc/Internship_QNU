@@ -21,13 +21,13 @@ class Table extends React.Component {
             <table className="table custom-table" id="table-calendar">
                 <thead>
                     <tr>
-                        <th scope="col" className="weekday">Monday</th>
-                        <th scope="col" className="weekday">Tuesday</th>
-                        <th scope="col" className="weekday">Wednesday</th>
-                        <th scope="col" className="weekday">Thursday</th>
-                        <th scope="col" className="weekday">Friday</th>
-                        <th scope="col" className="weekday">Saturday</th>
-                        <th scope="col" className="weekday">Sunday</th>
+                        <th scope="col" className="weekday" colSpan="2">Monday</th>
+                        <th scope="col" className="weekday" colSpan="2">Tuesday</th>
+                        <th scope="col" className="weekday" colSpan="2">Wednesday</th>
+                        <th scope="col" className="weekday" colSpan="2">Thursday</th>
+                        <th scope="col" className="weekday" colSpan="2">Friday</th>
+                        <th scope="col" className="weekday" colSpan="2">Saturday</th>
+                        <th scope="col" className="weekday" colSpan="2">Sunday</th>
                     </tr>
                 </thead>
                 <tbody id="tbody">

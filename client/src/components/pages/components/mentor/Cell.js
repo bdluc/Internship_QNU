@@ -7,7 +7,7 @@ class Cell extends React.Component {
         super(props);
         this.state = {
             id: props.rowId + "-td" + props.cellNum,
-            date: props.cellData.date + " ",
+            date: props.cellData.date + "." + props.cellData.session,
             iconClass: this.getIconClass(props.cellData.attendance),
             showEdit: false,
             showModal: false,
@@ -20,7 +20,7 @@ class Cell extends React.Component {
     componentWillReceiveProps(newProps) {
         if (this.props.cellData !== newProps.cellData){
             this.setState({
-                date: newProps.cellData.date + " ",
+                date: newProps.cellData.date + " " + newProps.cellData.session,
                 iconClass: this.getIconClass(newProps.cellData.attendance),
                 selectDefaultValue: newProps.cellData.attendance,
                 selectCurrentValue: newProps.cellData.attendance
