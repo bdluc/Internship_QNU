@@ -220,8 +220,8 @@ class AttendancePage extends React.Component {
 
   loadChartData(id, month, year) {
     var arr = [];
-    var pCount, aCount, arCount, naCount;
-    pCount = aCount = arCount = naCount = 0;
+    var ppCount, pCount, aCount, arCount, naCount;
+    ppCount = pCount = aCount = arCount = naCount = 0;
 
     var days = this.getDaysInMonth(month, year);
     for (var i = 0; i < days.length; i++) {
@@ -230,6 +230,9 @@ class AttendancePage extends React.Component {
         } else {
             var result = this.getAttendanceData(id, days[i].getDate(), month, year);
             switch(result) {
+                case "PP":
+                    ppCount++;
+                    break;
                 case "P" :
                     pCount++;
                     break;
@@ -249,6 +252,7 @@ class AttendancePage extends React.Component {
         }
     }
 
+    arr.push(ppCount);
     arr.push(pCount);
     arr.push(aCount);
     arr.push(arCount);
@@ -257,8 +261,29 @@ class AttendancePage extends React.Component {
   }
 
   handleCellChange(value) {
-
-  }
+    var row = value.id.substring(value.id.lastIndexOf("tr") + 2, value.id.lastIndexOf("-"));
+    var col = value.id.substring(value.id.lastIndexOf("td") + 2);
+    var tableData = this.state.tableData;
+    var curAttendance = tableData[row][col].attendance;
+    var curDay = tableData[row][col].date;
+    if (value.attendance !== curAttendance) {
+        var requestObject = {
+            
+        };
+        $.ajax({
+            url: "#",
+            type: "POST",
+            data: JSON.stringify(requestObject),
+            success: function (response) {
+                this.setState({showSuccess: true, showError: false});
+                //this.getAttendancesData();
+            }.bind(this),
+            error: function (xhr, status) {
+                this.setState({showSuccess: false, showError: true});
+            }.bind(this)
+        });
+    }
+}
 
 
   createEmptyRow() {
@@ -321,7 +346,7 @@ class AttendancePage extends React.Component {
     if (mid >= start && mid <= end) {
         if (mid >= start && mid <= today) {
             for (var i = 0; i < traineeData.Attendances.length; i++) {
-                var strDate = traineeData.Attendances[i].Date.substring(0, 10);
+                var strDate = traineeData.Attendances[i].Date;
                 var date = new Date(this.getYear(strDate), this.getMonth(strDate)-1, this.getDay(strDate));
                 if (mid.getTime() === date.getTime()) {
                     return traineeData.Attendances[i].Status;
@@ -361,7 +386,7 @@ class AttendancePage extends React.Component {
     }
 
     return arr;
-}
+  }
 
   getYear(strDate) {
     return parseInt(strDate.substring(0, 4));
@@ -374,6 +399,11 @@ class AttendancePage extends React.Component {
   getDay(strDate) {
       return parseInt(strDate.substring(8, 10));
   }
+
+  getSession(strDate) {
+    return parseInt(strDate.substring(11, 13));
+}
+
 
   getMonthString(iMonth) {
       var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
