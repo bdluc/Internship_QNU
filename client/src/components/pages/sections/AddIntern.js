@@ -27,7 +27,7 @@ export default class AddIntern extends React.Component {
         return (
             <div>
                 <Button variant="outlined" style={{ color: "green" }} onClick={this.handleClickOpen}>
-                    <MDBIcon icon="plus" />
+                    {/* <MDBIcon icon="plus" /> */}Add
                 </Button>
                 <Dialog
                     open={this.state.open}
