@@ -21,7 +21,7 @@ class Row extends React.Component {
         return (
             <tr id={this.state.id}>
                 {this.props.rowData.map(function(data, index){
-                    return <Cell key={index} cellData={data} onCellChange={this.props.onCellChange} rowId={this.state.id} cellNum={index}/>;
+                    return <Cell key={index} cellData={data} rowId={this.state.id} cellNum={index}/>;
                 }.bind(this))}
             </tr>
         );
