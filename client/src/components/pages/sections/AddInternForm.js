@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { FormErrors } from './FormErrors';
-// import AddMentor from './AddMentor';
-// import './Form.css';
 
 class AddInternForm extends Component {
   constructor (props) {
@@ -90,10 +88,6 @@ class AddInternForm extends Component {
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
-          {/* <input type="radio" required className="form-control" name="Gender"
-            placeholder="true: Male or false: Female"
-            value={this.state.Gender}
-            onChange={this.handleUserInput}  /> */}
         </div>
         <div className={`form-group ${this.errorClass(this.state.formErrors.DayofBirth)}`}>
           <label htmlFor="DayofBirth">Day of Birth</label>
@@ -104,21 +98,21 @@ class AddInternForm extends Component {
         </div>
         <div className={`form-group ${this.errorClass(this.state.formErrors.University)}`}>
           <label htmlFor="University">University</label>
-          <input type="University" className="form-control" name="University"
+          <input type="text" className="form-control" name="University"
             placeholder="Quy Nhon"
             value={this.state.University}
             onChange={this.handleUserInput}  />
         </div>
         <div className={`form-group ${this.errorClass(this.state.formErrors.Faculty)}`}>
           <label htmlFor="Faculty">Faculty</label>
-          <input type="Faculty" className="form-control" name="Faculty"
+          <input type="text" className="form-control" name="Faculty"
             placeholder="IT"
             value={this.state.Faculty}
             onChange={this.handleUserInput}  />
         </div>
         <div className={`form-group ${this.errorClass(this.state.formErrors.CourseID)}`}>
           <label htmlFor="CourseID">Course ID</label>
-          <input type="CourseID" className="form-control" name="CourseID"
+          <input type="boll" className="form-control" name="CourseID"
             placeholder="false"
             disabled
             value={this.state.CourseID}
