@@ -10,15 +10,24 @@ class AddInternForm extends Component {
       formErrors: {email: '', password: ''},
       emailValid: false,
       passwordValid: false,
-      formValid: false
+      formValid: false,
+      Name : '',
+      PhoneNumber : '',
+      Gender : '',
+      DayofBirth : '',
+      University : '',
+      Faculty : '',
+      CourseID : false
     }
   }
 
   handleUserInput = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    this.setState({[name]: value},
-                  () => { this.validateField(name, value) });
+    this.setState({
+      [name] : value
+    }, () => console.log(this.state)
+    )
   }
 
   validateField(fieldName, value) {
@@ -52,19 +61,47 @@ class AddInternForm extends Component {
     console.log(error)
     //  return(error.length === 0 ? '' : 'has-error');
   }
+  onSubmit = (e) =>{
+    e.preventDefault();
+    var intern = {
+      "Name": this.state.Name,
+      "PhoneNumber": this.state.PhoneNumber,
+      "Email": this.state.email,
+      "Gender": this.state.Gender === 'true' ? true : false,
+      "DayofBirth": this.state.DayofBirth,
+      "University": this.state.University,
+      "Faculty": this.state.Faculty,
+      "CourseID": "5c944596b47a2118f8c3aa4b",
+      "IsDeleted": false
+  }
+    console.log(intern);
+    
+    fetch("http://localhost:8080/intern",
+    {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(intern)
+    })
+    .then(rs => console.log(rs)
+    )
+
+  }
 
   render () {
     return (
-      <form className="demoForm">
+      <form className="demoForm" onSubmit = {this.onSubmit}>
         {/* <h2>Sign up</h2> */}
         <div className="panel panel-default">
           <FormErrors formErrors={this.state.formErrors} />
         </div>
-        <div className={`form-group ${this.errorClass(this.state.formErrors.name)}`}>
+        <div className={`form-group ${this.errorClass(this.state.formErrors.Name)}`}>
           <label htmlFor="Name">User Name</label>
           <input type="Name" required className="form-control" name="Name"
             placeholder="UserName......"
-            value={this.state.name}
+            value={this.state.Name}
             onChange={this.handleUserInput}  />
         </div>
         <div className={`form-group ${this.errorClass(this.state.formErrors.PhoneNumber)}`}>
@@ -118,7 +155,7 @@ class AddInternForm extends Component {
             onChange={this.handleUserInput}  />
         </div>
 
-        <button type="submit" className="btn btn-primary" disabled={!this.state.formValid}>Add</button>
+        <button type="submit" className="btn btn-primary" >Add</button>
       </form>
     )
   }
