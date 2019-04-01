@@ -206,10 +206,20 @@ class AttendancePage extends React.Component {
 
         var index = weekDays.indexOf(weekDay);
         rowData[index].date = day;
-        if (weekDay !== "Sat" && weekDay !== "Sun") {
-            rowData[index].attendance = this.getAttendanceData(id, parseInt(day), month, year);
-        }
 
+        if (weekDay !== "Sat" && weekDay !== "Sun") {
+            var attendanceData = this.getAttendanceData(id, parseInt(day), month, year);
+            if (attendanceData === "N.A")
+                rowData[index].attendance = "N.A"
+            else {
+                rowData[index].attendance = attendanceData.attendance;
+                rowData[index].id = attendanceData.id;
+                rowData[index].InternID = attendanceData.InternID;
+                rowData[index].fullDate = attendanceData.fullDate;
+                console.log(attendanceData)
+            }
+        }
+        
         if(i === days.length - 1){
             tableData.push(rowData);
         }
@@ -229,7 +239,7 @@ class AttendancePage extends React.Component {
             naCount++;
         } else {
             var result = this.getAttendanceData(id, days[i].getDate(), month, year);
-            switch(result) {
+            switch(result.attendance) {
                 case "PP":
                     ppCount++;
                     break;
@@ -290,6 +300,9 @@ class AttendancePage extends React.Component {
     var rowData = [];
     for(var i = 0; i < 7; i++){
         rowData.push({
+            id:"",
+            InternID:"",
+            fullDate:"",
             date: "",
             attendance: "N.A",
             weekDay: this.getWeekDay(i)
@@ -349,7 +362,13 @@ class AttendancePage extends React.Component {
                 var strDate = traineeData.Attendances[i].Date;
                 var date = new Date(this.getYear(strDate), this.getMonth(strDate)-1, this.getDay(strDate));
                 if (mid.getTime() === date.getTime()) {
-                    return traineeData.Attendances[i].Status;
+                    return {
+                        id: traineeData.Attendances[i].ID,
+                        InternID: id,
+                        fullDate: strDate,
+                        attendance: traineeData.Attendances[i].status,
+                    }
+                        
                 }
             }
             return "N.A"
