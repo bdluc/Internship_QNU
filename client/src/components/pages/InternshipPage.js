@@ -7,8 +7,6 @@ import AddIntern from './sections/AddIntern';
 import React, { Component } from 'react';
 import PickCoure from './sections/PickCoure';
 
-
-
 class InternshipPage extends Component {
   constructor() {
     super();
@@ -22,9 +20,9 @@ class InternshipPage extends Component {
     fetch('http://localhost:8080/intern')
       .then(response => response.json())
       .then(result => {
-        console.log(result);
+        // console.log(result);
         this.setState({
-          Intern: result
+          // Intern: result
         });
       })
   }
@@ -40,7 +38,10 @@ class InternshipPage extends Component {
       title : "ADD NEW MENTOR",
       icon : "plus",
       isUpdate : false,
-      checkValidate : false
+      checkValidate : false,
+      <Button variant="outlined" style={{ color: "green" }} onClick={this.handleClickOpen}>
+                    {/* <MDBIcon icon="plus" /> */}Add
+      </Button>
     });
     this.toggleMentor()
   }
@@ -61,10 +62,7 @@ class InternshipPage extends Component {
           "DoB" : date,
           "University" : this.state.university,
           "SupervisorID" : "5c9b53dbda51e308e86b2243",
-          "IsDeleted" : false
-          <Button variant="outlined" style={{ color: "green" }} onClick={this.handlerAddIntern}>
-                    {/* <MDBIcon icon="plus" /> */}Add
-          </Button>
+          "IsDeleted" : false 
         }
         fetch("http://localhost:8080/intern",
             {

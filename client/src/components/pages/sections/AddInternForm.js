@@ -77,7 +77,7 @@ class AddInternForm extends Component {
         <div className={`form-group ${this.errorClass(this.state.formErrors.email)}`}>
           <label htmlFor="email">Email address</label>
           <input type="email" required className="form-control" name="email"
-            placeholder="Email@gmail.com"
+            placeholder="Email"
             value={this.state.email}
             onChange={this.handleUserInput}  />
         </div>

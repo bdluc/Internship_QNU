@@ -1,10 +1,9 @@
-import React from 'react';
-import './attendance.css';
-import Table from './components/mentor/Table'
-import BarChart from './components/BarChart'
-import $ from 'jquery';
+import React from 'react'
+import CalendarHeatmap from 'react-calendar-heatmap';
+import './dist/stylesCalendar.css';
 
 //https://github.com/patientslikeme/react-calendar-heatmap
+
 
 
 class AttendancePage extends React.Component {
@@ -489,6 +488,7 @@ class AttendancePage extends React.Component {
         </div>
     );
   }
+master
 }
 
-export default AttendancePage;
+export default AttendancePage
