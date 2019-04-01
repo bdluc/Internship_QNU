@@ -50,7 +50,7 @@ class AddInternForm extends Component {
 
   errorClass(error) {
     console.log(error)
-    // return(error.length === 0 ? '' : 'has-error');
+    //  return(error.length === 0 ? '' : 'has-error');
   }
 
   render () {
@@ -83,11 +83,10 @@ class AddInternForm extends Component {
         </div>
         <div className={`form-group ${this.errorClass(this.state.formErrors.Gender)}`}>
           <label htmlFor="Gender">Gender</label>
-          <select value="gender" value={this.state.Gender}
-                                  onChange={this.handleUserInput} style={{marginLeft:'20px'}}>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-          </select>
+          <input type="boll" required className="form-control" name="Gender"
+            placeholder="True or False"
+            value={this.state.Gender}
+            onChange={this.handleUserInput}  />
         </div>
         <div className={`form-group ${this.errorClass(this.state.formErrors.DayofBirth)}`}>
           <label htmlFor="DayofBirth">Day of Birth</label>

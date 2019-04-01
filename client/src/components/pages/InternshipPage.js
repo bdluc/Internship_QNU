@@ -27,8 +27,57 @@ class InternshipPage extends Component {
           Intern: result
         });
       })
+  }
+
+  addintern = () => {
+    this.setState({
+      name : "",
+      phone : "",
+      email : "",
+      gender : "",
+      dob : "",
+      University : "",
+      title : "ADD NEW MENTOR",
+      icon : "plus",
+      isUpdate : false,
+      checkValidate : false
+    });
+    this.toggleMentor()
+  }
 
 
+
+  handlerAddIntern = () => {
+    if (this.state.icon === "edit") {
+      this.toggleIntern()
+    } else {
+        const dt  = this.state.dob.split(/-|\s/)
+        let date = new Date(dt[2], dt[1], dt[0])
+        const data = {
+          "Name" : this.state.name,
+          "PhoneNumber" : this.state.phone,
+          "Email" : this.state.email,
+          "Gender" : this.state.gender === "Male"?true:false,
+          "DoB" : date,
+          "University" : this.state.university,
+          "SupervisorID" : "5c9b53dbda51e308e86b2243",
+          "IsDeleted" : false
+          <Button variant="outlined" style={{ color: "green" }} onClick={this.handlerAddIntern}>
+                    {/* <MDBIcon icon="plus" /> */}Add
+          </Button>
+        }
+        fetch("http://localhost:8080/intern",
+            {
+                method: "POST",
+                mode: "no-cors",
+                headers:{
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(this.GetInternList())
+        this.toggleIntern()
+    }
   }
 
   render() {
