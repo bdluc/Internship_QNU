@@ -326,7 +326,24 @@ class MentorPage extends React.Component {
         }
         break;
       case "email":
-        this.setState({ email: value })
+      this.setState({ email: value})
+      e.target.className="form-control"
+      const regexEmail = /^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i;
+      if(value.trim().length === 0){
+        this.setState({
+          email: " ",
+          errorEmail:"Email can not be blank"
+        })
+        e.target.className += " invalid"
+      } else if (!regexEmail.test(value.trim())){
+        this.setState({
+          errorEmail: "Not a valid email address"
+        })
+        e.target.className +=" invalid"
+      } else {
+        e.target.className +=" valid"
+      }
+       
         break;
       case "gender":
         this.setState({ gender: value })
