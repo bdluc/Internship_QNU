@@ -31,7 +31,7 @@ class AddMentorForm extends Component {
     switch(fieldName) {
       case 'email':
         emailValid = value.notmatch(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
-        fieldValidationErrors.email = emailValid ? '' : ' is invalid';
+        fieldValidationErrors.email = emailValid ? '' : ' is invalid!';
         break;
       case 'password':
         passwordValid = value.length >= 6;

@@ -34,7 +34,7 @@ func CreateMentor(c *gin.Context) {
 	//	return
 	//}
 
-	// Add User
+	// Add User for mentor
 	hash, _ := bcrypt.GenerateFromPassword([]byte(common.DefaultPassword), bcrypt.DefaultCost)
 	user := models.User{}
 	user.UserName = mentor.Email
