@@ -4,8 +4,6 @@ import Table from './components/mentor/Table'
 import BarChart from './components/BarChart'
 import $ from 'jquery';
 
-//https://github.com/patientslikeme/react-calendar-heatmap
-
 
 class AttendancePage extends React.Component {
 
@@ -494,4 +492,4 @@ class AttendancePage extends React.Component {
   }
 }
 
-export default AttendancePage;
+export default AttendancePage

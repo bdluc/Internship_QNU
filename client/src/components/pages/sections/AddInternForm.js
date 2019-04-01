@@ -62,63 +62,19 @@ class AddInternForm extends Component {
           <FormErrors formErrors={this.state.formErrors} />
         </div>
         <div className={`form-group ${this.errorClass(this.state.formErrors.email)}`}>
-          <label htmlFor="Name">User Name</label>
-          <input type="Name" required className="form-control" name="Name"
-            placeholder="UserName......"
-            value={this.state.name}
-            onChange={this.handleUserInput}  />
-        </div>
-        <div className={`form-group ${this.errorClass(this.state.formErrors.email)}`}>
-          <label htmlFor="PhoneNumber">Phone Number</label>
-          <input type="PhoneNumber" required className="form-control" name="PhoneNumber"
-            placeholder="0123456789"
-            value={this.state.PhoneNumber}
-            onChange={this.handleUserInput}  />
-        </div>
-        <div className={`form-group ${this.errorClass(this.state.formErrors.email)}`}>
           <label htmlFor="email">Email address</label>
           <input type="email" required className="form-control" name="email"
-            placeholder="Email@gmail.com"
+            placeholder="Email"
             value={this.state.email}
             onChange={this.handleUserInput}  />
         </div>
-        <div className={`form-group ${this.errorClass(this.state.formErrors.email)}`}>
-          <label htmlFor="Gender">Gender</label>
-          <input type="Gender" required className="form-control" name="Gender"
-            placeholder="true: Male or false: Female"
-            value={this.state.Gender}
-            onChange={this.handleUserInput}  />
-        </div>
-        <div className={`form-group ${this.errorClass(this.state.formErrors.email)}`}>
-          <label htmlFor="DayofBirth">Day of Birth</label>
-          <input type="DayofBirth" required className="form-control" name="DayofBirth"
-            placeholder="2000-01-01T00:00:00+07:00"
-            value={this.state.DayofBirth}
-            onChange={this.handleUserInput}  />
-        </div>
         <div className={`form-group ${this.errorClass(this.state.formErrors.password)}`}>
-          <label htmlFor="University">University</label>
-          <input type="University" className="form-control" name="University"
-            placeholder="Quy Nhon"
-            value={this.state.University}
+          <label htmlFor="password">Password</label>
+          <input type="password" className="form-control" name="password"
+            placeholder="Password"
+            value={this.state.password}
             onChange={this.handleUserInput}  />
         </div>
-        <div className={`form-group ${this.errorClass(this.state.formErrors.password)}`}>
-          <label htmlFor="Faculty">Faculty</label>
-          <input type="Faculty" className="form-control" name="Faculty"
-            placeholder="IT"
-            value={this.state.Faculty}
-            onChange={this.handleUserInput}  />
-        </div>
-        <div className={`form-group ${this.errorClass(this.state.formErrors.password)}`}>
-          <label htmlFor="CourseID">Course ID</label>
-          <input type="CourseID" className="form-control" name="CourseID"
-            placeholder="false"
-            disabled
-            value={this.state.CourseID}
-            onChange={this.handleUserInput}  />
-        </div>
-
         <button type="submit" className="btn btn-primary" disabled={!this.state.formValid}>Add</button>
       </form>
     )
