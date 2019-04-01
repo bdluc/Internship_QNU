@@ -7,7 +7,7 @@ class Cell extends React.Component {
         super(props);
         this.state = {
             id: props.rowId + "-td" + props.cellNum,
-            date: props.cellData.date + " ",
+            date: props.cellData.date,
             iconClass: this.getIconClass(props.cellData.attendance),
             showEdit: false,
             showModal: false,
@@ -20,7 +20,7 @@ class Cell extends React.Component {
     componentWillReceiveProps(newProps) {
         if (this.props.cellData !== newProps.cellData){
             this.setState({
-                date: newProps.cellData.date + " ",
+                date: newProps.cellData.date,
                 iconClass: this.getIconClass(newProps.cellData.attendance),
                 selectDefaultValue: newProps.cellData.attendance,
                 selectCurrentValue: newProps.cellData.attendance
@@ -30,8 +30,10 @@ class Cell extends React.Component {
 
     getIconClass(attendance) {
         switch(attendance){
-            case "P":
+            case "PP":
                 return "fa fa-check custom-icon-green";
+            case "P":
+                return "fa fa-check custom-icon-yellow";
             case "A":
                 return "fa fa-remove custom-icon-red";
             case "AR":
@@ -102,7 +104,8 @@ class Cell extends React.Component {
                     <ModalHeader>Edit</ModalHeader>
                     <ModalBody>
                         <select className="browser-default custom-select td-dropdown" value={this.state.selectCurrentValue} onChange={this.onSelectChange.bind(this)}>
-                            <option value="P" className="custom-icon-green custom-bold">P</option>
+                        <option value="PP" className="custom-icon-green custom-bold">PP</option>
+                            <option value="P" className="custom-icon-yellow custom-bold">P</option>
                             <option value="A" className="custom-icon-red custom-bold">A</option>
                             <option value="AR" className="custom-icon-blue custom-bold">AR</option>
                         </select>
