@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Modal, ModalBody, ModalHeader, ModalFooter } from 'mdbreact';
 import '../attendance.css';
+import $ from 'jquery';
 
 class Cell extends React.Component {
     constructor(props){
@@ -47,6 +48,7 @@ class Cell extends React.Component {
         if (this.state.iconClass !== "") {
             this.setState({showEdit: true});
         }
+        
     }
 
     onCellDeHover() {
@@ -83,11 +85,35 @@ class Cell extends React.Component {
 
     onUpdateClick() {
         var object = {
-            id: this.state.id,
-            attendance: this.state.selectCurrentValue
+            ID: this.props.cellData.id,
+            Date: this.props.cellData.fullDate,
+            InternID: this.props.cellData.InternID,
+            Status: this.state.selectCurrentValue,
+            IsDeleted: false
         };
-        this.props.onCellChange(object);
-        this.setState({showModal: false, showEdit: false});
+        if (this.state.selectCurrentValue !== this.state.selectDefaultValue) {
+            $.ajax({
+                url: "http://localhost:8080/attendance",
+                type: "PUT",
+                data: JSON.stringify(object),
+                success: function (response) {
+                    this.setState({
+                        showModal: false, 
+                        showEdit: false, 
+                        showSuccess: true, 
+                        showError: false
+                    });
+                }.bind(this),
+                error: function (xhr, status) {
+                    this.setState({
+                        showModal: false, 
+                        showEdit: false, 
+                        selectCurrentValue: this.state.selectDefaultValue,
+                        showSuccess: false, showError: true
+                    });
+                }.bind(this)
+            });
+        }
     }
 
     render() {

@@ -4,8 +4,6 @@ import Table from './components/mentor/Table'
 import BarChart from './components/BarChart'
 import $ from 'jquery';
 
-//https://github.com/patientslikeme/react-calendar-heatmap
-
 
 class AttendancePage extends React.Component {
 
@@ -13,6 +11,7 @@ class AttendancePage extends React.Component {
         super(props);   
         this.state = {
             mentorId: "5c9998a7ba3c261ba46034c1",
+            courses: [],
             traineesData: [],
             tableData: [],
             chartData: [],
@@ -28,24 +27,14 @@ class AttendancePage extends React.Component {
         };
         this.getStudents();
   }
+  
 
   getStudents() {
     $.ajax({
         url: "http://localhost:8080/attendance/" + this.state.mentorId +"/mentor",
         type: "GET",
         success: function (response) {
-            // var arr = []
-            // for (var i = 0; i < response.length; i++) {
-            //     arr.push({
-            //         "Name": response[i].Name,
-            //         "Id": response[i].Id,
-            //         "Data": [],
-            //         "months": [],
-            //         "startDate": "",
-            //         "endDate": ""
-            //     });
-            // }
-            this.setState({traineesData: response, currentStudentId: response[0].Id});
+            this.setState({traineesData: response, currentStudentId: response[0].Id, sourses: this.getSourses(response)});
             this.processAttendancesData();
         }.bind(this),
         error: function (xhr, status) {
@@ -74,10 +63,19 @@ class AttendancePage extends React.Component {
         var month = months.indexOf(curMonth);
         this.setState({
             tableData: this.loadTableData(this.state.currentStudentId, month, parseInt(curYear)),
-            chartData: this.loadChartData(this.state.currentStudentId, month, parseInt(curYear))
+            chartData: this.loadChartData(this.state.currentStudentId, month, parseInt(curYear)),
         });
     
     }
+  }
+
+  getSourses(traineeData){
+      var sourses = [];
+      for(let i = 0 ; i < traineeData.length ; i++){
+          if(!sourses.includes(traineeData[i].Course))
+            sourses.push(traineeData[i].Course);
+      }
+      return sourses;
   }
 
   onSelectChange(event) {
@@ -111,6 +109,10 @@ class AttendancePage extends React.Component {
         showSuccess: false,
         showError: false
     });
+  }
+
+  onSelectCourseChange(){
+
   }
 
   onLeftArrowHover(){
@@ -206,10 +208,19 @@ class AttendancePage extends React.Component {
 
         var index = weekDays.indexOf(weekDay);
         rowData[index].date = day;
-        if (weekDay !== "Sat" && weekDay !== "Sun") {
-            rowData[index].attendance = this.getAttendanceData(id, parseInt(day), month, year);
-        }
 
+        if (weekDay !== "Sat" && weekDay !== "Sun") {
+            var attendanceData = this.getAttendanceData(id, parseInt(day), month, year);
+            if (attendanceData === "N.A")
+                rowData[index].attendance = "N.A"
+            else {
+                rowData[index].attendance = attendanceData.attendance;
+                rowData[index].id = attendanceData.id;
+                rowData[index].InternID = attendanceData.InternID;
+                rowData[index].fullDate = attendanceData.fullDate;
+            }
+        }
+        
         if(i === days.length - 1){
             tableData.push(rowData);
         }
@@ -229,7 +240,7 @@ class AttendancePage extends React.Component {
             naCount++;
         } else {
             var result = this.getAttendanceData(id, days[i].getDate(), month, year);
-            switch(result) {
+            switch(result.attendance) {
                 case "PP":
                     ppCount++;
                     break;
@@ -259,37 +270,14 @@ class AttendancePage extends React.Component {
     arr.push(naCount);
     return arr;
   }
-
-  handleCellChange(value) {
-    var row = value.id.substring(value.id.lastIndexOf("tr") + 2, value.id.lastIndexOf("-"));
-    var col = value.id.substring(value.id.lastIndexOf("td") + 2);
-    var tableData = this.state.tableData;
-    var curAttendance = tableData[row][col].attendance;
-    var curDay = tableData[row][col].date;
-    if (value.attendance !== curAttendance) {
-        var requestObject = {
-            
-        };
-        $.ajax({
-            url: "#",
-            type: "POST",
-            data: JSON.stringify(requestObject),
-            success: function (response) {
-                this.setState({showSuccess: true, showError: false});
-                //this.getAttendancesData();
-            }.bind(this),
-            error: function (xhr, status) {
-                this.setState({showSuccess: false, showError: true});
-            }.bind(this)
-        });
-    }
-}
-
-
+  
   createEmptyRow() {
     var rowData = [];
     for(var i = 0; i < 7; i++){
         rowData.push({
+            id:"",
+            InternID:"",
+            fullDate:"",
             date: "",
             attendance: "N.A",
             weekDay: this.getWeekDay(i)
@@ -349,7 +337,13 @@ class AttendancePage extends React.Component {
                 var strDate = traineeData.Attendances[i].Date;
                 var date = new Date(this.getYear(strDate), this.getMonth(strDate)-1, this.getDay(strDate));
                 if (mid.getTime() === date.getTime()) {
-                    return traineeData.Attendances[i].Status;
+                    return {
+                        id: traineeData.Attendances[i].ID,
+                        InternID: id,
+                        fullDate: strDate,
+                        attendance: traineeData.Attendances[i].Status,
+                    }
+                        
                 }
             }
             return "N.A"
@@ -359,7 +353,9 @@ class AttendancePage extends React.Component {
     } else {
         return "N.A"
     }
-}
+  }
+
+ 
 
   createMonthsData(startDate, endDate) {
     var startMonth, startYear, endMonth, endYear;
@@ -444,6 +440,11 @@ class AttendancePage extends React.Component {
                         <option>Calendar</option>
                         <option>Chart</option>         
                     </select>
+                    <select className="browser-default custom-select custom-dropdown custom-margin" onChange={this.onSelectCourseChange.bind(this)}>      
+                        {this.state.courses.map(function(data, index){
+                             return <option key={index} value={data}>{data}</option>;
+                        })}      
+                    </select>
                     <select className="browser-default custom-select custom-dropdown custom-margin" onChange={this.onSelectStudentChange.bind(this)}>      
                         {this.state.traineesData.map(function(data, index){
                             return <option key={index} value={data.Name}>{data.Name}</option>;
@@ -468,7 +469,7 @@ class AttendancePage extends React.Component {
                 {!this.state.showChart ? 
                 <div className="card mt-6">
                     <div className="card-body">
-                        <Table tableData={this.state.tableData} text={this.state.currentMonth} onCellChange={this.handleCellChange.bind(this)}/>
+                        <Table tableData={this.state.tableData} text={this.state.currentMonth} />
                     </div>
                 </div> : null}       
                 {this.state.showChart ? 
@@ -491,4 +492,4 @@ class AttendancePage extends React.Component {
   }
 }
 
-export default AttendancePage;
+export default AttendancePage

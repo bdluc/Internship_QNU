@@ -72,7 +72,7 @@ class PickCoure extends React.Component {
       <form className={classes.root} autoComplete="off">
        
         <FormControl className={classes.margin}>
-          <InputLabel htmlFor="age-customized-select" className={classes.bootstrapFormLabel} placeholder="Course">
+          <InputLabel htmlFor="age-customized-select" className={classes.bootstrapFormLabel}>
             Course
           </InputLabel>
           <Select
@@ -80,7 +80,7 @@ class PickCoure extends React.Component {
             onChange={this.handleChange}
             input={<BootstrapInput name="age" id="age-customized-select" />}
           >
-            <MenuItem value="uuu">
+            <MenuItem value="">
 All            </MenuItem>
             <MenuItem value={10}>Golang</MenuItem>
             <MenuItem value={20}>FrontEnd</MenuItem>
