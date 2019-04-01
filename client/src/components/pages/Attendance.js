@@ -1,12 +1,29 @@
-import React from 'react';
-import './attendance.css';
-import Table from './components/mentor/Table'
-import BarChart from './components/BarChart'
-import $ from 'jquery';
+import React from 'react'
+import CalendarHeatmap from 'react-calendar-heatmap';
+import './dist/stylesCalendar.css';
 
 //https://github.com/patientslikeme/react-calendar-heatmap
 
 
+<<<<<<< HEAD
+const AttendancePage = () => {
+  return (
+    <React.Fragment>
+      <div >
+        <CalendarHeatmap
+          startDate={new Date('2019-01-01')}
+          endDate={new Date('2019-05-19')}
+          values={[
+            { date: '2019-02-01', count: 6 },
+            { date: '2019-03-22' },
+            { date: '2019-02-30' },
+            // ...and so on
+          ]} />
+
+      </div>
+    </React.Fragment>
+  )
+=======
 class AttendancePage extends React.Component {
 
   constructor(props) {
@@ -489,6 +506,7 @@ class AttendancePage extends React.Component {
         </div>
     );
   }
+>>>>>>> master
 }
 
-export default AttendancePage;
+export default AttendancePage

@@ -65,6 +65,9 @@ func UpdateMentor(c *gin.Context) {
 		return
 	}
 
+	// CreateMentor(c)
+	// DeleteMentor(c)
+
 	c.JSON(http.StatusOK, nil)
 }
 
