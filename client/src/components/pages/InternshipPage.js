@@ -39,9 +39,6 @@ class InternshipPage extends Component {
       icon : "plus",
       isUpdate : false,
       checkValidate : false,
-      <Button variant="outlined" style={{ color: "green" }} onClick={this.handleClickOpen}>
-                    {/* <MDBIcon icon="plus" /> */}Add
-      </Button>
     });
     this.toggleMentor()
   }
@@ -63,7 +60,7 @@ class InternshipPage extends Component {
           "University" : this.state.university,
           "SupervisorID" : "5c9b53dbda51e308e86b2243",
           "IsDeleted" : false 
-        }
+        }     
         fetch("http://localhost:8080/intern",
             {
                 method: "POST",
