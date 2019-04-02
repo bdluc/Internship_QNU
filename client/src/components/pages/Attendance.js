@@ -12,6 +12,9 @@ class AttendancePage extends React.Component {
         this.state = {
             mentorId: "5c9998a7ba3c261ba46034c1",
             courses: [],
+            names: [],
+            ids: [],
+            currentName:"",
             traineesData: [],
             tableData: [],
             chartData: [],
@@ -34,7 +37,14 @@ class AttendancePage extends React.Component {
         url: "http://localhost:8080/attendance/" + this.state.mentorId +"/mentor",
         type: "GET",
         success: function (response) {
-            this.setState({traineesData: response, currentStudentId: response[0].Id, sourses: this.getSourses(response)});
+            var names = this.getNames(response, "All");
+            this.setState({traineesData: response, 
+                currentStudentId: response[0].Id, 
+                courses: this.getSourses(response),
+                names: names,
+                ids: this.getIds(response, "All"),
+                currentName: names[0],
+            });
             this.processAttendancesData();
         }.bind(this),
         error: function (xhr, status) {
@@ -70,12 +80,59 @@ class AttendancePage extends React.Component {
   }
 
   getSourses(traineeData){
-      var sourses = [];
-      for(let i = 0 ; i < traineeData.length ; i++){
-          if(!sourses.includes(traineeData[i].Course))
-            sourses.push(traineeData[i].Course);
+      var courses = ["All"];
+      for(var i = 0 ; i < traineeData.length ; i++){
+          if(!courses.includes(traineeData[i].Course))
+            courses.push(traineeData[i].Course);
       }
-      return sourses;
+      return courses;
+  }
+
+  getNames(traineeData, course){
+    var names = [];
+    if(course === "All")
+        for(var i = 0 ; i < traineeData.length ; i++)
+        names.push(traineeData[i].Name);
+    else 
+        for(var i = 0 ; i < traineeData.length ; i++){
+            if(traineeData[i].Course === course)
+            names.push(traineeData[i].Name);
+        }
+    return names;
+  }
+
+  getIds(traineeData, course){
+    var ids = [];
+    if(course === "All")
+        for(var i = 0 ; i < traineeData.length ; i++)
+        ids.push(traineeData[i].Id);
+    else 
+        for(var i = 0 ; i < traineeData.length ; i++){
+            if(traineeData[i].Course === course)
+            ids.push(traineeData[i].Id);
+        }
+    return ids;
+  }
+
+  handleCellChange(object){
+    $.ajax({
+        url: "http://localhost:8080/attendance",
+        type: "PUT",
+        data: JSON.stringify(object),
+        success: function (response) {
+            this.setState({
+                showSuccess: true, 
+                showError: false
+            });
+            return true
+        }.bind(this),
+        error: function (xhr, status) {
+            this.setState({
+                showSuccess: false, showError: true
+            });
+            return false
+        }.bind(this)
+    });
   }
 
   onSelectChange(event) {
@@ -87,7 +144,9 @@ class AttendancePage extends React.Component {
                 tableData: this.loadTableData(this.state.currentStudentId, month.MonthNow, month.YearNow),
                 showChart: false
             });
-        } else {
+        } else if(curValue === "Daily"){
+            
+        }else {
             this.setState({
                 chartData: this.loadChartData(this.state.currentStudentId, month.MonthNow, month.YearNow),
                 showChart: true
@@ -97,11 +156,13 @@ class AttendancePage extends React.Component {
   }
 
   onSelectStudentChange(event){
-    var curValue = event.target.value;
-    var traineeData = this.getStudentByName(curValue);
+      console.log(event.target.selectedIndex);
+    var studentId = this.state.ids[event.target.selectedIndex];
+    var traineeData = this.getStudentById(studentId);
     var month = this.getCurrentMonth();
     this.setState({
         currentStudentId: traineeData.Id,
+        currentName: traineeData.Name,
         months: this.createMonthsData(traineeData.StartDate, traineeData.EndDate),
         currentMonth: month.Month,
         tableData: this.loadTableData(traineeData.Id, month.MonthNow, month.YearNow),
@@ -111,8 +172,23 @@ class AttendancePage extends React.Component {
     });
   }
 
-  onSelectCourseChange(){
-
+  onSelectCourseChange(event){
+        var curValue = event.target.value;
+        var ids = this.getIds(this.state.traineesData, curValue);
+        var names = this.getNames(this.state.traineesData, curValue);
+        var traineeData = this.getStudentById(ids[0]);
+        var month = this.getCurrentMonth();
+        this.setState({
+            currentStudentId: traineeData.Id,
+            ids: ids,
+            names: names,
+            currentName: traineeData.Name,
+            months: this.createMonthsData(traineeData.StartDate, traineeData.EndDate),
+            currentMonth: month.Month,
+            tableData: this.loadTableData(traineeData.Id, month.MonthNow, month.YearNow),
+            chartData: this.loadChartData(traineeData.Id, month.MonthNow, month.YearNow),
+        });
+    
   }
 
   onLeftArrowHover(){
@@ -300,16 +376,7 @@ class AttendancePage extends React.Component {
 
       return null;
   }
-
-  getStudentByName(name) {
-      for (var i = 0; i < this.state.traineesData.length; i++) {
-          if (this.state.traineesData[i].Name === name) {
-              return this.state.traineesData[i];
-          }
-      }
-
-      return null;
-  }
+  
 
   getAttendanceData(id, day, month, year) {
     var traineeData = this.getStudentById(id);
@@ -438,6 +505,7 @@ class AttendancePage extends React.Component {
                 <div>
                     <select className="browser-default custom-select custom-dropdown" onChange={this.onSelectChange.bind(this)}>      
                         <option>Calendar</option>
+                        <option>Daily</option> 
                         <option>Chart</option>         
                     </select>
                     <select className="browser-default custom-select custom-dropdown custom-margin" onChange={this.onSelectCourseChange.bind(this)}>      
@@ -445,9 +513,9 @@ class AttendancePage extends React.Component {
                              return <option key={index} value={data}>{data}</option>;
                         })}      
                     </select>
-                    <select className="browser-default custom-select custom-dropdown custom-margin" onChange={this.onSelectStudentChange.bind(this)}>      
-                        {this.state.traineesData.map(function(data, index){
-                            return <option key={index} value={data.Name}>{data.Name}</option>;
+                    <select className="browser-default custom-select custom-dropdown custom-margin" value={this.state.currentName} onChange={this.onSelectStudentChange.bind(this)}>      
+                        {this.state.names.map(function(data, index){
+                                return <option key={index} value={data}>{data}</option>;
                         })}      
                     </select>
                 </div>
@@ -469,7 +537,7 @@ class AttendancePage extends React.Component {
                 {!this.state.showChart ? 
                 <div className="card mt-6">
                     <div className="card-body">
-                        <Table tableData={this.state.tableData} text={this.state.currentMonth} />
+                        <Table tableData={this.state.tableData} text={this.state.currentMonth} onCellChange={this.handleCellChange.bind(this)}/>
                     </div>
                 </div> : null}       
                 {this.state.showChart ? 
