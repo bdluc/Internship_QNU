@@ -22,9 +22,9 @@ function DatePickers(props) {
     <form className={classes.container} noValidate>
       <TextField
         id="date"
-        label="Birthday"
         type="date"
-        defaultValue="2017-05-24"
+        defaultValue="1997-03-22"
+
         className={classes.textField}
         InputLabelProps={{
           shrink: true,

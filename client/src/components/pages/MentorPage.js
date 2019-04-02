@@ -137,6 +137,7 @@ class MentorPage extends React.Component {
       })
       .then(this.GetMentorList())
     this.toggleMentor()
+    this.setState({ games: [] });
 
 
   }
@@ -150,6 +151,8 @@ class MentorPage extends React.Component {
     })
       .then(this.GetMentorList())
     this.toggleMentor()
+    window.location.reload();
+
   }
 
   // handlerEditMentor = () => {
