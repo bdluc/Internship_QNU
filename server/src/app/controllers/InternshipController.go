@@ -7,45 +7,46 @@ import (
 	"../common"
 	"../models"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
 //add intern
-func AddIntern(c *gin.Context) {
 
-	type Intern struct {
-		user   models.User
-		intern models.Intern
-	}
-
+func CreateIntern(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
 
-	intern := Intern{}
+	intern := models.Intern{}
 	buf, _ := c.GetRawData()
 	err := json.Unmarshal(buf, &intern)
 	if common.CheckError(c, err) {
 		return
 	}
 
-	intern.user.ID = bson.NewObjectId()
-	intern.intern.ID = intern.user.ID
-	err = database.C(models.CollectionUser).Insert(intern.user)
-	if common.CheckError(c, err) {
-		return
-	}
-	err = database.C(models.CollectionIntern).Insert(intern.intern)
+	intern.ID = bson.NewObjectId()
+	err = database.C(models.CollectionIntern).Insert(intern)
 	if common.CheckError(c, err) {
 		return
 	}
 
-	c.JSON(201, nil)
+	// Add User
+	hash, _ := bcrypt.GenerateFromPassword([]byte(common.DefaultPassword), bcrypt.DefaultCost)
+	user := models.User{}
+	user.UserName = intern.Email
+	user.Password = string(hash)
+	user.Role = 1
+	user.ID = intern.ID
 
-	c.JSON(http.StatusCreated, nil)
+	err = database.C(models.CollectionUser).Insert(user)
+	if common.CheckError(c, err) {
+		return
+	}
+	c.JSON(http.StatusCreated, intern)
 }
 
 //edit intern
-func EditIntern(c *gin.Context) {
+func UpdateIntern(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
 
 	intern := models.Intern{}

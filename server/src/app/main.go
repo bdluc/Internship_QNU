@@ -51,8 +51,8 @@ func setupRouter() *gin.Engine {
 	r.GET("/mentors", controllers.ListMentors)
 
 	//intern
-	r.POST("/intern", controllers.AddIntern)
-	r.PUT("/intern", controllers.EditIntern)
+	r.POST("/intern", controllers.CreateIntern)
+	r.PUT("/intern", controllers.UpdateIntern)
 	r.DELETE("/intern/:id", controllers.DeleteIntern)
 	r.GET("/intern", controllers.ListIntern)
 	r.GET("/intern/:id", controllers.GetIntern)
@@ -61,7 +61,7 @@ func setupRouter() *gin.Engine {
 	//attendance
 	r.GET("/attendance/:id", controllers.GetAttendance)
 	r.GET("/attendances", controllers.GetListAttendances)
-	r.GET("/attendance/:id/trainee", controllers.GetTraineeAttendances)
+	r.GET("/attendance/:id/intern", controllers.GetInternAttendances)
 	r.GET("/attendance/:id/mentor", controllers.GetAttendancesByMentor)
 	r.GET("/attendance/:id/supervisor", controllers.GetAttendancesBySupervisor)
 	r.GET("/attendance/:id/mentor/daily", controllers.GetDailyAttendanceByMentor)
