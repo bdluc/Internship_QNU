@@ -371,13 +371,13 @@ class InternPage extends React.Component {
         sort: false,
       }
     },
-    // {
-    //   name: "CourseID",
-    //   options: {
-    //     filter: true,
-    //     sort: false,
-    //   }
-    // },
+    {
+      name: "CourseID",
+      options: {
+        filter: true,
+        sort: false,
+      }
+    },
   ]
 
 
@@ -409,7 +409,7 @@ class InternPage extends React.Component {
         all: "All",
         title: "FILTERS",
         reset: "RESET",
-      },
+      },   
       viewColumns: {
         title: "Show Columns",
         titleAria: "Show/Hide Table Columns",
@@ -632,9 +632,9 @@ class InternPage extends React.Component {
               />
               <TextField label="University" name="text" name="University" value={this.state.University} onChange={this.handleChangeValue.bind(this)} />
               <div className="text-center mt-1-half">
-                {/* <TextField fullWidth label="Faculty" name="text" name="Faculty" value={this.state.Faculty} onChange={this.handleChangeValue.bind(this)} />
+                <TextField fullWidth label="Faculty" name="text" name="Faculty" value={this.state.Faculty} onChange={this.handleChangeValue.bind(this)} />
                 <div className="text-center mt-1-half">
-                <TextField fullWidth label="Course" name="text" name="Course" value={this.state.CourseID} onChange={this.handleChangeValue.bind(this)} />
+                {/* <TextField fullWidth label="Course" name="text" name="Course" value={this.state.CourseID} onChange={this.handleChangeValue.bind(this)} />
                 <div className="text-center mt-1-half"></div> */}
                   {
                     this.state.isUpdate === false &&
@@ -669,7 +669,7 @@ class InternPage extends React.Component {
                     </MDBBtn>
                   }
                 </div>
-              {/* </div> */}
+              </div>
             </MDBModalBody>
           </MDBModal>
         </Row>
