@@ -92,27 +92,8 @@ class Cell extends React.Component {
             IsDeleted: false
         };
         if (this.state.selectCurrentValue !== this.state.selectDefaultValue) {
-            $.ajax({
-                url: "http://localhost:8080/attendance",
-                type: "PUT",
-                data: JSON.stringify(object),
-                success: function (response) {
-                    this.setState({
-                        showModal: false, 
-                        showEdit: false, 
-                        showSuccess: true, 
-                        showError: false
-                    });
-                }.bind(this),
-                error: function (xhr, status) {
-                    this.setState({
-                        showModal: false, 
-                        showEdit: false, 
-                        selectCurrentValue: this.state.selectDefaultValue,
-                        showSuccess: false, showError: true
-                    });
-                }.bind(this)
-            });
+            this.props.onCellChange(object);
+            this.setState({showModal: false, showEdit: false});   
         }
     }
 

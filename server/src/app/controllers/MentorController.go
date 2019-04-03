@@ -29,11 +29,6 @@ func CreateMentor(c *gin.Context) {
 		return
 	}
 
-	//err = database.C(models.CollectionMentor).Find(nil).Sort("-$natural").Limit(1).One(&mentor)
-	//if common.CheckError(c, err) {
-	//	return
-	//}
-
 	// Add User for mentor
 	hash, _ := bcrypt.GenerateFromPassword([]byte(common.DefaultPassword), bcrypt.DefaultCost)
 	user := models.User{}
@@ -99,51 +94,6 @@ func ListMentors(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, mentor)
 }
-
-// List all mentors
-//func ListMentors(c *gin.Context) {
-//	database := c.MustGet("db").(*mgo.Database)
-//
-//	//mentors := []models.Mentor{}
-//	collection := database.C(models.CollectionMentor)
-//	query := []bson.M{
-//		{
-//			"$lookup": bson.M{ // lookup the documents table here
-//				"from":         "supervisor",
-//				"localField":   "SupervisorID",
-//				"foreignField": "_id",
-//				"as":           "Supervisor",
-//			}},
-//		{
-//			"$unwind": "$Supervisor",
-//		},
-//		{"$match": bson.M{
-//			"IsDeleted": false,
-//		}},
-//		{
-//			"$project": bson.M{
-//				"Name":           1,
-//				"PhoneNumber":    1,
-//				"Gender":         1,
-//				"Email":          1,
-//				"DayofBirth":     1,
-//				"Department":     1,
-//				"SupervisorID":   1,
-//				"IsDeleted":      1,
-//				"SupervisorName": "$Supervisor.Name",
-//			},
-//		},
-//	}
-//	pipe := collection.Pipe(query)
-//	resp := []bson.M{}
-//	err := pipe.All(&resp)
-//	//err := database.C(models.CollectionMentor).Find(bson.M{"IsDeleted": false}).All(&mentors)
-//	if common.CheckError(c, err) {
-//		return
-//	}
-//
-//	c.JSON(http.StatusOK, resp)
-//}
 
 // Get mentor by id
 func getMentorByID(c *gin.Context, id string) (error, *models.Mentor) {

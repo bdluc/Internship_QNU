@@ -2,7 +2,6 @@ import React from 'react'
 import {
   Row, Col, Card, CardBody, MDBIcon, MDBModalBody, MDBInput, MDBBtn, MDBModal,
 } from 'mdbreact';
-import TextField from '@material-ui/core/TextField';
 import MUIDataTable from "mui-datatables";
 import DatePickers from './sections/DatePickers'
 import { withStyles } from '@material-ui/core/styles';
@@ -49,7 +48,7 @@ class MentorPage extends React.Component {
   }
 
   GetMentorList() {
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const options = { month: 'numeric', day: 'numeric' , year: 'numeric' };
     fetch('http://localhost:8080/mentors')
       .then(response => response.json())
       .then(data => {
@@ -57,9 +56,8 @@ class MentorPage extends React.Component {
         let cnt = 1
         data.map(row => {
           NewData.push([cnt, row.ID, row.Name, row.PhoneNumber, row.Email, row.Gender ? "Male" : "Female",
-            // format datetime
-            (new Date(row.DoB)).toLocaleDateString('en-US', options),
-            row.Department, row.SupervisorID])
+          (new Date(row.DoB)).toLocaleDateString('en-US', options),row.Department, row.SupervisorID])
+            // format datetime//
           cnt++
           return NewData
         })
@@ -69,9 +67,6 @@ class MentorPage extends React.Component {
       });
   }
 
-  handleChangeTab = (event, value) => {
-    this.setState({ value });
-  };
 
   componentDidMount() {
 
@@ -95,7 +90,6 @@ class MentorPage extends React.Component {
       gender: "",
       dob: "",
       department: "",
-      title: "ADD NEW MENTOR",
       icon: "plus",
       isUpdate: false,
       checkValidate: false
@@ -114,6 +108,7 @@ class MentorPage extends React.Component {
         .then(this.GetMentorList())
       this.toggleMentor()
     }
+    // console.log(this.state.dob)
     const dt = this.state.dob.split(/-|\s/)
     let date = new Date(dt[2], dt[1], dt[0])
     const data = {
@@ -121,7 +116,7 @@ class MentorPage extends React.Component {
       "PhoneNumber": this.state.phone,
       "Email": this.state.email,
       "Gender": this.state.gender === "Male" ? true : false,
-      "DoB": date,
+      "Dob": date,
       "Department": this.state.department,
       "SupervisorID": "5c1a11b49ef458a033e70628",
       "IsDeleted": false
@@ -137,6 +132,7 @@ class MentorPage extends React.Component {
       })
       .then(this.GetMentorList())
     this.toggleMentor()
+    // window.location.reload();
 
 
   }
@@ -150,6 +146,8 @@ class MentorPage extends React.Component {
     })
       .then(this.GetMentorList())
     this.toggleMentor()
+    window.location.reload();
+
   }
 
   // handlerEditMentor = () => {
@@ -175,7 +173,7 @@ class MentorPage extends React.Component {
     {
       name: "NAME",
       options: {
-        filter: true,
+        filter: false,
         sort: false,
       }
     },
@@ -201,9 +199,9 @@ class MentorPage extends React.Component {
       }
     },
     {
-      name: "DAY OF BIRTH",
+      name: "DOB",
       options: {
-        filter: false,
+        filter: true,
         sort: false,
       }
     },
@@ -263,7 +261,9 @@ class MentorPage extends React.Component {
         deleteAria: "Delete Selected Rows",
       },
     },
-    onRowClick: (rowData, rowState) => {
+    onRowClick: (rowData) => {
+      console.log(this.state.dob)
+
       this.setState({
         id: rowData[1],
         name: rowData[2],
@@ -343,13 +343,18 @@ class MentorPage extends React.Component {
       } else {
         e.target.className +=" valid"
       }
-       
+      // console.log(this.state.dob)
+
         break;
       case "gender":
         this.setState({ gender: value })
+        // console.log(this.state.dob)
+
         break;
       case "dob":
         this.setState({ dob: value })
+        console.log(this.state.dob)
+
         break;
       case "mentor":
         this.setState({ mentor: value })
@@ -363,11 +368,6 @@ class MentorPage extends React.Component {
   }
 
   render() {
-    // const { classes } = this.props;
-    // const { value } = this.state;
-    // const options =    this.state.mentorList.map((value, key) => {
-    //   return (<option key={key} value={value[1]}>{value[1]}</option>)
-    // })
     this.state.mentorList.map((value, key) => {
       return (<option key={key} value={value[1]}>{value[1]}</option>)
     })
@@ -404,17 +404,19 @@ class MentorPage extends React.Component {
             cascading>
 
             <MDBModalBody>
-              <MDBInput fullWidth size="" label="Name" name="name" value={this.state.name} onChange={this.handleChangeValue.bind(this)} />
-              <MDBInput fullWidth label="Phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
-              <MDBInput fullWidth label="Email" iconClass="dark-grey" name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
-              <MDBInput label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)} />
+              <MDBInput  label="Name" name="name" value={this.state.name} onChange={this.handleChangeValue.bind(this)} />
+              <MDBInput  label="Phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
+              <MDBInput  label="Email"  name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
+              <MDBInput  label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)} />
               <DatePickers
-                label="Day of Birth"
+                label="Dob"
                 name="dob"
                 value={this.state.dob}
                 onChange={this.handleChangeValue.bind(this)}
               />
-              <TextField label="Department" icon="university" name="department" value={this.state.department} onChange={this.handleChangeValue.bind(this)} />
+              {/* <MDBInput fullWidth label="Dob" name="dob" value={this.state.dob} onChange={this.handleChangeValue.bind(this)} /> */}
+
+              <MDBInput  label="Department" name="department" value={this.state.department} onChange={this.handleChangeValue.bind(this)} />
               <div className="text-center mt-1-half">
                 {
                   this.state.isUpdate === false &&
