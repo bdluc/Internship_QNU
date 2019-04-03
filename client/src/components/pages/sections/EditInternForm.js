@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { FormErrors } from './FormErrors';
 
-class AddInternForm extends Component {
+class EditInternForm extends Component {
   constructor (props) {
     super(props);
     this.state = {
@@ -92,7 +92,7 @@ class AddInternForm extends Component {
 
   render () {
     return (
-      <form className="AddForm" onSubmit = {this.onSubmit}>
+      <form className="demoForm" onSubmit = {this.onSubmit}>
         {/* <h2>Sign up</h2> */}
         <div className="panel panel-default">
           <FormErrors formErrors={this.state.formErrors} />
@@ -161,4 +161,4 @@ class AddInternForm extends Component {
   }
 }
 
-export default AddInternForm;
+export default EditInternForm;
