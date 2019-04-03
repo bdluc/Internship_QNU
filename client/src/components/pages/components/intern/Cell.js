@@ -39,7 +39,7 @@ class Cell extends React.Component {
 
     render() {
         return (
-            <td id={this.state.id} onMouseEnter={this.onCellEnter.bind(this)} onMouseLeave={this.onCellDeHover.bind(this)}>
+            <td id={this.state.id}>
                 {this.state.date}
                 <i className={this.state.iconClass}></i>
             </td>

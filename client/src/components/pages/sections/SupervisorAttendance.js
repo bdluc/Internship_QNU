@@ -6,12 +6,12 @@ import BarChart from '../components/BarChart'
 import $ from 'jquery';
 
 
-class MentorAttendance extends React.Component {
+class SupervisorAttendance extends React.Component {
 
   constructor(props) {
         super(props);   
         this.state = {
-            mentorId: "5c9b392b11e5e2338e4c0ee1",
+            supervisorId: "5c9b392b13d2e2338e4c0ee1",
             courses: [],
             names: [],
             ids: [],
@@ -37,7 +37,7 @@ class MentorAttendance extends React.Component {
 
   getStudents() {
     $.ajax({
-        url: "http://localhost:8080/attendance/" + this.state.mentorId +"/mentor",
+        url: "http://localhost:8080/attendance/" + this.state.supervisorId +"/supervisor",
         type: "GET",
         success: function (response) {
             if(response === []){
@@ -46,12 +46,25 @@ class MentorAttendance extends React.Component {
                 });
             }
             else{
-                var names = this.getNames(response, "All");
-                this.setState({traineesData: response, 
-                    currentStudentId: response[0].Id, 
-                    courses: this.getCourses(response),
+                var traineesData = [];
+                for(var i = 0 ; i < response.length ; i++)
+                    for(var j = 0 ; j < response[i].AttendancesByMentor.length ; j++){
+                        var index = this.getIndexById(traineesData ,response[i].AttendancesByMentor[j].Id);
+                        if(index !== -1)
+                            traineesData[index].mentor.push(response[i].Name)
+                        else{
+                            response[i].AttendancesByMentor[j].mentor = [response[i].Name];
+                            traineesData.push(response[i].AttendancesByMentor[j])
+                        }
+                    }
+                    console.log(traineesData);
+                    var names = this.getNames(traineesData, "All");
+                this.setState({
+                    traineesData: traineesData,
+                    currentStudentId: traineesData[0].Id, 
+                    courses: this.getCourses(traineesData),
                     names: names,
-                    ids: this.getIds(response, "All"),
+                    ids: this.getIds(traineesData, "All"),
                     currentName: names[0],
                     now: new Date()
                 });
@@ -78,6 +91,18 @@ class MentorAttendance extends React.Component {
     });
     this.loadDailyData();
   }
+
+
+  getIndexById(traineesData, id) {
+    for (var i = 0; i < traineesData.length; i++) {
+        if (traineesData[i].Id === id) {
+            console.log(traineesData[i].Id === id);
+            return i;
+        }
+    }
+
+    return -1;
+}
 
   getCourses(traineeData){
       var courses = ["All"];
@@ -312,7 +337,7 @@ class MentorAttendance extends React.Component {
 
   loadDailyData(){
     $.ajax({
-        url: "http://localhost:8080/attendance/"+this.state.mentorId+"/mentor/daily",
+        url: "http://localhost:8080/attendance/"+this.state.supervisorId+"/supervisor/daily",
         type: "GET",
         success: function (response) {
             this.setState({
@@ -605,4 +630,4 @@ class MentorAttendance extends React.Component {
   }
 }
 
-export default MentorAttendance
+export default SupervisorAttendance
