@@ -29,11 +29,6 @@ func CreateMentor(c *gin.Context) {
 		return
 	}
 
-	//err = database.C(models.CollectionMentor).Find(nil).Sort("-$natural").Limit(1).One(&mentor)
-	//if common.CheckError(c, err) {
-	//	return
-	//}
-
 	// Add User for mentor
 	hash, _ := bcrypt.GenerateFromPassword([]byte(common.DefaultPassword), bcrypt.DefaultCost)
 	user := models.User{}
