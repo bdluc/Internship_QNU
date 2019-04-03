@@ -209,10 +209,10 @@ class InternPage extends React.Component {
         let NewData = []
         let stt = 1
         data.map(row => {
-          NewData.push([stt, row.ID, row.Name, row.PhoneNumber, row.Email, row.Gender ? "Male" : "Female", row.DoB, row.University, row.Faculty,
+          NewData.push([stt, row.Intern.ID, row.Intern.Name, row.Intern.PhoneNumber, row.Intern.Email, row.Intern.Gender ? "Male" : "Female", row.Intern.DoB, row.Intern.University, row.Intern.Faculty, row.Course,
             // format datetime
             (new Date(row.DoB)).toLocaleDateString('en-US', options),
-            row.Department, row.SupervisorID])
+            row.Department, row.CourseID])
           stt++
           return NewData
         })
@@ -372,7 +372,7 @@ class InternPage extends React.Component {
       }
     },
     {
-      name: "CourseID",
+      name: "Course",
       options: {
         filter: true,
         sort: false,
@@ -537,50 +537,9 @@ class InternPage extends React.Component {
                   Add
                       </MDBBtn>
 
-                <FormControl className={classes.formControl}>
-                  <InputLabel htmlFor="demo-controlled-open-select">Course</InputLabel>
-                  <Select
-                    open={this.state.openIntern}
-                    onClose={this.handleCloseIntern}
-                    onOpen={this.handleOpenIntern}
-                    value={this.state.ageIntern}
-                    onChange={this.handleChangeIntern}
-                    inputProps={{
-                      name: 'Course',
-                      id: 'demo-controlled-open-select',
-                    }}
-                  >
-                    <MenuItem value="">
-                      <em>Course</em>
-                    </MenuItem>
-                    <MenuItem value={0}>All</MenuItem>
-                    <MenuItem value={10}>Golang</MenuItem>
-                    <MenuItem value={20}>ReactJs</MenuItem>
-                    <MenuItem value={30}>NodeJS</MenuItem>
-                  </Select>
-                </FormControl>
-                {/* <DialogTitle id="form-dialog-title">Add mentor form</DialogTitle>
-                <DialogContent >
-                  Hi, Please input your mentor information! We are Lab8 Mentor!
-                  </DialogContent> */}
-                {/* <Select
-                  value={this.state.age}
-                  onChange={this.handleChange}
-                  input={<Input name="age" id="age-label-placeholder" />}
-                  displayEmpty
-                  name="age"
-                >
-                  <InputLabel shrink htmlFor="age-label-placeholder">
-                    Course
-                  </InputLabel>
-                  <MenuItem value={0}>All</MenuItem>
-                  <MenuItem value={10}>Golang</MenuItem>
-                  <MenuItem value={20}>ReactJs</MenuItem>
-                  <MenuItem value={30}>NodeJS</MenuItem>
-                </Select> */}
                 <hr></hr>
                 <MUIDataTable
-                  title={"Intern List"}
+                  title={"List Intern"}
                   data={this.state.internList}
                   columns={this.columnsIntern}
                   options={this.optionsIntern} />
@@ -601,7 +560,7 @@ class InternPage extends React.Component {
               <MDBInput fullWidth size="" label="Name" name="name" value={this.state.name} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput fullWidth label="Phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput fullWidth label="Email" iconClass="dark-grey" name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
-              {/* <MDBInput label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)} /> */}
+              <MDBInput label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)} />
               <FormControl className={classes.formControl}>
                 <InputLabel htmlFor="demo-controlled-open-select">Course</InputLabel>
                 <Select
@@ -634,8 +593,8 @@ class InternPage extends React.Component {
               <div className="text-center mt-1-half">
                 <TextField fullWidth label="Faculty" name="text" name="Faculty" value={this.state.Faculty} onChange={this.handleChangeValue.bind(this)} />
                 <div className="text-center mt-1-half">
-                {/* <TextField fullWidth label="Course" name="text" name="Course" value={this.state.CourseID} onChange={this.handleChangeValue.bind(this)} />
-                <div className="text-center mt-1-half"></div> */}
+                <TextField fullWidth label="Course" name="text" name="Course" value={this.state.CourseID} onChange={this.handleChangeValue.bind(this)} />
+                <div className="text-center mt-1-half"></div>
                   {
                     this.state.isUpdate === false &&
                     <MDBBtn
