@@ -25,7 +25,7 @@ class TopNavigation extends Component {
                             Internship
                         </ListGroupItem>
                     </NavLink>
-                    <NavLink to="/course" activeClassName="activeClass">
+                    <NavLink to="/courses" activeClassName="activeClass">
                         <ListGroupItem>
                             <Fa icon="book" className="mr-3"/>
                             Course
