@@ -1,9 +1,10 @@
-// import React from 'react'
+/*// import React from 'react'
 import { Row, Col, Card, CardBody, Table, TableHead, TableBody } from 'mdbreact';
 import Fab from '@material-ui/core/Fab';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CreateIcon from '@material-ui/icons/Create';
 import AddIntern from './sections/AddIntern';
+import EditIntern from './sections/EditIntern';
 import React, { Component } from 'react';
 import PickCoure from './sections/PickCoure';
 
@@ -59,7 +60,7 @@ class InternshipPage extends Component {
           "University" : this.state.university,
           "Faculty": this.state.Faculty,
           "SupervisorID" : "5c9b53dbda51e308e86b2243",
-          "IsDeleted" : false 
+          "IsDeleted" : false
         }     
         fetch("http://localhost:8080/intern",
             {
@@ -118,7 +119,7 @@ class InternshipPage extends Component {
                             <th>{item.University}</th>
                             <th>{item.Faculty}</th>
                             <th>{item.PhoneNumber}</th>
-                            <th><Fab color="primary" size="small" aria-label="Edit"><CreateIcon /></Fab></th>
+                            <th><EditIntern></EditIntern></th>
                             <th><Fab size="small" href="#" ><DeleteIcon /></Fab></th>
                           </tr>
                         )
@@ -136,8 +137,8 @@ class InternshipPage extends Component {
 }
 
 export default InternshipPage;
+*/
 
-/*
 
 
 
@@ -151,9 +152,18 @@ import DatePickers from './sections/DatePickers'
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
+import Input from '@material-ui/core/Input';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import FilledInput from '@material-ui/core/FilledInput';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import Button from '@material-ui/core/Button';
 
 /* Import MUIDataTable using command "npm install mui-datatables --save" */
-/*
+
 function TabContainer(props) {
   return (
     <Typography component="div" style={{ padding: 8 * 3 }}>
@@ -197,13 +207,13 @@ class InternPage extends React.Component {
       .then(response => response.json())
       .then(data => {
         let NewData = []
-        let cnt = 1
+        let stt = 1
         data.map(row => {
-          NewData.push([cnt, row.ID, row.Name, row.PhoneNumber, row.Email, row.Gender, row.University, row.Faculty ? "Male" : "Female",
+          NewData.push([stt, row.ID, row.Name, row.PhoneNumber, row.Email, row.Gender ? "Male" : "Female", row.DoB, row.University, row.Faculty,
             // format datetime
             (new Date(row.DoB)).toLocaleDateString('en-US', options),
             row.Department, row.SupervisorID])
-          cnt++
+          stt++
           return NewData
         })
         this.setState({
@@ -239,7 +249,6 @@ class InternPage extends React.Component {
       dob: "",
       University: "",
       Faculty: "",
-      title: "ADD NEW MENTOR",
       icon: "plus",
       isUpdate: false,
       checkValidate: false
@@ -268,7 +277,7 @@ class InternPage extends React.Component {
       "DoB": date,
       "University": this.state.University,
       "Faculty": this.state.Faculty,
-      "SupervisorID": "5c9b53dbda51e308e86b2243",
+      "CourseID": "5c9b53dbda51e308e86b2243",
       "IsDeleted": false
     }
     fetch("http://localhost:8080/intern",
@@ -299,7 +308,7 @@ class InternPage extends React.Component {
 
   columnsIntern = [
     {
-      name: "#",
+      name: "STT",
       options: {
         filter: false,
         sort: true,
@@ -314,35 +323,35 @@ class InternPage extends React.Component {
       }
     },
     {
-      name: "NAME",
+      name: "Name",
       options: {
         filter: true,
         sort: false,
       }
     },
     {
-      name: "PHONE",
+      name: "Phone",
       options: {
         filter: false,
         sort: false,
       }
     },
     {
-      name: "EMAIL",
+      name: "Email",
       options: {
         filter: false,
         sort: false,
       }
     },
     {
-      name: "GENDER",
+      name: "Gender",
       options: {
         filter: false,
         sort: false,
       }
     },
     {
-      name: "DAY OF BIRTH",
+      name: "Day & Birth",
       options: {
         filter: false,
         sort: false,
@@ -362,22 +371,22 @@ class InternPage extends React.Component {
         sort: false,
       }
     },
-    {
-      name: "CourseID",
-      options: {
-        filter: true,
-        sort: false,
-      }
-    },
+    // {
+    //   name: "CourseID",
+    //   options: {
+    //     filter: true,
+    //     sort: false,
+    //   }
+    // },
   ]
 
 
   optionsIntern = {
     filterType: "dropdown",
     responsive: "scroll",
-    download : false,
-    print : false,
-    selectableRows : false,
+    download: false,
+    print: false,
+    selectableRows: false,
     textLabels: {
       body: {
         noMatch: "Sorry, no matching records found",
@@ -475,24 +484,24 @@ class InternPage extends React.Component {
         }
         break;
       case "email":
-      this.setState({ email: value})
-      e.target.className="form-control"
-      const regexEmail = /^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i;
-      if(value.trim().length === 0){
-        this.setState({
-          email: " ",
-          errorEmail:"Email can not be blank"
-        })
-        e.target.className += " invalid"
-      } else if (!regexEmail.test(value.trim())){
-        this.setState({
-          errorEmail: "Not a valid email address"
-        })
-        e.target.className +=" invalid"
-      } else {
-        e.target.className +=" valid"
-      }
-       
+        this.setState({ email: value })
+        e.target.className = "form-control"
+        const regexEmail = /^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i;
+        if (value.trim().length === 0) {
+          this.setState({
+            email: " ",
+            errorEmail: "Email can not be blank"
+          })
+          e.target.className += " invalid"
+        } else if (!regexEmail.test(value.trim())) {
+          this.setState({
+            errorEmail: "Not a valid email address"
+          })
+          e.target.className += " invalid"
+        } else {
+          e.target.className += " valid"
+        }
+
         break;
       case "gender":
         this.setState({ gender: value })
@@ -515,15 +524,12 @@ class InternPage extends React.Component {
   }
 
   render() {
-    // this.state.InternList.map((value, key) => {
-    //   return (<option key={key} value={value[1]}>{value[1]}</option>)
-    // })
+    const { classes } = this.props;
     return (
       <React.Fragment>
         <Row>
           <Col md="12">
             <Card className="mt-5">
-
               <CardBody>
                 <MDBBtn
                   className="mb-3 blue darken-2"
@@ -531,6 +537,47 @@ class InternPage extends React.Component {
                   Add
                       </MDBBtn>
 
+                <FormControl className={classes.formControl}>
+                  <InputLabel htmlFor="demo-controlled-open-select">Course</InputLabel>
+                  <Select
+                    open={this.state.openIntern}
+                    onClose={this.handleCloseIntern}
+                    onOpen={this.handleOpenIntern}
+                    value={this.state.ageIntern}
+                    onChange={this.handleChangeIntern}
+                    inputProps={{
+                      name: 'Course',
+                      id: 'demo-controlled-open-select',
+                    }}
+                  >
+                    <MenuItem value="">
+                      <em>Course</em>
+                    </MenuItem>
+                    <MenuItem value={0}>All</MenuItem>
+                    <MenuItem value={10}>Golang</MenuItem>
+                    <MenuItem value={20}>ReactJs</MenuItem>
+                    <MenuItem value={30}>NodeJS</MenuItem>
+                  </Select>
+                </FormControl>
+                {/* <DialogTitle id="form-dialog-title">Add mentor form</DialogTitle>
+                <DialogContent >
+                  Hi, Please input your mentor information! We are Lab8 Mentor!
+                  </DialogContent> */}
+                {/* <Select
+                  value={this.state.age}
+                  onChange={this.handleChange}
+                  input={<Input name="age" id="age-label-placeholder" />}
+                  displayEmpty
+                  name="age"
+                >
+                  <InputLabel shrink htmlFor="age-label-placeholder">
+                    Course
+                  </InputLabel>
+                  <MenuItem value={0}>All</MenuItem>
+                  <MenuItem value={10}>Golang</MenuItem>
+                  <MenuItem value={20}>ReactJs</MenuItem>
+                  <MenuItem value={30}>NodeJS</MenuItem>
+                </Select> */}
                 <hr></hr>
                 <MUIDataTable
                   title={"Intern List"}
@@ -554,7 +601,29 @@ class InternPage extends React.Component {
               <MDBInput fullWidth size="" label="Name" name="name" value={this.state.name} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput fullWidth label="Phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput fullWidth label="Email" iconClass="dark-grey" name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
-              <MDBInput label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)} />
+              {/* <MDBInput label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)} /> */}
+              <FormControl className={classes.formControl}>
+                <InputLabel htmlFor="demo-controlled-open-select">Course</InputLabel>
+                <Select
+                  open={this.state.openIntern}
+                  onClose={this.handleCloseIntern}
+                  onOpen={this.handleOpenIntern}
+                  value={this.state.ageIntern}
+                  onChange={this.handleChangeIntern}
+                  inputProps={{
+                    name: 'Course',
+                    id: 'demo-controlled-open-select',
+                  }}
+                >
+                  <MenuItem value="">
+                    <em>Course</em>
+                  </MenuItem>
+                  <MenuItem value={0}>All</MenuItem>
+                  <MenuItem value={10}>Golang</MenuItem>
+                  <MenuItem value={20}>ReactJs</MenuItem>
+                  <MenuItem value={30}>NodeJS</MenuItem>
+                </Select>
+              </FormControl>
               <DatePickers
                 label="Day of Birth"
                 name="dob"
@@ -563,51 +632,50 @@ class InternPage extends React.Component {
               />
               <TextField label="University" name="text" name="University" value={this.state.University} onChange={this.handleChangeValue.bind(this)} />
               <div className="text-center mt-1-half">
-              <TextField label="Faculty" name="text" name="Faculty" value={this.state.Faculty} onChange={this.handleChangeValue.bind(this)} />
-              <div className="text-center mt-1-half"></div>
-                {
-                  this.state.isUpdate === false &&
-                  <MDBBtn
-                    className="mb-2 blue darken-2"
-                    onClick={this.handlerAddIntern}
-                  >
-                    Create
+                {/* <TextField fullWidth label="Faculty" name="text" name="Faculty" value={this.state.Faculty} onChange={this.handleChangeValue.bind(this)} />
+                <div className="text-center mt-1-half">
+                <TextField fullWidth label="Course" name="text" name="Course" value={this.state.CourseID} onChange={this.handleChangeValue.bind(this)} />
+                <div className="text-center mt-1-half"></div> */}
+                  {
+                    this.state.isUpdate === false &&
+                    <MDBBtn
+                      className="mb-2 blue darken-2"
+                      onClick={this.handlerAddIntern}
+                    >
+                      Create
                   <MDBIcon icon="send" className="ml-1" />
-                  </MDBBtn>
-                }
-                {
-                  this.state.isUpdate &&
+                    </MDBBtn>
+                  }
+                  {
+                    this.state.isUpdate &&
 
 
-                  <MDBBtn
-                    className="mb-2 blue darken-2"
-                    onClick={this.handlerAddIntern}>
-                    Update
+                    <MDBBtn
+                      className="mb-2 blue darken-2"
+                      onClick={this.handlerAddIntern}>
+                      Update
                   <MDBIcon icon="edit" className="ml-1" />
-                  </MDBBtn>
-                }
-                {
-                  this.state.isUpdate &&
+                    </MDBBtn>
+                  }
+                  {
+                    this.state.isUpdate &&
 
 
-                  <MDBBtn
-                    className="mb-2 blue darken-2"
-                    onClick={this.handlerDeleteIntern}>
-                    Delete
+                    <MDBBtn
+                      className="mb-2 blue darken-2"
+                      onClick={this.handlerDeleteIntern}>
+                      Delete
                   <MDBIcon icon="trash" className="ml-1" />
-                  </MDBBtn>
-                }
-              </div>
+                    </MDBBtn>
+                  }
+                </div>
+              {/* </div> */}
             </MDBModalBody>
           </MDBModal>
         </Row>
-
-
       </React.Fragment>
-
     )
-
   }
 }
 export default withStyles(styles)(InternPage);
-*/
+
