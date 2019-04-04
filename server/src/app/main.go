@@ -41,6 +41,7 @@ func setupRouter() *gin.Engine {
 	r.PUT("/user", controllers.CreateUser)
 	r.GET("/users", controllers.ListUsers)
 	r.POST("/user", controllers.CreateUser)
+	r.PUT("/login", controllers.CheckLogin)
 
 	//Mentor
 
@@ -77,9 +78,10 @@ func setupRouter() *gin.Engine {
 	r.GET("/courses/:id", controllers.GetCoursesByMentorID)
 	r.GET("/coursename/:name", controllers.GetCourseByName)
 	r.GET("/course/:id/intern", controllers.GetCourseByIntern)
+	r.GET("/coursedetail/:id/intern", controllers.GetDetailCourseByIntern)
 	r.POST("/course", controllers.CreateCourse)
 	r.PUT("/course", controllers.UpdateCourse)
-	r.DELETE("course", controllers.DeleteCourse)
+	r.DELETE("/course/:id", controllers.DeleteCourse)
 
 	return r
 }
