@@ -15,9 +15,9 @@ func ListCourses(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
 	query := []bson.M{
 
-		{
-			"$unwind": "$MentorID",
-		},
+		// {
+		// 	"$unwind": "$MentorID",
+		// },
 		{
 			"$lookup": bson.M{
 				"from":         "mentor",
@@ -25,9 +25,9 @@ func ListCourses(c *gin.Context) {
 				"foreignField": "_id",
 				"as":           "Mentor",
 			}},
-		{
-			"$unwind": "$Mentor",
-		},
+		// {
+		// 	"$unwind": "$Mentor",
+		// },
 		{
 			"$match": bson.M{
 				"IsDeleted": false,
