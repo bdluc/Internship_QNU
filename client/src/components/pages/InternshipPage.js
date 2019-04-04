@@ -53,8 +53,10 @@ class InternPage extends React.Component {
       data: [],
       value: 0,
       internList: [],
+      courseList: [],
       isUpdate: false,
-      checkValidate: true
+      checkValidate: true,
+      courseName : ''
     };
   }
 
@@ -86,6 +88,7 @@ class InternPage extends React.Component {
   componentDidMount() {
 
     this.GetInternList()
+    this.GetListCourse()
   }
 
 
@@ -152,7 +155,20 @@ class InternPage extends React.Component {
 
   }
 
-
+  GetListCourse() {
+    fetch('http://localhost:8080/courses')
+      .then(response => response.json())
+      .then(data => {
+        let NewData = []
+        data.map(row => {
+          NewData.push({ ID: row._id, Name: row.CourseName })
+          return NewData
+        })
+        this.setState({
+          courseList: NewData,
+        })
+      });
+  }
 
   handlerDeleteIntern = () => {
     fetch("http://localhost:8080/intern/" + this.state.id, {
@@ -266,7 +282,7 @@ class InternPage extends React.Component {
         all: "All",
         title: "FILTERS",
         reset: "RESET",
-      },   
+      },
       viewColumns: {
         title: "Show Columns",
         titleAria: "Show/Hide Table Columns",
@@ -379,6 +395,13 @@ class InternPage extends React.Component {
         break;
     }
   }
+  onSelect = (course) =>{
+    console.log(course.Name);
+  }
+
+  handleChanges = name => e => {
+    this.setState({ [name]: e.target.value });
+  };
 
   render() {
     const { classes } = this.props;
@@ -418,26 +441,25 @@ class InternPage extends React.Component {
               <MDBInput fullWidth label="Phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput fullWidth label="Email" iconClass="dark-grey" name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)} />
+
               <FormControl className={classes.formControl}>
                 <InputLabel htmlFor="demo-controlled-open-select">Course</InputLabel>
                 <Select
-                  open={this.state.openIntern}
-                  onClose={this.handleCloseIntern}
-                  onOpen={this.handleOpenIntern}
-                  value={this.state.ageIntern}
-                  onChange={this.handleChangeIntern}
+                  value={this.state.course}
+                  onChange={this.handleChanges}
                   inputProps={{
-                    name: 'Course',
-                    id: 'demo-controlled-open-select',
+                    name: 'courseName',
                   }}
                 >
-                  <MenuItem value="">
-                    <em>Course</em>
-                  </MenuItem>
-                  <MenuItem value={0}>All</MenuItem>
-                  <MenuItem value={10}>Golang</MenuItem>
-                  <MenuItem value={20}>ReactJs</MenuItem>
-                  <MenuItem value={30}>NodeJS</MenuItem>
+                  {
+                    this.state.courseList.map((course, index) => {
+                      return (
+                        <div key={index}>
+                          <MenuItem value={course.ID} onClick = {() => this.onSelect(course)} value = {course.Name}>{course.Name}</MenuItem>
+                        </div>
+                      )
+                    })
+                  }
                 </Select>
               </FormControl>
               <DatePickers
@@ -450,8 +472,6 @@ class InternPage extends React.Component {
               <div className="text-center mt-1-half">
                 <TextField fullWidth label="Faculty" name="text" name="Faculty" value={this.state.Faculty} onChange={this.handleChangeValue.bind(this)} />
                 <div className="text-center mt-1-half">
-                <TextField fullWidth label="Course" name="text" name="Course" value={this.state.CourseID} onChange={this.handleChangeValue.bind(this)} />
-                <div className="text-center mt-1-half"></div>
                   {
                     this.state.isUpdate === false &&
                     <MDBBtn
