@@ -2,6 +2,7 @@ import React from 'react';
 import './attendance.css';
 import MentorAttendance from './sections/MentorAttendance';
 import InternAttendance from './sections/InternAttendance';
+import SupervisorAttendance from './sections/SupervisorAttendance';
 import $ from 'jquery';
 
 
@@ -10,7 +11,7 @@ class AttendancePage extends React.Component {
   constructor(props) {
         super(props);   
         this.state = {
-            role: 1
+            role: 3
         };
   }
 
@@ -24,6 +25,11 @@ class AttendancePage extends React.Component {
         return (
             <MentorAttendance></MentorAttendance>
         );
+    else{
+        return (
+            <SupervisorAttendance></SupervisorAttendance>
+        );
+    }
   }
 }
 

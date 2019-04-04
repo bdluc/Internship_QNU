@@ -107,7 +107,6 @@ func getAttendancesByMentorId(c *gin.Context, idMentor bson.ObjectId) []Attendan
 	if common.IsError(c, err, "Could not get courses") {
 		return nil
 	}
-
 	//courseTrainee := []models.Intern
 	resp := []Attendance{}
 	for _, course := range courses {
