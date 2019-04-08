@@ -11,7 +11,7 @@ class SupervisorAttendance extends React.Component {
   constructor(props) {
         super(props);   
         this.state = {
-            supervisorId: "5c9b392b13d2e2338e4c0ee1",
+            supervisorId: JSON.parse(sessionStorage.getItem('user')).ID,
             courses: [],
             names: [],
             ids: [],

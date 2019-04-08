@@ -10,22 +10,48 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-      isLogin : false,
-      dataLogin : "",
+      user : JSON.parse(sessionStorage.getItem('user')),
+      dataLogin : ""
     };
-  }
+    console.log(this.state.user);
+    }
 
   onLogin (value) {
     if (value !== null) {
       this.setState({
-        isLogin : value
+        user : value
       });
-    }    
+      var user = this.state.user;
+      console.log( user.ID);
+      if (user.Role === 1){
+        fetch('http://localhost:8080/attendance',
+            {
+                method: "POST",
+                headers:{
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify({"InternID": user.ID})
+            })
+            .then(response => 
+              response.json()
+            )
+            .then(data => {
+                console.log(data.message)
+            });
+      }
+      
+    } 
+  }
+
+  onLogout(){
+    this.setState({
+      user : null
+    });
+    sessionStorage.clear();
   }
 
   changeComponent () {
-    console.log(localStorage.getItem('user') )
-    if (localStorage.getItem('user') === null) {
+    if (this.state.user === null) {
       return (
       <div className="flexible-content">
       <main id="content" className="p-5">
@@ -36,7 +62,7 @@ class App extends Component {
     } else {
       return (
         <div className="flexible-content">
-          <TopNavigation onLogin = {this.onLogin.bind(this)}/>
+          <TopNavigation onLogout = {this.onLogout.bind(this)}/>
           <SideNavigation />
           <div>
           <main id="content" className="p-5">

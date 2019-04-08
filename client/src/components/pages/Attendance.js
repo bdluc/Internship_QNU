@@ -11,7 +11,7 @@ class AttendancePage extends React.Component {
   constructor(props) {
         super(props);   
         this.state = {
-            role: 3
+            role: JSON.parse(sessionStorage.getItem('user')).Role
         };
   }
 

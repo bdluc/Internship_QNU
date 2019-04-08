@@ -43,8 +43,8 @@ class Login extends Component {
             )
             .then(data => {
               if (data.ID !== undefined) {
-                localStorage.setItem("user", JSON.stringify(data));
-                this.props.onLogin(true);
+                sessionStorage.setItem("user", JSON.stringify(data));
+                this.props.onLogin(data);
               }
             });         
   }

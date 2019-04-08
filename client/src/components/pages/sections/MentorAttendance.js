@@ -11,7 +11,7 @@ class MentorAttendance extends React.Component {
   constructor(props) {
         super(props);   
         this.state = {
-            mentorId: "5c9b392b11e5e2338e4c0ee1",
+            mentorId: JSON.parse(sessionStorage.getItem('user')).ID,
             courses: [],
             names: [],
             ids: [],
