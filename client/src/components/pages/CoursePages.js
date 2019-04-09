@@ -9,7 +9,7 @@ import DatePickers from './sections/DatePickers'
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
-
+import { Link } from 'react-router-dom'
 // /* Import MUIDataTable using command "npm install mui-datatables --save" */
 
 function TabContainer(props) {
@@ -51,7 +51,7 @@ class CoursePages extends React.Component {
   }
 
   GetCourseList() {
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
     fetch('http://localhost:8080/courses')
       .then(response => response.json())
       .then(data => {
@@ -144,6 +144,7 @@ class CoursePages extends React.Component {
       "MentorID": mentorlist,
       "IsDeleted": false
     }
+    console.log(data)
     fetch("http://localhost:8080/course",
       {
         method: "POST",
@@ -161,9 +162,7 @@ class CoursePages extends React.Component {
   ListMentor(){
     fetch('http://localhost:8080/mentors')
       .then(response => response.json())
-        .then(result => {
-            console.log(result);
-            
+        .then(result => {            
           let mentorlist = []
           result.map(row => {
             return mentorlist.push( {ID : row.ID , Name : row.Name, isChecked : false})
@@ -182,7 +181,6 @@ class CoursePages extends React.Component {
       .then(this.GetCourseList())
     this.toggleCourse()
     // window.location.reload();
-    console.log(this.state.id)
   }
 
   // handlerEditMentor = () => {
@@ -240,6 +238,21 @@ class CoursePages extends React.Component {
         sort: false,
       }
     },
+    {
+      name: "MENTOR ID",
+      options: {
+        filter: false,
+        sort: false,
+        display: "excluded"
+      }
+    },
+    {
+      name: "DETAIL",
+      options: {
+        filter: false,
+        sort: false,
+      }
+    },
   ]
 
 
@@ -287,12 +300,11 @@ class CoursePages extends React.Component {
         id: rowData[1],
         courseName: rowData[2],
         startDate: rowData[3],
-        endDate: rowData[4],
+        endDate:rowData[4],
         icon: "edit",
         isUpdate: true,
         checkValidate: true
       });
-      console.log(rowData)
       this.toggleCourse()
     }
   }
@@ -406,7 +418,8 @@ class CoursePages extends React.Component {
             cascading>
 
             <MDBModalBody>
-              <MDBInput fullWidth size="" label="Course name" name="courseName" value={this.state.courseName} onChange={this.handleChangeValue.bind(this)} />
+            <input type="hidden" name="id" value={this.state.id} />
+              <MDBInput fullwidth="true" size="" label="Course name" name="courseName" value={this.state.courseName} onChange={this.handleChangeValue.bind(this)} />
               <label>Start Date</label>
               <DatePickers
                 label="Start Date"
@@ -463,6 +476,14 @@ class CoursePages extends React.Component {
                     onClick={this.handlerDeleteCourse}>
                     Delete
                   <MDBIcon icon="trash" className="ml-1" />
+                  </MDBBtn>
+                }
+                {
+                  this.state.isUpdate &&
+                  <MDBBtn
+                    className="mb-2 blue darken-2"
+                    >
+                    <Link to={`/course/${this.state.id}`} >Detail</Link>
                   </MDBBtn>
                 }
               </div>
