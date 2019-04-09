@@ -44,6 +44,7 @@ const styles = theme => ({
   }
 });
 
+
 class InternPage extends React.Component {
 
   constructor() {
@@ -415,7 +416,7 @@ class InternPage extends React.Component {
                   className="mb-3 blue darken-2"
                   onClick={this.addIntern}>
                   Add
-                      </MDBBtn>
+                </MDBBtn>
 
                 <hr></hr>
                 <MUIDataTable
@@ -455,7 +456,7 @@ class InternPage extends React.Component {
                     this.state.courseList.map((course, index) => {
                       return (
                         <div key={index}>
-                          <MenuItem value={course.ID} onClick = {() => this.onSelect(course)} value = {course.Name}>{course.Name}</MenuItem>
+                          <MenuItem onClick = {() => this.onSelect(course)} value = {course.Name}>{course.Name}</MenuItem>
                         </div>
                       )
                     })
