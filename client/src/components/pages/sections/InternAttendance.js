@@ -10,7 +10,7 @@ class MentorAttendance extends React.Component {
   constructor(props) {
         super(props);   
         this.state = {
-            internId: "5c99965bba3c261ba46034bd",
+            internId: JSON.parse(sessionStorage.getItem('user')).ID,
             traineeData: null,
             tableData: [],
             chartData: [],
@@ -47,7 +47,7 @@ class MentorAttendance extends React.Component {
         error: function (xhr, status) {
             this.setState({showData: false});
         }.bind(this)
-    });
+    }).then();
   }
 
   processAttendancesData(){

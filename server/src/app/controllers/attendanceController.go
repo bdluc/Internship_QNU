@@ -258,9 +258,44 @@ func CreateAttendance(c *gin.Context) {
 	}
 
 	currentTime := time.Now()
-	atten.Date = time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 0, 0, 0, 0, time.Local)
+	atten.Date = time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), currentTime.Hour(), 0, 0, 0, time.Local)
+	atten.Status = "P"
+	atten.IsDeleted = false
+
 	check := models.Attendance{}
 	err = database.C(models.CollectionAttendance).Find(bson.M{"InternID": atten.InternID, "Date": atten.Date}).One(&check)
+	fmt.Println(check.Date.Hour())
+	if err == nil && ((check.Status == "PP") || (currentTime.Hour() < 13 && check.Status == "P") || (check.Date.Hour() > 13 && check.Status == "P")) {
+		c.JSON(http.StatusNotFound, gin.H{
+			common.Status:  "error",
+			common.Message: "attendance is exit",
+		})
+		return
+	} else if err == nil && currentTime.Hour() > 13 && check.Status == "P" {
+		atten.ID = check.ID
+		atten.Status = "PP"
+		updateAttendance(c, database, atten)
+		return
+	}
+
+	err = database.C(models.CollectionAttendance).Insert(atten)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			common.Status:  "error",
+			common.Message: "Could not create attendance",
+		})
+		return
+	}
+	c.JSON(http.StatusCreated, gin.H{
+		common.Status:  "created",
+		common.Message: "Created attendance",
+	})
+}
+
+func updateAttendance(c *gin.Context, database *mgo.Database, atten models.Attendance) {
+
+	check := models.Attendance{}
+	err := database.C(models.CollectionAttendance).Find(bson.M{"$not": bson.M{"_id": atten.ID}, "InternID": atten.ID, "Date": atten.Date}).One(&check)
 	if err == nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			common.Status:  "error",
@@ -269,17 +304,11 @@ func CreateAttendance(c *gin.Context) {
 		return
 	}
 
-	err = database.C(models.CollectionAttendance).Insert(atten)
-	if err != nil {
-		fmt.Println(err)
-		fmt.Println(atten)
-		c.JSON(http.StatusNotFound, gin.H{
-			common.Status:  "error",
-			common.Message: "Could not create attendance",
-		})
+	err = database.C(models.CollectionAttendance).UpdateId(atten.ID, atten)
+	if common.IsError(c, err, "Could not update attendance") {
 		return
 	}
-	c.JSON(http.StatusCreated, nil)
+
 }
 
 func UpdateAttendance(c *gin.Context) {
@@ -293,21 +322,7 @@ func UpdateAttendance(c *gin.Context) {
 	if common.IsError(c, err, "Could not update attendance") {
 		return
 	}
-
-	check := models.Attendance{}
-	err = database.C(models.CollectionAttendance).Find(bson.M{"$not": bson.M{"_id": atten.ID}, "InternID": atten.ID, "Date": atten.Date}).One(&check)
-	if err == nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			common.Status:  "error",
-			common.Message: "attendance is exit",
-		})
-		return
-	}
-
-	err = database.C(models.CollectionAttendance).UpdateId(atten.ID, atten)
-	if common.IsError(c, err, "Could not update attendance") {
-		return
-	}
+	updateAttendance(c, database, atten)
 	c.JSON(http.StatusCreated, nil)
 
 }
