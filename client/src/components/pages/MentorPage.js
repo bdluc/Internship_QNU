@@ -263,7 +263,7 @@ class MentorPage extends React.Component {
       },
     },
     onRowClick: (rowData) => {
-      console.log(this.state.dob)
+      // console.log(this.state.dob)
 
       this.setState({
         id: rowData[1],
