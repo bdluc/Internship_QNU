@@ -23,9 +23,12 @@ class MentorAttendance extends React.Component {
             showData: true,
             now: null
         };
-        this.getStudent();
+        
   }
   
+  componentWillMount(){
+    this.getStudent();
+  }
 
   getStudent() {
     $.ajax({
@@ -47,7 +50,7 @@ class MentorAttendance extends React.Component {
         error: function (xhr, status) {
             this.setState({showData: false});
         }.bind(this)
-    }).then();
+    });
   }
 
   processAttendancesData(){
@@ -60,6 +63,7 @@ class MentorAttendance extends React.Component {
             tableData: this.loadTableData(month.MonthNow, month.YearNow),
             chartData: this.loadChartData(month.MonthNow, month.YearNow)
         });
+            console.log("OK")
   }
 
   onSelectChange(event) {
@@ -358,6 +362,9 @@ class MentorAttendance extends React.Component {
         MonthNow: monthNow,
         YearNow: yearNow
     };
+  }
+  componentDidMount() {
+    console.log("componentDidMount")
   }
 
   render() {

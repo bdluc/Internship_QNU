@@ -32,12 +32,6 @@ class App extends Component {
                 },
                 body: JSON.stringify({"InternID": user.ID})
             })
-            .then(response => 
-              response.json()
-            )
-            .then(data => {
-                console.log(data.message)
-            });
       }
       
     } 
