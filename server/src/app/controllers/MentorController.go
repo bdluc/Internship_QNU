@@ -55,7 +55,7 @@ func UpdateMentor(c *gin.Context) {
 		return
 	}
 
-	err = database.C(models.CollectionMentor).UpdateId(mentor.ID, mentor)
+	err = database.C(models.CollectionMentor).UpdateId(bson.ObjectIdHex(c.Param("id")), mentor)
 	if common.CheckError(c, err) {
 		return
 	}
