@@ -119,42 +119,40 @@ class InternPage extends React.Component {
     this.toggleIntern()
   }
 
-
-
   handlerAddIntern = () => {
-    if (this.state.icon === "edit") {
-      fetch("http://localhost:8080/intern/" + this.state.id, {
-        method: 'DELETE',
-        mode: 'cors'
-      })
-        .then(this.GetInternList())
-      this.toggleIntern()
-    }
-    const dt = this.state.dob.split(/-|\s/)
-    let date = new Date(dt[2], dt[1], dt[0])
-    const data = {
-      "Name": this.state.name,
-      "PhoneNumber": this.state.phone,
-      "Email": this.state.email,
-      "Gender": this.state.gender === "Male" ? true : false,
-      // "DoB": date,
-      "University": this.state.University,
-      "Faculty": this.state.Faculty,
-      "CourseID": this.state.course,
-      "IsDeleted": false
-    }
-    console.log(data)
-    fetch("http://localhost:8080/intern",
-      {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      })
+  if (this.state.icon === "edit") {
+    fetch("http://localhost:8080/intern/" + this.state.id, {
+      method: 'DELETE',
+      mode: 'cors'
+    })
       .then(this.GetInternList())
     this.toggleIntern()
+  }
+  const dt = this.state.dob.split(/-|\s/)
+  let date = new Date(dt[2], dt[1], dt[0])
+  const data = {
+    "Name": this.state.name,
+    "PhoneNumber": this.state.phone,
+    "Email": this.state.email,
+    "Gender": this.state.gender === "Male" ? true : false,
+    // "DoB": date,
+    "University": this.state.University,
+    "Faculty": this.state.Faculty,
+    "CourseID": this.state.course,
+    "IsDeleted": false
+  }
+  console.log(data)
+  fetch("http://localhost:8080/intern",
+    {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    })
+    .then(this.GetInternList())
+  this.toggleIntern()
 
 
   }
@@ -409,7 +407,7 @@ class InternPage extends React.Component {
 
   handleChanges() {
     this.setState({
-      
+
     });
   };
 
