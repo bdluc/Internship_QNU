@@ -3,7 +3,6 @@ import {
   Row, Col, Card, CardBody, MDBIcon, MDBModalBody, MDBInput, MDBBtn, MDBModal,
 } from 'mdbreact';
 import MUIDataTable from "mui-datatables";
-import DatePickers from './sections/DatePickers'
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
@@ -11,6 +10,7 @@ import Typography from '@material-ui/core/Typography';
 // /* Import MUIDataTable using command "npm install mui-datatables --save" */
 
 function TabContainer(props) {
+  
   return (
     <Typography component="div" style={{ padding: 8 * 3 }}>
       {props.children}
@@ -30,7 +30,12 @@ const styles = theme => ({
   },
   main: {
     backgroundColor: "#007bff",
-  }
+  },
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    width: 200,
+  },
 });
 
 class MentorPage extends React.Component {
@@ -45,6 +50,8 @@ class MentorPage extends React.Component {
       isUpdate: false,
       checkValidate: true
     };
+
+
   }
 
   GetMentorList() {
@@ -57,7 +64,6 @@ class MentorPage extends React.Component {
         data.map(row => {
           NewData.push([cnt, row.ID, row.Name, row.PhoneNumber, row.Email, row.Gender ? "Male" : "Female",
           (new Date(row.DoB)).toLocaleDateString('en-US', options),row.Department, row.SupervisorID])
-            // format datetime//
           cnt++
           return NewData
         })
@@ -69,7 +75,6 @@ class MentorPage extends React.Component {
 
 
   componentDidMount() {
-
     this.GetMentorList()
   }
 
@@ -94,23 +99,16 @@ class MentorPage extends React.Component {
       isUpdate: false,
       checkValidate: false
     });
+    // const dateInForm =
     this.toggleMentor()
   }
 
 
 
   handlerAddMentor = () => {
-    // if (this.state.icon === "edit") {
-    //   fetch("http://localhost:8080/mentor/" + this.state.id, {
-    //     method: 'DELETE',
-    //     mode: 'cors'
-    //   })
-    //     .then(this.GetMentorList())
-    //   this.toggleMentor()
-    // }
-    // console.log(this.state.dob)
-    const dt = this.state.dob.split(/-|\s/)
-    let date = new Date(dt[2], dt[1], dt[0])
+    
+    var moment = require('moment');
+    const date = moment.utc(this.state.dob).format();
     const data = {
       "Name": this.state.name,
       "PhoneNumber": this.state.phone,
@@ -132,7 +130,6 @@ class MentorPage extends React.Component {
       })
       .then(this.GetMentorList())
     this.toggleMentor()
-    // window.location.reload();
 
 
   }
@@ -145,16 +142,14 @@ class MentorPage extends React.Component {
     })
       .then(this.GetMentorList())
     this.toggleMentor()
-    window.location.reload();
 
 
   }
 
   handlerEditMentor = () => {
-    const dt = this.state.dob.split(/-|\s/)
-    let date = new Date(dt[2], dt[1], dt[0])
-    // console.log(this.state.date)
-
+    var moment = require('moment');
+    const date = moment.utc(this.state.dob).format();
+    console.log("dt"+date);
     const data = {
       "Name": this.state.name,
       "PhoneNumber": this.state.phone,
@@ -177,7 +172,7 @@ class MentorPage extends React.Component {
     this.toggleMentor()
     console.log(this.state.id)
 
-    window.location.reload();
+    // window.location.reload();
 
       // this.setState({
 
@@ -306,6 +301,9 @@ class MentorPage extends React.Component {
         isUpdate: true,
         checkValidate: true
       });
+      
+      console.log("day"+this.state.dob);
+
       this.toggleMentor()
 
     }
@@ -319,6 +317,8 @@ class MentorPage extends React.Component {
 
   handleChangeValue(e) {
     const { name, value } = e.target;
+
+
     e.target.className = "form-control"
     switch (name) {
       case "name":
@@ -440,12 +440,28 @@ class MentorPage extends React.Component {
               <MDBInput  label="Phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput  label="Email"  name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput  label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)} />
-              <DatePickers
+
+              <MDBInput
+                label="Dob"
+                name="dob"
+                id="date"
+                type="date"
+                defaultValue="1997-03-22"
+                // value="1997-03-22"
+                value={this.state.dob}  
+                // value={ (new Date(this.state.dob)).toLocaleDateString('en-US', {  year: 'numeric', month: 'numeric', day: 'numeric'  })}
+                onChange={this.handleChangeValue.bind(this)}
+                // className={classes.textField}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+              {/* <DatePickers
                 label="Dob"
                 name="dob"
                 value={this.state.dob}
                 onChange={this.handleChangeValue.bind(this)}
-              />
+              /> */}
               {/* <MDBInput fullWidth label="Dob" name="dob" value={this.state.dob} onChange={this.handleChangeValue.bind(this)} /> */}
 
               <MDBInput  label="Department" name="department" value={this.state.department} onChange={this.handleChangeValue.bind(this)} />
