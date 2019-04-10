@@ -53,7 +53,7 @@ func setupRouter() *gin.Engine {
 
 	//intern
 	r.POST("/intern", controllers.CreateIntern)
-	r.PUT("/intern", controllers.UpdateIntern)
+	r.PUT("/internu/:id", controllers.UpdateIntern)
 	r.DELETE("/intern/:id", controllers.DeleteIntern)
 	r.GET("/intern", controllers.ListIntern)
 	r.GET("/intern/:id", controllers.GetIntern)
