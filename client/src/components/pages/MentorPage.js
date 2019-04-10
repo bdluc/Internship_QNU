@@ -100,14 +100,14 @@ class MentorPage extends React.Component {
 
 
   handlerAddMentor = () => {
-    if (this.state.icon === "edit") {
-      fetch("http://localhost:8080/mentor/" + this.state.id, {
-        method: 'DELETE',
-        mode: 'cors'
-      })
-        .then(this.GetMentorList())
-      this.toggleMentor()
-    }
+    // if (this.state.icon === "edit") {
+    //   fetch("http://localhost:8080/mentor/" + this.state.id, {
+    //     method: 'DELETE',
+    //     mode: 'cors'
+    //   })
+    //     .then(this.GetMentorList())
+    //   this.toggleMentor()
+    // }
     // console.log(this.state.dob)
     const dt = this.state.dob.split(/-|\s/)
     let date = new Date(dt[2], dt[1], dt[0])
@@ -138,7 +138,6 @@ class MentorPage extends React.Component {
   }
 
 
-
   handlerDeleteMentor = () => {
     fetch("http://localhost:8080/mentor/" + this.state.id, {
       method: 'DELETE',
@@ -148,11 +147,42 @@ class MentorPage extends React.Component {
     this.toggleMentor()
     window.location.reload();
 
+
   }
 
-  // handlerEditMentor = () => {
+  handlerEditMentor = () => {
+    const dt = this.state.dob.split(/-|\s/)
+    let date = new Date(dt[2], dt[1], dt[0])
+    // console.log(this.state.date)
 
-  // }
+    const data = {
+      "Name": this.state.name,
+      "PhoneNumber": this.state.phone,
+      "Email": this.state.email,
+      "Gender": this.state.gender === "Male" ? true : false,
+      "Dob": date,
+      "Department": this.state.department,
+      "SupervisorID": "5c1a11b49ef458a033e70628",
+      "IsDeleted": false
+    }
+    fetch("http://localhost:8080/mentoru/" + this.state.id,{
+      method: 'PUT',
+      mode: 'cors',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    })
+      .then(this.GetMentorList())
+    this.toggleMentor()
+    console.log(this.state.id)
+
+    window.location.reload();
+
+      // this.setState({
+
+      // })
+  }
 
   columnsMentor = [
     {
@@ -263,7 +293,6 @@ class MentorPage extends React.Component {
       },
     },
     onRowClick: (rowData) => {
-      console.log(this.state.dob)
 
       this.setState({
         id: rowData[1],
@@ -278,7 +307,9 @@ class MentorPage extends React.Component {
         checkValidate: true
       });
       this.toggleMentor()
+
     }
+    
   }
 
   checkValidate() {
@@ -435,7 +466,7 @@ class MentorPage extends React.Component {
 
                   <MDBBtn
                     className="mb-2 blue darken-2"
-                    onClick={this.handlerAddMentor}>                    
+                    onClick={this.handlerEditMentor}>                    
                     Update
                   <MDBIcon icon="edit" className="ml-1" />
                   </MDBBtn>
