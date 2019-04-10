@@ -18,6 +18,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
+import './attendance.css';
 
 /* Import MUIDataTable using command "npm install mui-datatables --save" */
 
@@ -57,7 +58,7 @@ class InternPage extends React.Component {
       courseList: [],
       isUpdate: false,
       checkValidate: true,
-      courseName : ''
+      courseName: ''
     };
   }
 
@@ -107,6 +108,7 @@ class InternPage extends React.Component {
       phone: "",
       email: "",
       gender: "",
+      courseName: "",
       dob: "",
       University: "",
       Faculty: "",
@@ -135,12 +137,13 @@ class InternPage extends React.Component {
       "PhoneNumber": this.state.phone,
       "Email": this.state.email,
       "Gender": this.state.gender === "Male" ? true : false,
-      "DoB": date,
+      // "DoB": date,
       "University": this.state.University,
       "Faculty": this.state.Faculty,
-      "CourseID": "5c9b53dbda51e308e86b2243",
+      "CourseID": this.state.course,
       "IsDeleted": false
     }
+    console.log(data)
     fetch("http://localhost:8080/intern",
       {
         method: "POST",
@@ -304,6 +307,7 @@ class InternPage extends React.Component {
         dob: rowData[6],
         University: rowData[7],
         Faculty: rowData[8],
+        Course: rowData[9],
         icon: "edit",
         isUpdate: true,
         checkValidate: true
@@ -380,6 +384,9 @@ class InternPage extends React.Component {
       case "gender":
         this.setState({ gender: value })
         break;
+      case "course":
+        this.setState({ course: value })
+        break;
       case "dob":
         this.setState({ dob: value })
         break;
@@ -396,12 +403,14 @@ class InternPage extends React.Component {
         break;
     }
   }
-  onSelect = (course) =>{
+  onSelect = (course) => {
     console.log(course.Name);
   }
 
-  handleChanges = name => e => {
-    this.setState({ [name]: e.target.value });
+  handleChanges() {
+    this.setState({
+      
+    });
   };
 
   render() {
@@ -442,27 +451,13 @@ class InternPage extends React.Component {
               <MDBInput fullWidth label="Phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput fullWidth label="Email" iconClass="dark-grey" name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)} />
+              <label>Course</label>
+              <select className="browser-default custom-select custom-dropdown custom-margin" onChange={this.handleChangeValue.bind(this)} name="course" size="lg">
+                {this.state.courseList.map(function (course, index) {
+                  return <option key={index} value={course.ID}>{course.Name}</option>;
+                })}
+              </select>
 
-              <FormControl className={classes.formControl}>
-                <InputLabel htmlFor="demo-controlled-open-select">Course</InputLabel>
-                <Select
-                  value={this.state.course}
-                  onChange={this.handleChanges}
-                  inputProps={{
-                    name: 'courseName',
-                  }}
-                >
-                  {
-                    this.state.courseList.map((course, index) => {
-                      return (
-                        <div key={index}>
-                          <MenuItem onClick = {() => this.onSelect(course)} value = {course.Name}>{course.Name}</MenuItem>
-                        </div>
-                      )
-                    })
-                  }
-                </Select>
-              </FormControl>
               <DatePickers
                 label="Day of Birth"
                 name="dob"
