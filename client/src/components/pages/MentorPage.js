@@ -159,7 +159,7 @@ class MentorPage extends React.Component {
       name: "#",
       options: {
         filter: false,
-        sort: true,
+        sort: false,
       }
     },
     {
@@ -175,6 +175,7 @@ class MentorPage extends React.Component {
       options: {
         filter: false,
         sort: false,
+        // sortDirection: 'asc',
       }
     },
     {
@@ -434,7 +435,7 @@ class MentorPage extends React.Component {
 
                   <MDBBtn
                     className="mb-2 blue darken-2"
-                    onClick={this.handlerAddMentor}>
+                    onClick={this.handlerAddMentor}>                    
                     Update
                   <MDBIcon icon="edit" className="ml-1" />
                   </MDBBtn>

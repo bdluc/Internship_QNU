@@ -89,6 +89,7 @@ func ListMentors(c *gin.Context) {
 
 	mentor := []models.Mentor{}
 	err := database.C(models.CollectionMentor).Find(bson.M{"IsDeleted": false}).All(&mentor)
+	//err := database.C(models.CollectionMentor).Find(bson.M{"$or": []bson.M{{"Name": bson.RegEx{"12312", "$i"}}, {"Email": bson.RegEx{"q", "$i"}}, {"Department": bson.RegEx{"DC20", "$i"}}}}).All(&mentor)
 	if common.CheckError(c, err) {
 		return
 	}

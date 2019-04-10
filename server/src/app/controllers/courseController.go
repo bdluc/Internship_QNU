@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"../common"
 	"../models"
@@ -71,12 +72,106 @@ func UpdateCourse(c *gin.Context) {
 	course := models.Course{}
 	buf, _ := c.GetRawData()
 
-	err := json.Unmarshal(buf, course)
+	err := json.Unmarshal(buf, &course)
 	common.CheckError(c, err)
 
 	err = database.C(models.CollectionCourse).UpdateId(course.ID, course)
 	common.CheckError(c, err)
 
+	c.JSON(http.StatusOK, nil)
+}
+func GetDetailCourseByID(c *gin.Context) {
+	course := getCourseByID(c, c.Param("id"))
+	OidDetail, _ := strconv.Atoi(c.Param("idDetail"))
+	resp := models.CourseDetail{}
+	for i, v := range course.Detail {
+		if OidDetail == i {
+			resp = v
+		}
+	}
+	c.JSON(http.StatusOK, resp)
+}
+
+func DeleteElementDetailCourseByID(c *gin.Context) {
+	database := c.MustGet("db").(*mgo.Database)
+	OidDetail, _ := strconv.Atoi(c.Param("idDetail"))
+	course := getCourseByID(c, c.Param("id"))
+	resp := models.CourseDetail{}
+	for i, v := range course.Detail {
+		if OidDetail == i {
+			resp = v
+		}
+	}
+	query := bson.M{
+
+		"$pull": bson.M{
+			"Detail": bson.M{
+				"Content": resp.Content,
+			},
+		},
+	}
+	err := database.C(models.CollectionCourse).UpdateId(course.ID, query)
+	common.CheckError(c, err)
+	c.JSON(http.StatusNoContent, nil)
+}
+func CreateElementDetailCourseByID(c *gin.Context) {
+	database := c.MustGet("db").(*mgo.Database)
+	course := getCourseByID(c, c.Param("id"))
+	courseDetail := models.CourseDetail{}
+	buf, _ := c.GetRawData()
+
+	err := json.Unmarshal(buf, &courseDetail)
+	if common.CheckError(c, err) {
+		return
+	}
+	query := bson.M{
+		"$push": bson.M{
+			"Detail": courseDetail,
+		},
+	}
+	errUpdate := database.C(models.CollectionCourse).UpdateId(course.ID, query)
+	common.CheckError(c, errUpdate)
+	c.JSON(http.StatusCreated, nil)
+}
+
+func UpdateElementDetailCourseByID(c *gin.Context) {
+	database := c.MustGet("db").(*mgo.Database)
+	OidDetail, _ := strconv.Atoi(c.Param("idDetail"))
+	course := getCourseByID(c, c.Param("id"))
+	resp := models.CourseDetail{}
+	for i, v := range course.Detail {
+		if OidDetail == i {
+			resp = v
+		}
+	}
+	query := bson.M{
+		"$pull": bson.M{
+			"Detail": bson.M{
+				"Content": resp.Content,
+			},
+		},
+	}
+	err := database.C(models.CollectionCourse).UpdateId(course.ID, query)
+	common.CheckError(c, err)
+
+	courseDetail := models.CourseDetail{}
+	buf, _ := c.GetRawData()
+	errCreate := json.Unmarshal(buf, &courseDetail)
+	datadetail := []models.CourseDetail{}
+	datadetail = append(datadetail, courseDetail)
+	if common.CheckError(c, errCreate) {
+		return
+	}
+	queryCreate := bson.M{
+		"$push": bson.M{
+			"Detail": bson.M{
+				"$each":     datadetail,
+				"$position": OidDetail,
+			},
+		},
+	}
+	errUpdate := database.C(models.CollectionCourse).UpdateId(course.ID, queryCreate)
+	common.CheckError(c, errUpdate)
 	c.JSON(http.StatusOK, nil)
 }
 
