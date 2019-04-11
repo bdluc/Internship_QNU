@@ -7,8 +7,29 @@ import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import green from '@material-ui/core/colors/green';
+import amber from '@material-ui/core/colors/amber';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import ErrorIcon from '@material-ui/icons/Error';
+import InfoIcon from '@material-ui/icons/Info';
+import CloseIcon from '@material-ui/icons/Close';
+import WarningIcon from '@material-ui/icons/Warning';
+import classNames from 'classnames';
+import IconButton from '@material-ui/core/IconButton';
 
 // /* Import MUIDataTable using command "npm install mui-datatables --save" */
+
+const variantIcon = {
+  success: CheckCircleIcon,
+  warning: WarningIcon,
+  error: ErrorIcon,
+  info: InfoIcon,
+};
 
 function TabContainer(props) {
 
@@ -19,9 +40,66 @@ function TabContainer(props) {
   );
 }
 
+function MySnackbarContent(props) {
+  const { classes, className, message, onClose, variant, ...other } = props;
+  const Icon = variantIcon[variant];
+
+  return (
+    <SnackbarContent
+      className={classNames(classes[variant], className)}
+      aria-describedby="client-snackbar"
+      message={
+        <span id="client-snackbar" className={classes.message}>
+          <Icon className={classNames(classes.icon, classes.iconVariant)} />
+          {message}
+        </span>
+      }
+      action={[
+        <IconButton
+          key="close"
+          aria-label="Close"
+          color="inherit"
+          className={classes.close}
+          onClick={onClose}
+        >
+          <CloseIcon className={classes.icon} />
+        </IconButton>,
+      ]}
+      {...other}
+    />
+  );
+}
 TabContainer.propTypes = {
   children: PropTypes.node.isRequired,
 };
+
+const styles1 = theme => ({
+  success: {
+    backgroundColor: green[600],
+  },
+  error: {
+    backgroundColor: theme.palette.error.dark,
+  },
+  info: {
+    backgroundColor: theme.palette.primary.dark,
+  },
+  warning: {
+    backgroundColor: amber[700],
+  },
+  icon: {
+    fontSize: 20,
+  },
+  iconVariant: {
+    opacity: 0.9,
+    marginRight: theme.spacing.unit,
+  },
+  message: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+});
+
+const MySnackbarContentWrapper = withStyles(styles1)(MySnackbarContent);
 
 
 const styles = theme => ({
@@ -49,7 +127,7 @@ class MentorPage extends React.Component {
       value: 0,
       mentorList: [],
       isUpdate: false,
-      checkValidate: true,
+      // checkValidate: true,
       btnMode: 'off'
     };
 
@@ -88,6 +166,11 @@ class MentorPage extends React.Component {
     });
   };
 
+  togglePopup = () => {
+    this.setState({
+      popupShow: !this.state.popupShow,
+    })
+  };
 
 
   addMentor = () => {
@@ -100,7 +183,7 @@ class MentorPage extends React.Component {
       department: "",
       icon: "plus",
       isUpdate: false,
-      checkValidate: false,
+      // checkValidate: false,
       btnMode: 'off',
       doneName: false,
       donePhone: false,
@@ -181,8 +264,10 @@ class MentorPage extends React.Component {
       body: JSON.stringify(data)
     })
       .then(this.GetMentorList())
+      .then(this.setState({ open: true }))
+
     this.toggleMentor()
-    console.log(this.state.id)
+    // console.log(this.state.id)
 
     // window.location.reload();
 
@@ -190,7 +275,13 @@ class MentorPage extends React.Component {
 
     // })
   }
+  handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
 
+    this.setState({ open: false });
+  };
   columnsMentor = [
     {
       name: "#",
@@ -314,26 +405,22 @@ class MentorPage extends React.Component {
         department: rowData[7],
         icon: "edit",
         isUpdate: true,
-        checkValidate: true,
+        // checkValidate: true,
         btnMode: 'off',
         
 
       });
-
-
-      console.log("day" + this.state.dob);
-
+      // console.log("day" + this.state.dob);
       this.toggleMentor()
-
     }
 
 
   }
 
-  checkValidate() {
+  // checkValidate() {
 
-    return false;
-  }
+  //   return false;
+  // }
   convertDate(rowData) {
     var moment = require('moment')
     let strDate = ""
@@ -362,10 +449,10 @@ class MentorPage extends React.Component {
       strYea = '' + ye
     return strYea + "-" + strMon + "-" + strDate
   }
-  checkValidate() {
+  // checkValidate() {
 
-    return false;
-  }
+  //   return false;
+  // }
   handleChangeValue(e) {
     const { name, value } = e.target;
     e.target.className = "form-control"
@@ -518,7 +605,7 @@ class MentorPage extends React.Component {
                   className="mb-3 blue darken-2"
                   onClick={this.addMentor}>
                   Add
-                      </MDBBtn>
+                </MDBBtn>
 
                 <hr></hr>
                 <MUIDataTable
@@ -529,6 +616,25 @@ class MentorPage extends React.Component {
               </CardBody>
             </Card>
           </Col>
+
+          {
+            //Popup
+          }
+          <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          open={this.state.open}
+          autoHideDuration={6000}
+          onClose={this.handleClose}
+        >
+          <MySnackbarContentWrapper
+            onClose={this.handleClose}
+            variant="success"
+            message="Đã cập nhật thành công!"
+          />
+        </Snackbar>
 
           {
             // AddMentor, Edit table
@@ -543,10 +649,14 @@ class MentorPage extends React.Component {
               <MDBInput label="Name" name="name" value={this.state.name} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput label="Phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput label="Email" name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
+              <FormControl fullWidth >
+              <InputLabel htmlFor="select-multiple">Gender</InputLabel>
               <Select fullWidth label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)}>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
+                <MenuItem value="Male">Male</MenuItem>
+                <MenuItem value="Female">Female</MenuItem>
               </Select>
+              </FormControl>
+
               <MDBInput
 
                 label="Dob"
