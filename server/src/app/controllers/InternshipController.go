@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"../common"
@@ -45,11 +46,12 @@ func CreateIntern(c *gin.Context) {
 	c.JSON(http.StatusCreated, intern)
 }
 
-// Edit an intern
+// update intern
 func UpdateIntern(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
 
 	intern := models.Intern{}
+	fmt.Println(intern)
 	buf, _ := c.GetRawData()
 	err := json.Unmarshal(buf, &intern)
 	if common.CheckError(c, err) {
@@ -61,8 +63,39 @@ func UpdateIntern(c *gin.Context) {
 		return
 	}
 
+	// update User
+	hash, _ := bcrypt.GenerateFromPassword([]byte(common.DefaultPassword), bcrypt.DefaultCost)
+	user := models.User{}
+	user.UserName = intern.Email
+	user.Password = string(hash)
+	user.Role = 1
+	user.ID = intern.ID
+	fmt.Println(user)
+	err = database.C(models.CollectionUser).UpdateId(bson.ObjectIdHex(c.Param("id")), user)
+	if common.CheckError(c, err) {
+		return
+	}
 	c.JSON(http.StatusOK, nil)
 }
+
+// Edit an intern
+// func UpdateIntern(c *gin.Context) {
+// 	database := c.MustGet("db").(*mgo.Database)
+
+// 	intern := models.Intern{}
+// 	buf, _ := c.GetRawData()
+// 	err := json.Unmarshal(buf, &intern)
+// 	if common.CheckError(c, err) {
+// 		return
+// 	}
+
+// 	err = database.C(models.CollectionIntern).UpdateId(bson.ObjectIdHex(c.Param("id")), intern)
+// 	if common.CheckError(c, err) {
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusOK, nil)
+// }
 
 //Delete intern
 func DeleteIntern(c *gin.Context) {

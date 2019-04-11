@@ -70,9 +70,9 @@ class InternPage extends React.Component {
         let NewData = []
         let stt = 1
         data.map(row => {
-          NewData.push([stt, row.Intern.ID, row.Intern.Name, row.Intern.PhoneNumber, row.Intern.Email, row.Intern.Gender ? "Male" : "Female", 
-          (new Date(row.Intern.DoB)).toLocaleDateString('en-US', options),
-           row.Intern.University, row.Intern.Faculty, row.Course,
+          NewData.push([stt, row.Intern.ID, row.Intern.Name, row.Intern.PhoneNumber, row.Intern.Email, row.Intern.Gender ? "Male" : "Female",
+            (new Date(row.Intern.DoB)).toLocaleDateString('en-US', options),
+            row.Intern.University, row.Intern.Faculty, row.Course,
             // format datetime,
             row.Department, row.CourseID])
           stt++
@@ -122,8 +122,11 @@ class InternPage extends React.Component {
   }
 
   handlerAddIntern = () => {
+    if (confirm("You definitely want to add intern ?")) { //eslint-disable-line
+
+    }
     var moment = require('moment');
-    
+
     const date = moment.utc(this.state.dob).format();
     // const dt = this.state.dob.split(/-|\s/)
     // let date = new Date(dt[2], dt[1], dt[0])
@@ -151,7 +154,7 @@ class InternPage extends React.Component {
       .then(this.GetInternList())
     this.toggleIntern()
 
-    // window.location.reload();
+    window.location.reload();
   }
 
 
@@ -171,9 +174,12 @@ class InternPage extends React.Component {
   }
 
   handlerDeleteIntern = () => {
-    fetch("http://localhost:8080/intern/" + this.state.id, {
+    if (confirm("You definitely want to delete ?")) { //eslint-disable-line
+
+    }
+    fetch('http://localhost:8080/intern/${id}', {
       method: 'DELETE',
-      mode: 'cors'
+      mode: 'cors',
     })
       .then(this.GetInternList())
     this.toggleIntern()
@@ -183,7 +189,7 @@ class InternPage extends React.Component {
 
   handlerEditIntern = () => {
     var moment = require('moment');
-    
+
     const date = moment.utc(this.state.dob).format();
 
     // const dt = this.state.dob.split(/-|\s/)
@@ -191,7 +197,7 @@ class InternPage extends React.Component {
 
     //new Date(dt[2], dt[1], dt[0])
     // console.log(this.state.date)
-    console.log("dt"+date);
+    console.log("dt" + date);
     const data = {
       "Name": this.state.name,
       "PhoneNumber": this.state.phone,
@@ -203,7 +209,7 @@ class InternPage extends React.Component {
       "CourseID": this.state.course,
       "IsDeleted": false
     }
-    fetch("http://localhost:8080/internu/" + this.state.id,{
+    fetch("http://localhost:8080/internu/" + this.state.id, {
       method: 'PUT',
       mode: 'cors',
       headers: {
@@ -217,42 +223,6 @@ class InternPage extends React.Component {
 
     window.location.reload();
   }
-
-  // handlerEditIntern = (e) => {
-  //   e.preventDefault();
-
-  //   var moment = require('moment');
-
-  //   const date = moment.utc(this.state.dob).format();
-
-  //   // const dt = this.state.dob.split(/-|\s/)
-  //   // let date = new Date(dt[2], dt[1], dt[0])
-  //   const data = {
-  //     "Name": this.state.name,
-  //     "PhoneNumber": this.state.phone,
-  //     "Email": this.state.email,
-  //     "Gender": this.state.gender === "Male" ? true : false,
-  //     "DoB": date,
-  //     "University": this.state.University,
-  //     "Faculty": this.state.Faculty,
-  //     "CourseID": this.state.course,
-  //     "IsDeleted": false
-  //   }
-  //   console.log(data)
-  //   fetch("http://localhost:8080/internu/" + this.state.id, {
-  //     method: 'PUT',
-  //     mode: 'cors',
-  //     headers: {
-  //       "Content-Type": "application/json"
-  //     },
-  //     body: JSON.stringify(data)
-  //   })
-  //     .then(this.GetInternList())
-  //   this.toggleIntern()
-  //   console.log(this.state.id)
-
-  //   // window.location.reload();
-  // }
 
 
   columnsIntern = [
@@ -395,28 +365,28 @@ class InternPage extends React.Component {
     let strDate = ""
     let strMon = ""
     let strYea = ""
-      let ye = moment(rowData).get('year');
-      let mo = moment(rowData).get('month') + 1;  // 0 to 11
-      let da = moment(rowData).get('date');
-      if(da < 10)
-        strDate = "0"+da
-      else
-        strDate = ''+da
-      if(mo < 10)
-        strMon = "0"+mo 
-        else 
-        strMon = ''+mo
-      if(ye <1000){
-        strYea = "0" +ye
-        if(ye <100){
-          strYea = "0"+strYea
-          if(ye <10) 
-            strYea = "0"+strYea
-        }
+    let ye = moment(rowData).get('year');
+    let mo = moment(rowData).get('month') + 1;  // 0 to 11
+    let da = moment(rowData).get('date');
+    if (da < 10)
+      strDate = "0" + da
+    else
+      strDate = '' + da
+    if (mo < 10)
+      strMon = "0" + mo
+    else
+      strMon = '' + mo
+    if (ye < 1000) {
+      strYea = "0" + ye
+      if (ye < 100) {
+        strYea = "0" + strYea
+        if (ye < 10)
+          strYea = "0" + strYea
       }
-      else
-        strYea = ''+ye
-      return  strYea+"-"+strMon+"-"+strDate 
+    }
+    else
+      strYea = '' + ye
+    return strYea + "-" + strMon + "-" + strDate
   }
   checkValidate() {
 
@@ -551,22 +521,20 @@ class InternPage extends React.Component {
               <MDBInput fullwidth="true" size="" label="Name" name="name" value={this.state.name} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput fullwidth="true" label="Phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput fullwidth="true" label="Email" iconClass="dark-grey" name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
-              <MDBInput label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)} />
+              {/* <MDBInput label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)} /> */}
+              <Select fullWidth label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)}>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </Select><br />
               <label>Course</label>
               <select className="browser-default custom-select custom-dropdown custom-margin" onChange={this.handleChangeValue.bind(this)} name="course" size="lg">
                 {this.state.courseList.map(function (course, index) {
                   return <option key={index} value={course.ID}>{course.Name}</option>;
                 })}
-              </select><br/>
+              </select><br />
 
-              {/* <DatePickers
-                label="Day of Birth"
-                name="dob"
-                value={this.state.dob}
-                onChange={this.handleChangeValue.bind(this)}
-              /> */}
               <label>Date</label>
-              <input type="date" name="dob" value={this.state.dob}  onChange={this.handleChangeValue.bind(this)}/><br></br>
+              <input type="date" name="dob" size="lg" value={this.state.dob} onChange={this.handleChangeValue.bind(this)} /><br></br>
               <TextField label="University" name="text" name="University" value={this.state.University} onChange={this.handleChangeValue.bind(this)} />
               <div className="text-center mt-1-half">
                 <TextField fullWidth label="Faculty" name="text" name="Faculty" value={this.state.Faculty} onChange={this.handleChangeValue.bind(this)} />
