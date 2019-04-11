@@ -6,11 +6,12 @@ import MUIDataTable from "mui-datatables";
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
+import Select from '@material-ui/core/Select';
 
 // /* Import MUIDataTable using command "npm install mui-datatables --save" */
 
 function TabContainer(props) {
-  
+
   return (
     <Typography component="div" style={{ padding: 8 * 3 }}>
       {props.children}
@@ -48,14 +49,15 @@ class MentorPage extends React.Component {
       value: 0,
       mentorList: [],
       isUpdate: false,
-      checkValidate: true
+      checkValidate: true,
+      btnMode: 'off'
     };
 
 
   }
 
   GetMentorList() {
-    const options = { month: 'numeric', day: 'numeric' , year: 'numeric' };
+    const options = { month: 'numeric', day: 'numeric', year: 'numeric' };
     fetch('http://localhost:8080/mentors')
       .then(response => response.json())
       .then(data => {
@@ -63,7 +65,8 @@ class MentorPage extends React.Component {
         let cnt = 1
         data.map(row => {
           NewData.push([cnt, row.ID, row.Name, row.PhoneNumber, row.Email, row.Gender ? "Male" : "Female",
-          (new Date(row.DoB)).toLocaleDateString('en-US', options),row.Department, row.SupervisorID])
+            (new Date(row.DoB)).toLocaleDateString('en-US', options), row.Department])
+          //, row.SupervisorID
           cnt++
           return NewData
         })
@@ -97,7 +100,16 @@ class MentorPage extends React.Component {
       department: "",
       icon: "plus",
       isUpdate: false,
-      checkValidate: false
+      checkValidate: false,
+      btnMode: 'off',
+      doneName: false,
+      donePhone: false,
+      doneGender: false,
+      doneEmail: false,
+      doneDepartment: false,
+      doneDOB: false,
+      
+
     });
     // const dateInForm =
     this.toggleMentor()
@@ -106,7 +118,7 @@ class MentorPage extends React.Component {
 
 
   handlerAddMentor = () => {
-    
+
     var moment = require('moment');
     const date = moment.utc(this.state.dob).format();
     const data = {
@@ -149,7 +161,7 @@ class MentorPage extends React.Component {
   handlerEditMentor = () => {
     var moment = require('moment');
     const date = moment.utc(this.state.dob).format();
-    console.log("dt"+date);
+    console.log("dt" + date);
     const data = {
       "Name": this.state.name,
       "PhoneNumber": this.state.phone,
@@ -160,7 +172,7 @@ class MentorPage extends React.Component {
       "SupervisorID": "5c1a11b49ef458a033e70628",
       "IsDeleted": false
     }
-    fetch("http://localhost:8080/mentoru/" + this.state.id,{
+    fetch("http://localhost:8080/mentoru/" + this.state.id, {
       method: 'PUT',
       mode: 'cors',
       headers: {
@@ -174,9 +186,9 @@ class MentorPage extends React.Component {
 
     // window.location.reload();
 
-      // this.setState({
+    // this.setState({
 
-      // })
+    // })
   }
 
   columnsMentor = [
@@ -238,22 +250,22 @@ class MentorPage extends React.Component {
         sort: false,
       }
     },
-    {
-      name: "SUPERVISOR",
-      options: {
-        filter: true,
-        sort: false,
-      }
-    },
+    // {
+    //   name: "SUPERVISOR",
+    //   options: {
+    //     filter: true,
+    //     sort: false,
+    //   }
+    // },
   ]
 
 
   optionsMentor = {
     filterType: "dropdown",
     responsive: "scroll",
-    download : false,
-    print : false,
-    selectableRows : false,
+    download: false,
+    print: false,
+    selectableRows: false,
     textLabels: {
       body: {
         noMatch: "Sorry, no matching records found",
@@ -286,55 +298,97 @@ class MentorPage extends React.Component {
         delete: "Delete",
         deleteAria: "Delete Selected Rows",
       },
+      SelectStyle: {
+        marginLeft: "8px",
+      }
     },
     onRowClick: (rowData) => {
-
+      let std = this.convertDate(rowData[6])
       this.setState({
         id: rowData[1],
         name: rowData[2],
         phone: rowData[3],
         email: rowData[4],
         gender: rowData[5],
-        dob: rowData[6],
+        dob: std,
         department: rowData[7],
         icon: "edit",
         isUpdate: true,
-        checkValidate: true
+        checkValidate: true,
+        btnMode: 'off',
+        
+
       });
-      
-      console.log("day"+this.state.dob);
+
+
+      console.log("day" + this.state.dob);
 
       this.toggleMentor()
 
     }
-    
+
+
   }
 
   checkValidate() {
 
     return false;
   }
+  convertDate(rowData) {
+    var moment = require('moment')
+    let strDate = ""
+    let strMon = ""
+    let strYea = ""
+    let ye = moment(rowData).get('year');
+    let mo = moment(rowData).get('month') + 1;  
+    let da = moment(rowData).get('date');
+    if (da < 10)
+      strDate = "0" + da
+    else
+      strDate = '' + da
+    if (mo < 10)
+      strMon = "0" + mo
+    else
+      strMon = '' + mo
+    if (ye < 1000) {
+      strYea = "0" + ye
+      if (ye < 100) {
+        strYea = "0" + strYea
+        if (ye < 10)
+          strYea = "0" + strYea
+      }
+    }
+    else
+      strYea = '' + ye
+    return strYea + "-" + strMon + "-" + strDate
+  }
+  checkValidate() {
 
+    return false;
+  }
   handleChangeValue(e) {
     const { name, value } = e.target;
-
-
     e.target.className = "form-control"
     switch (name) {
       case "name":
         this.setState({ name: value })
         if (value.trim().length === 0) {
           this.setState({
+            btnMode: 'off',
             name: " ",
             errorName: "Name can not be blank"
           })
           e.target.className += " invalid"
         } else if (value.trim().length < 6) {
           this.setState({
+            btnMode: 'off',
             errorName: "Name contains more than 5 characters"
           })
           e.target.className += " invalid"
         } else {
+          this.setState({
+            doneName: true,
+            })
           e.target.className += " valid"
         }
         break;
@@ -344,60 +398,110 @@ class MentorPage extends React.Component {
         const regexPhone = /^[0-9\b]+$/
         if (value.trim().length === 0) {
           this.setState({
+            btnMode: 'off',
             phone: " ",
             errorPhone: "Phone can not be blank"
           })
           e.target.className += " invalid"
         } else if (!regexPhone.test(value.trim())) {
           this.setState({
+            btnMode: 'off',
             errorPhone: "Phone contains only numeric characters"
           })
           e.target.className += " invalid"
         } else {
+          this.setState({
+            donePhone: true,
+            })
           e.target.className += " valid"
         }
         break;
       case "email":
-      this.setState({ email: value})
-      e.target.className="form-control"
-      const regexEmail = /^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i;
-      if(value.trim().length === 0){
-        this.setState({
-          email: " ",
-          errorEmail:"Email can not be blank"
-        })
-        e.target.className += " invalid"
-      } else if (!regexEmail.test(value.trim())){
-        this.setState({
-          errorEmail: "Not a valid email address"
-        })
-        e.target.className +=" invalid"
-      } else {
-        e.target.className +=" valid"
-      }
-      // console.log(this.state.dob)
+        this.setState({ email: value })
+        e.target.className = "form-control"
+        const regexEmail = /^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i;
+        if (value.trim().length === 0) {
+          this.setState({
+            btnMode: 'off',
+            email: " ",
+            errorEmail: "Email can not be blank"
+          })
+          e.target.className += " invalid"
+        } else if (!regexEmail.test(value.trim())) {
+          this.setState({
+            btnMode: 'off',
+            errorEmail: "Not a valid email address"
+          })
+          e.target.className += " invalid"
+        } else {
+          this.setState({
+            doneEmail: true,
+            })
+          e.target.className += " valid"
+        }
+        // console.log(this.state.dob)
 
         break;
       case "gender":
         this.setState({ gender: value })
+        if (value.trim().length > 0) {
+          this.setState({
+            doneGender: true,            
+          })
+        }
         // console.log(this.state.dob)
 
         break;
       case "dob":
         this.setState({ dob: value })
-        console.log(this.state.dob)
-
+        if (value.trim().length > 0) {
+          this.setState({
+            doneDOB: true,            
+          })
+        }
         break;
       case "mentor":
         this.setState({ mentor: value })
+        if (value.trim().length > 0) {
+          this.setState({
+            doneMentor: true,            
+          })
+          e.target.className += " valid"
+        }
         break;
       case "department":
         this.setState({ department: value })
+        if (value.trim().length > 0) {
+          this.setState({
+            doneDepartment: true,            
+          })
+          e.target.className += " valid"
+        }
         break;
       default:
         break;
     }
+    /*
+    doneName
+    donePhone
+    doneGender
+    doneEmail
+    doneDepartment
+    doneDOB
+    */
+    if(this.state.doneName ===  true && 
+      this.state.donePhone ===  true && 
+      this.state.doneGender ===  true && 
+      this.state.doneEmail ===  true && 
+      this.state.doneDepartment ===  true && 
+      this.state.doneDOB ===  true )
+    {
+      this.setState({
+        btnMode: "on"
+      })
+    }
   }
+
 
   render() {
     this.state.mentorList.map((value, key) => {
@@ -436,38 +540,31 @@ class MentorPage extends React.Component {
             cascading>
 
             <MDBModalBody>
-              <MDBInput  label="Name" name="name" value={this.state.name} onChange={this.handleChangeValue.bind(this)} />
-              <MDBInput  label="Phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
-              <MDBInput  label="Email"  name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
-              <MDBInput  label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)} />
-
+              <MDBInput label="Name" name="name" value={this.state.name} onChange={this.handleChangeValue.bind(this)} />
+              <MDBInput label="Phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
+              <MDBInput label="Email" name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
+              <Select fullWidth label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)}>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </Select>
               <MDBInput
+
                 label="Dob"
                 name="dob"
                 id="date"
                 type="date"
-                defaultValue="1997-03-22"
-                // value="1997-03-22"
-                value={this.state.dob}  
-                // value={ (new Date(this.state.dob)).toLocaleDateString('en-US', {  year: 'numeric', month: 'numeric', day: 'numeric'  })}
+                value={this.state.dob}
                 onChange={this.handleChangeValue.bind(this)}
-                // className={classes.textField}
                 InputLabelProps={{
                   shrink: true,
                 }}
               />
-              {/* <DatePickers
-                label="Dob"
-                name="dob"
-                value={this.state.dob}
-                onChange={this.handleChangeValue.bind(this)}
-              /> */}
-              {/* <MDBInput fullWidth label="Dob" name="dob" value={this.state.dob} onChange={this.handleChangeValue.bind(this)} /> */}
 
-              <MDBInput  label="Department" name="department" value={this.state.department} onChange={this.handleChangeValue.bind(this)} />
+              <MDBInput label="Department" name="department" value={this.state.department} onChange={this.handleChangeValue.bind(this)} />
               <div className="text-center mt-1-half">
                 {
-                  this.state.isUpdate === false &&
+                  (this.state.isUpdate === false) &&
+                  this.state.btnMode === 'on' &&
                   <MDBBtn
                     className="mb-2 blue darken-2"
                     onClick={this.handlerAddMentor}
@@ -476,13 +573,27 @@ class MentorPage extends React.Component {
                   <MDBIcon icon="send" className="ml-1" />
                   </MDBBtn>
                 }
+
                 {
-                  this.state.isUpdate &&
+                  (this.state.isUpdate === false) &&
 
-
+                  this.state.btnMode === 'off' &&
                   <MDBBtn
                     className="mb-2 blue darken-2"
-                    onClick={this.handlerEditMentor}>                    
+                    onClick={this.handlerAddMentor}
+                    disabled="true"
+                  >
+                    Create
+                  <MDBIcon icon="send" className="ml-1" />
+                  </MDBBtn>
+
+                }
+
+                {
+                  this.state.isUpdate &&
+                  <MDBBtn
+                    className="mb-2 blue darken-2"
+                    onClick={this.handlerEditMentor}>
                     Update
                   <MDBIcon icon="edit" className="ml-1" />
                   </MDBBtn>
