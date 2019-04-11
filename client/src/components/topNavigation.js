@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Navbar, NavbarBrand, NavbarNav, NavbarToggler, Collapse } from 'mdbreact';
+import { Navbar, NavbarBrand, NavbarNav, NavbarToggler, Collapse, MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem } from 'mdbreact';
+
 // import Fab from '@material-ui/core/Fab';
 import { NavLink } from 'react-router-dom';
 import { ListGroupItem, Fa } from 'mdbreact';
@@ -11,9 +12,19 @@ class TopNavigation extends Component {
         super(props);
         this.state = {
             collapse: false,
+            info : null
         };
     this.onClick = this.onClick.bind(this);
     this.toggle = this.toggle.bind(this);
+    this.getInfo()
+}
+
+    getInfo(){
+
+    }
+
+    logOut(event){
+        this.props.onLogout();
     }
 
     onClick(){
@@ -43,14 +54,26 @@ class TopNavigation extends Component {
                     
                     {/* <Fab href="/mentor" activeClassName="activeClass" variant="extended" >
                     <MDBIcon icon="sign-in-alt" />                                                              Login
-                    </Fab> */}
+                    </Fab>
 
-<NavLink  to="/login" activeClassName="activeClass">
+                    <NavLink  to="/login" activeClassName="activeClass">
                         <ListGroupItem>
                             <Fa icon="user" className="mr-3"/>
                             Login
                         </ListGroupItem>
-                    </NavLink>
+                    </NavLink> */}
+                    <MDBDropdown>
+                        <MDBDropdownToggle caret color="info">
+                            Bách
+                        </MDBDropdownToggle>
+                        <MDBDropdownMenu color="info" basic>
+                            <MDBDropdownItem>Infor</MDBDropdownItem>
+                            <MDBDropdownItem>Change password</MDBDropdownItem>
+                            <MDBDropdownItem>About</MDBDropdownItem>
+                            <MDBDropdownItem divider />
+                            <MDBDropdownItem onClick = {this.logOut.bind(this)}>Logout</MDBDropdownItem>
+                        </MDBDropdownMenu>
+                    </MDBDropdown>
                     </NavbarNav>
                 </Collapse>
             </Navbar>

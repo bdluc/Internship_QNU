@@ -30,6 +30,7 @@ func CheckNotFound(c *gin.Context, err error) bool {
 func IsError(c *gin.Context, e error, m string) bool {
 	if e != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  "error",
 			"message": m,
 		})
 		c.Error(e)

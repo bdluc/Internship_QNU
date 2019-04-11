@@ -1,7 +1,6 @@
 import React from 'react';
 import '../attendance.css';
-import Table from '../components/mentor/Table'
-import DailyTable from '../components/DailyTable'
+import Table from '../components/intern/Table'
 import BarChart from '../components/BarChart'
 import $ from 'jquery';
 
@@ -11,7 +10,7 @@ class MentorAttendance extends React.Component {
   constructor(props) {
         super(props);   
         this.state = {
-            internId: "5c99965bba3c261ba46034bd",
+            internId: JSON.parse(sessionStorage.getItem('user')).ID,
             traineeData: null,
             tableData: [],
             chartData: [],
@@ -24,19 +23,29 @@ class MentorAttendance extends React.Component {
             showData: true,
             now: null
         };
-        this.getStudent();
+        
   }
   
+  componentWillMount(){
+    this.getStudent();
+  }
 
   getStudent() {
     $.ajax({
         url: "http://localhost:8080/attendance/" + this.state.internId +"/intern",
         type: "GET",
         success: function (response) {
-            this.setState({
-                traineeData: response
-            });
-            this.processAttendancesData();
+            if(response === []){
+                this.setState({
+                    showData: false
+                });
+            }
+            else{
+                this.setState({
+                    traineeData: response
+                });
+                this.processAttendancesData();
+            }
         }.bind(this),
         error: function (xhr, status) {
             this.setState({showData: false});
@@ -54,6 +63,7 @@ class MentorAttendance extends React.Component {
             tableData: this.loadTableData(month.MonthNow, month.YearNow),
             chartData: this.loadChartData(month.MonthNow, month.YearNow)
         });
+            console.log("OK")
   }
 
   onSelectChange(event) {
@@ -352,6 +362,9 @@ class MentorAttendance extends React.Component {
         MonthNow: monthNow,
         YearNow: yearNow
     };
+  }
+  componentDidMount() {
+    console.log("componentDidMount")
   }
 
   render() {

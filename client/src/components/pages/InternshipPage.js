@@ -1,145 +1,3 @@
-// import React from 'react'
-import { Row, Col, Card, CardBody, Table, TableHead, TableBody } from 'mdbreact';
-import Fab from '@material-ui/core/Fab';
-import DeleteIcon from '@material-ui/icons/Delete';
-import CreateIcon from '@material-ui/icons/Create';
-import AddIntern from './sections/AddIntern';
-import React, { Component } from 'react';
-import PickCoure from './sections/PickCoure';
-
-class InternshipPage extends Component {
-  constructor() {
-    super();
-    this.state = {
-      Intern: []
-    };
-  }
-
-  componentDidMount() {
-
-    fetch('http://localhost:8080/intern')
-      .then(response => response.json())
-      .then(result => {
-        console.log(result);
-        this.setState({
-          Intern: result
-        });
-      })
-  }
-
-  addintern = () => {
-    this.setState({
-      name : "",
-      phone : "",
-      email : "",
-      gender : "",
-      dob : "",
-      University : "",
-      Faculty: "",
-      title : "ADD NEW INTERN",
-      icon : "plus",
-      isUpdate : false,
-      checkValidate : false,
-    });
-    this.toggleIntern()
-  }
-  
-  handlerAddIntern = () => {
-    if (this.state.icon === "edit") {
-      this.toggleIntern()
-    } else {
-        const dt  = this.state.dob.split(/-|\s/)
-        let date = new Date(dt[2], dt[1], dt[0])
-        const data = {
-          "Name" : this.state.name,
-          "PhoneNumber" : this.state.phone,
-          "Email" : this.state.email,
-          "Gender" : this.state.gender === "Male"?true:false,
-          "DoB" : date,
-          "University" : this.state.university,
-          "Faculty": this.state.Faculty,
-          "SupervisorID" : "5c9b53dbda51e308e86b2243",
-          "IsDeleted" : false 
-        }     
-        fetch("http://localhost:8080/intern",
-            {
-                method: "POST",
-                mode: "no-cors",
-                headers:{
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
-            })
-            .then(this.GetInternList())
-        this.toggleIntern()
-    }
-  }
-
-  render() {
-    const DATE_OPTIONS = { year: 'numeric', month: 'numeric', day: 'numeric' };
-    return (
-      <div>
-        <React.Fragment>
-          <Row>
-            <Col md="12">
-              <Card className="mt-5">
-
-                <CardBody>
-                  <tr>
-                    <td><AddIntern></AddIntern></td>
-                    <td><PickCoure></PickCoure></td>
-                  </tr>
-                  <hr></hr>
-                  <Table>
-
-                    <TableHead color="primary-color" textWhite>
-
-                      <tr>
-                        <th>STT</th>
-                        <th>Name</th>
-                        <th>DayofBirth</th>
-                        <th>Email</th>
-                        <th>University</th>
-                        <th>Faculty</th>
-                        <th>PhoneNumber</th>
-                        <th>Edit</th>
-                        <th>Delete</th>
-                      </tr>
-                    </TableHead>
-                 
-                    <TableBody>
-                      {this.state.Intern.map((item, index) =>
-                        (
-                          <tr key={index}>
-                            <th>{index}</th>
-                            <th>{item.Name}</th>
-                            <th>{(new Date(item.DoB)).toLocaleDateString('en-US', DATE_OPTIONS)}</th>
-                            <th>{item.Email}</th>
-                            <th>{item.University}</th>
-                            <th>{item.Faculty}</th>
-                            <th>{item.PhoneNumber}</th>
-                            <th><Fab color="primary" size="small" aria-label="Edit"><CreateIcon /></Fab></th>
-                            <th><Fab size="small" href="#" ><DeleteIcon /></Fab></th>
-                          </tr>
-                        )
-                      )}
-                    </TableBody>
-                  </Table>
-                </CardBody>
-              </Card>
-            </Col>
-          </Row>
-        </React.Fragment>
-      </div>
-    )
-  }
-}
-
-export default InternshipPage;
-
-/*
-
-
 
 import React from 'react'
 import {
@@ -151,9 +9,19 @@ import DatePickers from './sections/DatePickers'
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
+import Input from '@material-ui/core/Input';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import FilledInput from '@material-ui/core/FilledInput';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import Button from '@material-ui/core/Button';
+import './attendance.css';
 
 /* Import MUIDataTable using command "npm install mui-datatables --save" */
-/*
+
 function TabContainer(props) {
   return (
     <Typography component="div" style={{ padding: 8 * 3 }}>
@@ -177,6 +45,7 @@ const styles = theme => ({
   }
 });
 
+
 class InternPage extends React.Component {
 
   constructor() {
@@ -186,29 +55,33 @@ class InternPage extends React.Component {
       data: [],
       value: 0,
       internList: [],
+      courseList: [],
       isUpdate: false,
-      checkValidate: true
+      checkValidate: true,
+      courseName: ''
     };
   }
 
   GetInternList() {
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
     fetch('http://localhost:8080/intern')
       .then(response => response.json())
       .then(data => {
         let NewData = []
-        let cnt = 1
+        let stt = 1
         data.map(row => {
-          NewData.push([cnt, row.ID, row.Name, row.PhoneNumber, row.Email, row.Gender, row.University, row.Faculty ? "Male" : "Female",
-            // format datetime
-            (new Date(row.DoB)).toLocaleDateString('en-US', options),
-            row.Department, row.SupervisorID])
-          cnt++
+          NewData.push([stt, row.Intern.ID, row.Intern.Name, row.Intern.PhoneNumber, row.Intern.Email, row.Intern.Gender ? "Male" : "Female", 
+          (new Date(row.Intern.DoB)).toLocaleDateString('en-US', options),
+           row.Intern.University, row.Intern.Faculty, row.Course,
+            // format datetime,
+            row.Department, row.CourseID])
+          stt++
           return NewData
         })
         this.setState({
           internList: NewData
         })
+        console.log(data)
       });
   }
 
@@ -219,6 +92,7 @@ class InternPage extends React.Component {
   componentDidMount() {
 
     this.GetInternList()
+    this.GetListCourse()
   }
 
 
@@ -236,10 +110,10 @@ class InternPage extends React.Component {
       phone: "",
       email: "",
       gender: "",
+      courseName: "",
       dob: "",
       University: "",
       Faculty: "",
-      title: "ADD NEW MENTOR",
       icon: "plus",
       isUpdate: false,
       checkValidate: false
@@ -247,19 +121,12 @@ class InternPage extends React.Component {
     this.toggleIntern()
   }
 
-
-
   handlerAddIntern = () => {
-    if (this.state.icon === "edit") {
-      fetch("http://localhost:8080/intern/" + this.state.id, {
-        method: 'DELETE',
-        mode: 'cors'
-      })
-        .then(this.GetInternList())
-      this.toggleIntern()
-    }
-    const dt = this.state.dob.split(/-|\s/)
-    let date = new Date(dt[2], dt[1], dt[0])
+    var moment = require('moment');
+    
+    const date = moment.utc(this.state.dob).format();
+    // const dt = this.state.dob.split(/-|\s/)
+    // let date = new Date(dt[2], dt[1], dt[0])
     const data = {
       "Name": this.state.name,
       "PhoneNumber": this.state.phone,
@@ -268,9 +135,10 @@ class InternPage extends React.Component {
       "DoB": date,
       "University": this.state.University,
       "Faculty": this.state.Faculty,
-      "SupervisorID": "5c9b53dbda51e308e86b2243",
+      "CourseID": this.state.course,
       "IsDeleted": false
     }
+    console.log(data)
     fetch("http://localhost:8080/intern",
       {
         method: "POST",
@@ -283,10 +151,24 @@ class InternPage extends React.Component {
       .then(this.GetInternList())
     this.toggleIntern()
 
-
+    // window.location.reload();
   }
 
 
+  GetListCourse() {
+    fetch('http://localhost:8080/courses')
+      .then(response => response.json())
+      .then(data => {
+        let NewData = []
+        data.map(row => {
+          NewData.push({ ID: row._id, Name: row.CourseName })
+          return NewData
+        })
+        this.setState({
+          courseList: NewData,
+        })
+      });
+  }
 
   handlerDeleteIntern = () => {
     fetch("http://localhost:8080/intern/" + this.state.id, {
@@ -295,11 +177,87 @@ class InternPage extends React.Component {
     })
       .then(this.GetInternList())
     this.toggleIntern()
+
+    window.location.reload();
   }
+
+  handlerEditIntern = () => {
+    var moment = require('moment');
+    
+    const date = moment.utc(this.state.dob).format();
+
+    // const dt = this.state.dob.split(/-|\s/)
+    // let date = new Date(dt[2], dt[1], dt[0])
+
+    //new Date(dt[2], dt[1], dt[0])
+    // console.log(this.state.date)
+    console.log("dt"+date);
+    const data = {
+      "Name": this.state.name,
+      "PhoneNumber": this.state.phone,
+      "Email": this.state.email,
+      "Gender": this.state.gender === "Male" ? true : false,
+      "DoB": date,
+      "University": this.state.University,
+      "Faculty": this.state.Faculty,
+      "CourseID": this.state.course,
+      "IsDeleted": false
+    }
+    fetch("http://localhost:8080/internu/" + this.state.id,{
+      method: 'PUT',
+      mode: 'cors',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    })
+      .then(this.GetInternList())
+    this.toggleIntern()
+    console.log(this.state.id)
+
+    window.location.reload();
+  }
+
+  // handlerEditIntern = (e) => {
+  //   e.preventDefault();
+
+  //   var moment = require('moment');
+
+  //   const date = moment.utc(this.state.dob).format();
+
+  //   // const dt = this.state.dob.split(/-|\s/)
+  //   // let date = new Date(dt[2], dt[1], dt[0])
+  //   const data = {
+  //     "Name": this.state.name,
+  //     "PhoneNumber": this.state.phone,
+  //     "Email": this.state.email,
+  //     "Gender": this.state.gender === "Male" ? true : false,
+  //     "DoB": date,
+  //     "University": this.state.University,
+  //     "Faculty": this.state.Faculty,
+  //     "CourseID": this.state.course,
+  //     "IsDeleted": false
+  //   }
+  //   console.log(data)
+  //   fetch("http://localhost:8080/internu/" + this.state.id, {
+  //     method: 'PUT',
+  //     mode: 'cors',
+  //     headers: {
+  //       "Content-Type": "application/json"
+  //     },
+  //     body: JSON.stringify(data)
+  //   })
+  //     .then(this.GetInternList())
+  //   this.toggleIntern()
+  //   console.log(this.state.id)
+
+  //   // window.location.reload();
+  // }
+
 
   columnsIntern = [
     {
-      name: "#",
+      name: "STT",
       options: {
         filter: false,
         sort: true,
@@ -314,35 +272,35 @@ class InternPage extends React.Component {
       }
     },
     {
-      name: "NAME",
+      name: "Name",
       options: {
         filter: true,
         sort: false,
       }
     },
     {
-      name: "PHONE",
+      name: "Phone",
       options: {
         filter: false,
         sort: false,
       }
     },
     {
-      name: "EMAIL",
+      name: "Email",
       options: {
         filter: false,
         sort: false,
       }
     },
     {
-      name: "GENDER",
+      name: "Gender",
       options: {
         filter: false,
         sort: false,
       }
     },
     {
-      name: "DAY OF BIRTH",
+      name: "DOB",
       options: {
         filter: false,
         sort: false,
@@ -363,7 +321,7 @@ class InternPage extends React.Component {
       }
     },
     {
-      name: "CourseID",
+      name: "Course",
       options: {
         filter: true,
         sort: false,
@@ -375,9 +333,9 @@ class InternPage extends React.Component {
   optionsIntern = {
     filterType: "dropdown",
     responsive: "scroll",
-    download : false,
-    print : false,
-    selectableRows : false,
+    download: false,
+    print: false,
+    selectableRows: false,
     textLabels: {
       body: {
         noMatch: "Sorry, no matching records found",
@@ -412,15 +370,18 @@ class InternPage extends React.Component {
       },
     },
     onRowClick: (rowData, rowState) => {
+      let std = this.convertDate(rowData[6])
       this.setState({
+
         id: rowData[1],
         name: rowData[2],
         phone: rowData[3],
         email: rowData[4],
         gender: rowData[5],
-        dob: rowData[6],
+        dob: std,
         University: rowData[7],
         Faculty: rowData[8],
+        course: rowData[9],
         icon: "edit",
         isUpdate: true,
         checkValidate: true
@@ -429,6 +390,34 @@ class InternPage extends React.Component {
     }
   }
 
+  convertDate(rowData) {
+    var moment = require('moment')
+    let strDate = ""
+    let strMon = ""
+    let strYea = ""
+      let ye = moment(rowData).get('year');
+      let mo = moment(rowData).get('month') + 1;  // 0 to 11
+      let da = moment(rowData).get('date');
+      if(da < 10)
+        strDate = "0"+da
+      else
+        strDate = ''+da
+      if(mo < 10)
+        strMon = "0"+mo 
+        else 
+        strMon = ''+mo
+      if(ye <1000){
+        strYea = "0" +ye
+        if(ye <100){
+          strYea = "0"+strYea
+          if(ye <10) 
+            strYea = "0"+strYea
+        }
+      }
+      else
+        strYea = ''+ye
+      return  strYea+"-"+strMon+"-"+strDate 
+  }
   checkValidate() {
 
     return false;
@@ -446,9 +435,9 @@ class InternPage extends React.Component {
             errorName: "Name can not be blank"
           })
           e.target.className += " invalid"
-        } else if (value.trim().length < 6) {
+        } else if (value.trim().length < 3) {
           this.setState({
-            errorName: "Name contains more than 5 characters"
+            errorName: "Name contains more than 3 characters"
           })
           e.target.className += " invalid"
         } else {
@@ -475,27 +464,30 @@ class InternPage extends React.Component {
         }
         break;
       case "email":
-      this.setState({ email: value})
-      e.target.className="form-control"
-      const regexEmail = /^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i;
-      if(value.trim().length === 0){
-        this.setState({
-          email: " ",
-          errorEmail:"Email can not be blank"
-        })
-        e.target.className += " invalid"
-      } else if (!regexEmail.test(value.trim())){
-        this.setState({
-          errorEmail: "Not a valid email address"
-        })
-        e.target.className +=" invalid"
-      } else {
-        e.target.className +=" valid"
-      }
-       
+        this.setState({ email: value })
+        e.target.className = "form-control"
+        const regexEmail = /^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i;
+        if (value.trim().length === 0) {
+          this.setState({
+            email: " ",
+            errorEmail: "Email can not be blank"
+          })
+          e.target.className += " invalid"
+        } else if (!regexEmail.test(value.trim())) {
+          this.setState({
+            errorEmail: "Not a valid email address"
+          })
+          e.target.className += " invalid"
+        } else {
+          e.target.className += " valid"
+        }
+
         break;
       case "gender":
         this.setState({ gender: value })
+        break;
+      case "course":
+        this.setState({ course: value })
         break;
       case "dob":
         this.setState({ dob: value })
@@ -513,27 +505,32 @@ class InternPage extends React.Component {
         break;
     }
   }
+  onSelect = (course) => {
+    console.log(course.Name);
+  }
+
+  handleChanges() {
+    this.setState({
+    });
+  };
 
   render() {
-    // this.state.InternList.map((value, key) => {
-    //   return (<option key={key} value={value[1]}>{value[1]}</option>)
-    // })
+    const { classes } = this.props;
     return (
       <React.Fragment>
         <Row>
           <Col md="12">
             <Card className="mt-5">
-
               <CardBody>
                 <MDBBtn
                   className="mb-3 blue darken-2"
                   onClick={this.addIntern}>
                   Add
-                      </MDBBtn>
+                </MDBBtn>
 
                 <hr></hr>
                 <MUIDataTable
-                  title={"Intern List"}
+                  title={"List Intern"}
                   data={this.state.internList}
                   columns={this.columnsIntern}
                   options={this.optionsIntern} />
@@ -551,63 +548,68 @@ class InternPage extends React.Component {
             cascading>
 
             <MDBModalBody>
-              <MDBInput fullWidth size="" label="Name" name="name" value={this.state.name} onChange={this.handleChangeValue.bind(this)} />
-              <MDBInput fullWidth label="Phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
-              <MDBInput fullWidth label="Email" iconClass="dark-grey" name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
+              <MDBInput fullwidth="true" size="" label="Name" name="name" value={this.state.name} onChange={this.handleChangeValue.bind(this)} />
+              <MDBInput fullwidth="true" label="Phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
+              <MDBInput fullwidth="true" label="Email" iconClass="dark-grey" name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)} />
-              <DatePickers
+              <label>Course</label>
+              <select className="browser-default custom-select custom-dropdown custom-margin" onChange={this.handleChangeValue.bind(this)} name="course" size="lg">
+                {this.state.courseList.map(function (course, index) {
+                  return <option key={index} value={course.ID}>{course.Name}</option>;
+                })}
+              </select><br/>
+
+              {/* <DatePickers
                 label="Day of Birth"
                 name="dob"
                 value={this.state.dob}
                 onChange={this.handleChangeValue.bind(this)}
-              />
+              /> */}
+              <label>Date</label>
+              <input type="date" name="dob" value={this.state.dob}  onChange={this.handleChangeValue.bind(this)}/><br></br>
               <TextField label="University" name="text" name="University" value={this.state.University} onChange={this.handleChangeValue.bind(this)} />
               <div className="text-center mt-1-half">
-              <TextField label="Faculty" name="text" name="Faculty" value={this.state.Faculty} onChange={this.handleChangeValue.bind(this)} />
-              <div className="text-center mt-1-half"></div>
-                {
-                  this.state.isUpdate === false &&
-                  <MDBBtn
-                    className="mb-2 blue darken-2"
-                    onClick={this.handlerAddIntern}
-                  >
-                    Create
+                <TextField fullWidth label="Faculty" name="text" name="Faculty" value={this.state.Faculty} onChange={this.handleChangeValue.bind(this)} />
+                <div className="text-center mt-1-half">
+                  {
+                    this.state.isUpdate === false &&
+                    <MDBBtn
+                      className="mb-2 blue darken-2"
+                      onClick={this.handlerAddIntern}
+                    >
+                      Create
                   <MDBIcon icon="send" className="ml-1" />
-                  </MDBBtn>
-                }
-                {
-                  this.state.isUpdate &&
+                    </MDBBtn>
+                  }
+                  {
+                    this.state.isUpdate &&
 
 
-                  <MDBBtn
-                    className="mb-2 blue darken-2"
-                    onClick={this.handlerAddIntern}>
-                    Update
+                    <MDBBtn
+                      className="mb-2 blue darken-2"
+                      onClick={this.handlerEditIntern}>
+                      Update
                   <MDBIcon icon="edit" className="ml-1" />
-                  </MDBBtn>
-                }
-                {
-                  this.state.isUpdate &&
+                    </MDBBtn>
+                  }
+                  {
+                    this.state.isUpdate &&
 
 
-                  <MDBBtn
-                    className="mb-2 blue darken-2"
-                    onClick={this.handlerDeleteIntern}>
-                    Delete
+                    <MDBBtn
+                      className="mb-2 blue darken-2"
+                      onClick={this.handlerDeleteIntern}>
+                      Delete
                   <MDBIcon icon="trash" className="ml-1" />
-                  </MDBBtn>
-                }
+                    </MDBBtn>
+                  }
+                </div>
               </div>
             </MDBModalBody>
           </MDBModal>
         </Row>
-
-
       </React.Fragment>
-
     )
-
   }
 }
 export default withStyles(styles)(InternPage);
-*/
