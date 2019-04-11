@@ -45,7 +45,7 @@ func CreateIntern(c *gin.Context) {
 	c.JSON(http.StatusCreated, intern)
 }
 
-//edit intern
+// Edit an intern
 func UpdateIntern(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
 
@@ -56,7 +56,7 @@ func UpdateIntern(c *gin.Context) {
 		return
 	}
 
-	err = database.C(models.CollectionIntern).UpdateId(intern.ID, intern)
+	err = database.C(models.CollectionIntern).UpdateId(bson.ObjectIdHex(c.Param("id")), intern)
 	if common.CheckError(c, err) {
 		return
 	}
@@ -101,8 +101,21 @@ func ListIntern(c *gin.Context) {
 	if common.CheckError(c, err) {
 		return
 	}
+	resp := []Intern{}
+	for _, v := range intern {
+		course := models.Course{}
+		internResp := Intern{}
+		database.C(models.CollectionCourse).Find(bson.M{"_id": v.CourseID, "IsDeleted": false}).One(&course)
+		internResp.Intern = v
+		internResp.Course = course.CourseName
+		resp = append(resp, internResp)
+	}
+	c.JSON(http.StatusOK, resp)
+}
 
-	c.JSON(http.StatusOK, intern)
+type Intern struct {
+	Intern models.Intern
+	Course string
 }
 
 // Get an intern

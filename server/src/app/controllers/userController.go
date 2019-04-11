@@ -8,6 +8,7 @@ import (
 	"../common"
 	"../models"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -53,4 +54,48 @@ func DeleteUser(c *gin.Context, id bson.ObjectId) bool {
 		return false
 	}
 	return true
+}
+
+// Get User Login
+func getUserLogin(c *gin.Context, username string, password string) *models.User {
+	database := c.MustGet("db").(*mgo.Database)
+
+	user := models.User{}
+	err := database.C(models.CollectionUser).Find(bson.M{"UserName": username, "Password": password}).One(&user)
+	if common.CheckNotFound(c, err) {
+		return nil
+	}
+
+	return &user
+}
+
+// Check Login from client
+func CheckLogin(c *gin.Context) {
+	database := c.MustGet("db").(*mgo.Database)
+
+	userTemp := models.User{}
+	buf, _ := c.GetRawData()
+	err := json.Unmarshal(buf, &userTemp)
+	if common.CheckError(c, err) {
+		return
+	}
+
+	user := models.User{}
+	err = database.C(models.CollectionUser).Find(bson.M{"UserName": userTemp.UserName, "IsDeleted": false}).One(&user)
+	if err != nil {
+		c.JSON(http.StatusForbidden, gin.H{
+			"stt":     "1",
+			"message": "Username or Password is not correct!",
+		})
+		return
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userTemp.Password)); err != nil {
+		c.JSON(http.StatusForbidden, gin.H{
+			"stt":     "2",
+			"message": "Username or Password is not correct!",
+		})
+	} else {
+		c.JSON(http.StatusOK, user)
+	}
 }

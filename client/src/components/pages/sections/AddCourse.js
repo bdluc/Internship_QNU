@@ -7,9 +7,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 // import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { MDBIcon } from 'mdbreact';
-import AddCourceForm from './AddCourceForm'
-
-export default class AddCource extends React.Component {
+import AddCourseForm from './AddCourseForm'
+export default class AddCourse extends React.Component {
     
     state = {
         open: false,
@@ -34,7 +33,7 @@ export default class AddCource extends React.Component {
                     onClose={this.handleClose}
                     aria-labelledby="form-dialog-title"
                 >
-                    <DialogTitle id="form-dialog-title">Add mentor form</DialogTitle>
+                    <DialogTitle id="form-dialog-title">Add course form</DialogTitle>
                     <DialogContent >
                     Hi, Please input your mentor information! We are Lab8 Mentor!
                     {/* Hi, Please input your mentor information!                     Hi, Please input your mentor information! 
@@ -55,7 +54,7 @@ export default class AddCource extends React.Component {
                         </div>
                          */}
 
-                         <AddCourceForm></AddCourceForm>
+                         <AddCourseForm></AddCourseForm>
                     </DialogContent>
                     <DialogActions>
                   

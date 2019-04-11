@@ -41,6 +41,7 @@ func setupRouter() *gin.Engine {
 	r.PUT("/user", controllers.CreateUser)
 	r.GET("/users", controllers.ListUsers)
 	r.POST("/user", controllers.CreateUser)
+	r.PUT("/login", controllers.CheckLogin)
 
 	//Mentor
 
@@ -52,7 +53,7 @@ func setupRouter() *gin.Engine {
 
 	//intern
 	r.POST("/intern", controllers.CreateIntern)
-	r.PUT("/intern", controllers.UpdateIntern)
+	r.PUT("/internu/:id", controllers.UpdateIntern)
 	r.DELETE("/intern/:id", controllers.DeleteIntern)
 	r.GET("/intern", controllers.ListIntern)
 	r.GET("/intern/:id", controllers.GetIntern)
@@ -77,9 +78,14 @@ func setupRouter() *gin.Engine {
 	r.GET("/courses/:id", controllers.GetCoursesByMentorID)
 	r.GET("/coursename/:name", controllers.GetCourseByName)
 	r.GET("/course/:id/intern", controllers.GetCourseByIntern)
+	r.GET("/coursedetail/:id/intern", controllers.GetDetailCourseByIntern)
+	r.GET("/coursedetailindex/:id/:idDetail", controllers.GetDetailCourseByID)
 	r.POST("/course", controllers.CreateCourse)
 	r.PUT("/course", controllers.UpdateCourse)
-	r.DELETE("course", controllers.DeleteCourse)
+	r.PUT("/coursedetailindex/:id", controllers.CreateElementDetailCourseByID)
+	r.PUT("/coursedetailupdate/:id/:idDetail", controllers.UpdateElementDetailCourseByID)
+	r.DELETE("/course/:id", controllers.DeleteCourse)
+	r.DELETE("/coursedetailindex/:id/:idDetail", controllers.DeleteElementDetailCourseByID)
 
 	return r
 }
