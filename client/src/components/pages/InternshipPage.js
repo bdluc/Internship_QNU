@@ -527,14 +527,16 @@ class InternPage extends React.Component {
                 {this.state.courseList.map(function (course, index) {
                   return <option key={index} value={course.ID}>{course.Name}</option>;
                 })}
-              </select>
+              </select><br/>
 
-              <DatePickers
+              {/* <DatePickers
                 label="Day of Birth"
                 name="dob"
                 value={this.state.dob}
                 onChange={this.handleChangeValue.bind(this)}
-              />
+              /> */}
+              <label>Date</label>
+              <input type="date" name="dob" value={this.state.dob}  onChange={this.handleChangeValue.bind(this)}/><br></br>
               <TextField label="University" name="text" name="University" value={this.state.University} onChange={this.handleChangeValue.bind(this)} />
               <div className="text-center mt-1-half">
                 <TextField fullWidth label="Faculty" name="text" name="Faculty" value={this.state.Faculty} onChange={this.handleChangeValue.bind(this)} />
