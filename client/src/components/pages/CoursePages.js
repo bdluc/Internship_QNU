@@ -4,8 +4,10 @@ import {
 } from 'mdbreact';
 // import TextField from '@material-ui/core/TextField';
 import MUIDataTable from "mui-datatables";
-import DatePickers from './sections/DatePickers'
+// import DatePickers from './sections/DatePickers'
 // import Checkbox from './sections/Checkbox';
+// import DatePickers from 'react-date-picker'
+
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
@@ -102,33 +104,58 @@ class CoursePages extends React.Component {
   addCourse = () => {
     this.setState({
       courseName: "",
-      startDate: "",
-      endDate: "",
-      // detail: "",
+      startDate: '',
+      endDate: '',
       mentorID: [],
       title: "ADD NEW COURSE",
       icon: "plus",
       isUpdate: false,
       checkValidate: false
-    });
+    }
+    );
     this.toggleCourse()
   }
 
 
+  handlerUpdateCourse = () => {
+    var moment = require('moment');
+    const std = moment.utc(this.state.startDate).format(); //=> "2013-10-06T00:00:00+00:00"
+    const etd = moment.utc(this.state.endDate).format();
+    let mentorlist = []
 
-  handlerAddCourse = () => {
-    if (this.state.icon === "edit") {
-      fetch("http://localhost:8080/course/" + this.state.id, {
-        method: 'DELETE',
-        mode: 'cors'
-      })
-        .then(this.GetCourseList())
-      this.toggleCourse()
+    this.state.mentorList.forEach(row => {
+        if(row.isChecked){
+          return mentorlist.push(row.ID);
+        }
+    })
+    const data = {
+      "ID" : this.state.id, 
+      "CourseName": this.state.courseName,
+      "StartDate": std,
+      "EndDate": etd,
+      "MentorID": mentorlist,
+      "IsDeleted": false
     }
-    const dts = this.state.startDate.split(/-|\s/)
-    const dte = this.state.endDate.split(/-|\s/)
-    let dates = new Date(dts[2], dts[1], dts[0])
-    let datee = new Date(dte[2], dte[1], dte[0])
+    fetch("http://localhost:8080/course",
+      {
+        method: "PUT",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      .then(this.GetCourseList())
+    this.toggleCourse()
+  }
+  handlerAddCourse = () => {
+    // const dts = this.state.startDate.split(/-|\s/)
+    // const dte = this.state.endDate.split(/-|\s/)
+    // let dates = new Date(dts[2], dts[1], dts[0])
+    // let datee = new Date(dte[2], dte[1], dte[0])
+    var moment = require('moment');
+    const std = moment.utc(this.state.startDate).format(); //=> "2013-10-06T00:00:00+00:00"
+    const etd = moment.utc(this.state.endDate).format();
     let mentorlist = []
 
     this.state.mentorList.forEach(row => {
@@ -138,13 +165,11 @@ class CoursePages extends React.Component {
     })
     const data = {
       "CourseName": this.state.courseName,
-      "StartDate": dates,
-      "EndDate": datee,
-      // "Detail": this.state.detail,
+      "StartDate": std,
+      "EndDate": etd,
       "MentorID": mentorlist,
       "IsDeleted": false
     }
-    console.log(data)
     fetch("http://localhost:8080/course",
       {
         method: "POST",
@@ -246,13 +271,6 @@ class CoursePages extends React.Component {
         display: "excluded"
       }
     },
-    {
-      name: "DETAIL",
-      options: {
-        filter: false,
-        sort: false,
-      }
-    },
   ]
 
 
@@ -296,11 +314,14 @@ class CoursePages extends React.Component {
       },
     },
     onRowClick: (rowData, rowState) => {
+      let std = this.convertDate(rowData[3])
+      let etd = this.convertDate(rowData[4])
+
       this.setState({
         id: rowData[1],
         courseName: rowData[2],
-        startDate: rowData[3],
-        endDate:rowData[4],
+        startDate: std,
+        endDate: etd,
         icon: "edit",
         isUpdate: true,
         checkValidate: true
@@ -308,12 +329,45 @@ class CoursePages extends React.Component {
       this.toggleCourse()
     }
   }
+  convertDate(rowData) {
+    var moment = require('moment')
+    let strDate = ""
+    let strMon = ""
+    let strYea = ""
+      let ye = moment(rowData).get('year');
+      let mo = moment(rowData).get('month') + 1;  // 0 to 11
+      let da = moment(rowData).get('date');
+      if(da < 10)
+        strDate = "0"+da
+      else
+        strDate = ''+da
+      if(mo < 10)
+        strMon = "0"+mo 
+        else 
+        strMon = ''+mo
+      if(ye <1000){
+        strYea = "0" +ye
+        if(ye <100){
+          strYea = "0"+strYea
+          if(ye <10) 
+            strYea = "0"+strYea
+        }
+      }
+      else
+        strYea = ''+ye
+      return  strYea+"-"+strMon+"-"+strDate 
+  }
 
   checkValidate() {
 
     return false;
   }
 
+  onChangeDate = (e) => {
+    const name = e.target.name
+    const value = e.target.value
+        this.setState({ [name] : value })
+  }
   handleChangeValue(e) {
     const { name, value } = e.target;
     e.target.className = "form-control"
@@ -335,53 +389,48 @@ class CoursePages extends React.Component {
           e.target.className += " valid"
         }
         break;
-      case "startDate":
-        this.setState({ startDate: value })
-        e.target.className = "form-control"
-        const age = Math.floor((new Date() - new Date(e.target.startDate.value)) / 1000 / 60 / 60 / 24 / 365.25)
-        if (e.target.startDate.value === "") {
-          this.setState({
-            errorPhone: "Start date can not be blank"
-          })
-          e.target.className += " invalid"
-        } else if (age <0) {
-          this.setState({
-            errorPhone: "Start date must be after current time"
-          })
-          e.target.className += " invalid"
-        } else {
-          e.target.className += " valid"
-        }
-        break;
-      case "endDate":
-      this.setState({ endDate: value})
-      e.target.className="form-control"
-      const ages = Math.floor((new Date(e.target.endDate.value) - new Date(e.target.startDate.value)) / 1000 / 60 / 60 / 24 / 365.25)
-      if(e.target.endDate.value === ""){
-        this.setState({
-          errorEmail:"End date can not be blank"
-        })
-        e.target.className += " invalid"
-      } else if (ages < 0){
-        this.setState({
-          errorEmail: "End date must be after Start date"
-        })
-        e.target.className +=" invalid"
-      } else {
-        e.target.className +=" valid"
-      }
-        break;
+      // case "startDate":
+      //   this.setState({ startDate })
+      //   e.target.className = "form-control"
+      //   const age = Math.floor((new Date() - new Date(e.target.startDate.value)) / 1000 / 60 / 60 / 24 / 365.25)
+      //   if (e.target.startDate.value === "") {
+      //     this.setState({
+      //       errorPhone: "Start date can not be blank"
+      //     })
+      //     e.target.className += " invalid"
+      //   } else if (age <0) {
+      //     this.setState({
+      //       errorPhone: "Start date must be after current time"
+      //     })
+      //     e.target.className += " invalid"
+      //   } else {
+      //     e.target.className += " valid"
+      //   }
+      //   break;
+      // case "endDate":
+      // this.setState({ endDate : value})
+      // e.target.className="form-control"
+      // const ages = Math.floor((new Date(e.target.endDate.value) - new Date(e.target.startDate.value)) / 1000 / 60 / 60 / 24 / 365.25)
+      // if(e.target.endDate.value === ""){
+      //   this.setState({
+      //     errorEmail:"End date can not be blank"
+      //   })
+      //   e.target.className += " invalid"
+      // } else if (ages < 0){
+      //   this.setState({
+      //     errorEmail: "End date must be after Start date"
+      //   })
+      //   e.target.className +=" invalid"
+      // } else {
+      //   e.target.className +=" valid"
+      // }
+      //   break;
       default:
         break;
     }
   }
 
   render() {
-    // const { classes } = this.props;
-    // const { value } = this.state;
-    // const options =    this.state.mentorList.map((value, key) => {
-    //   return (<option key={key} value={value[1]}>{value[1]}</option>)
-    // })
     this.state.courseList.map((value, key) => {
       return (<option key={key} value={value[1]}>{value[1]}</option>)
     })
@@ -421,19 +470,21 @@ class CoursePages extends React.Component {
             <input type="hidden" name="id" value={this.state.id} />
               <MDBInput fullwidth="true" size="" label="Course name" name="courseName" value={this.state.courseName} onChange={this.handleChangeValue.bind(this)} />
               <label>Start Date</label>
-              <DatePickers
-                label="Start Date"
+              <input type="date" className="form-control" name="startDate" value={this.state.startDate} onChange={this.onChangeDate}/>
+              {/* <DatePickers
+                // label="Start Date"
                 name="startDate"
                 value={this.state.startDate}
-                onChange={this.handleChangeValue.bind(this)}
-              />
+                onChange={this.onChangeDate}
+              /> */}
               <label>End Date</label>
-              <DatePickers
+              <input type="date" className="form-control" name="endDate" value={this.state.endDate} onChange={this.onChangeDate}/>
+              {/* <DatePickers
                 label="End Date"
                 name="endDate"
                 value={this.state.endDate}
                 onChange={this.handleChangeValue.bind(this)}
-              />
+              /> */}
               <label>Mentor</label>
               {
                 this.state.mentorList.map((mentor,index) => {
@@ -462,7 +513,7 @@ class CoursePages extends React.Component {
 
                   <MDBBtn
                     className="mb-2 blue darken-2"
-                    onClick={this.handlerAddCourse}>
+                    onClick={this.handlerUpdateCourse}>
                     Update
                   <MDBIcon icon="edit" className="ml-1" />
                   </MDBBtn>

@@ -84,6 +84,7 @@ func CheckLogin(c *gin.Context) {
 	err = database.C(models.CollectionUser).Find(bson.M{"UserName": userTemp.UserName, "IsDeleted": false}).One(&user)
 	if err != nil {
 		c.JSON(http.StatusForbidden, gin.H{
+			"stt":     "1",
 			"message": "Username or Password is not correct!",
 		})
 		return
@@ -91,6 +92,7 @@ func CheckLogin(c *gin.Context) {
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userTemp.Password)); err != nil {
 		c.JSON(http.StatusForbidden, gin.H{
+			"stt":     "2",
 			"message": "Username or Password is not correct!",
 		})
 	} else {
