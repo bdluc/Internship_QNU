@@ -17,7 +17,8 @@ class Login extends Component {
     super(props);
     this.state = {
       username : "",
-      password : ""
+      password : "",
+      showError: false
     }
   }
 
@@ -45,6 +46,11 @@ class Login extends Component {
               if (data.ID !== undefined) {
                 sessionStorage.setItem("user", JSON.stringify(data));
                 this.props.onLogin(data);
+              }
+              else {
+                this.setState({
+                  showError: true
+                });
               }
             });         
   }
@@ -76,7 +82,10 @@ class Login extends Component {
                       onChange = {this.handlePasswordChange.bind(this)}
                     />
                   </div>
-  
+                  {this.state.showError ?
+                <div className="alert alert-danger custom-top">
+                    "Username or Password is not correct!"
+                </div> : null}
                 <div className="text-center mt-4">
                   <MDBBtn
                     color="light-blue"
@@ -90,7 +99,6 @@ class Login extends Component {
                 </form>
                 <MDBModalFooter>
                   <div className="font-weight-light">
-                    <p>Not a member? Sign Up</p>
                     <p>Forgot Password?</p>
                   </div>
                 </MDBModalFooter>
