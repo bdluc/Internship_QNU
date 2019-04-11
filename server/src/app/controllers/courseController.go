@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"fmt"
 )
 
 func ListCourses(c *gin.Context) {
@@ -62,6 +63,7 @@ func CreateCourse(c *gin.Context) {
 	if common.CheckError(c, err) {
 		return
 	}
+	fmt.Println(course.StartDate)
 	err = database.C(models.CollectionCourse).Insert(course)
 	common.CheckError(c, err)
 	c.JSON(http.StatusCreated, nil)
