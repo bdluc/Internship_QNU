@@ -54,15 +54,25 @@ func UpdateMentor(c *gin.Context) {
 	if common.CheckError(c, err) {
 		return
 	}
+	mentor.ID = bson.ObjectIdHex(c.Param("id"))
 
-	err = database.C(models.CollectionMentor).UpdateId(bson.ObjectIdHex(c.Param("id")), mentor)
+	err = database.C(models.CollectionMentor).UpdateId(mentor.ID, mentor)
 	if common.CheckError(c, err) {
 		return
 	}
 
-	// CreateMentor(c)
-	// DeleteMentor(c)
-
+	// Update User
+	user := models.User{}
+	err = database.C(models.CollectionUser).FindId(mentor.ID).One(&user)
+	if common.CheckError(c, err) {
+		return
+	}
+	user.UserName = mentor.Email
+	user.ID = mentor.ID
+	err = database.C(models.CollectionUser).UpdateId(mentor.ID, user)
+	if common.CheckError(c, err) {
+		return
+	}
 	c.JSON(http.StatusOK, nil)
 }
 
