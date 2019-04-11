@@ -122,11 +122,11 @@ class InternPage extends React.Component {
   }
 
   handlerAddIntern = () => {
-    // var moment = require('moment');
+    var moment = require('moment');
     
-    // const date = moment.utc(this.state.dob).format();
-    const dt = this.state.dob.split(/-|\s/)
-    let date = new Date(dt[2], dt[1], dt[0])
+    const date = moment.utc(this.state.dob).format();
+    // const dt = this.state.dob.split(/-|\s/)
+    // let date = new Date(dt[2], dt[1], dt[0])
     const data = {
       "Name": this.state.name,
       "PhoneNumber": this.state.phone,
@@ -370,13 +370,15 @@ class InternPage extends React.Component {
       },
     },
     onRowClick: (rowData, rowState) => {
+      let std = this.convertDate(rowData[6])
       this.setState({
+
         id: rowData[1],
         name: rowData[2],
         phone: rowData[3],
         email: rowData[4],
         gender: rowData[5],
-        dob: rowData[6],
+        dob: std,
         University: rowData[7],
         Faculty: rowData[8],
         course: rowData[9],
@@ -388,6 +390,34 @@ class InternPage extends React.Component {
     }
   }
 
+  convertDate(rowData) {
+    var moment = require('moment')
+    let strDate = ""
+    let strMon = ""
+    let strYea = ""
+      let ye = moment(rowData).get('year');
+      let mo = moment(rowData).get('month') + 1;  // 0 to 11
+      let da = moment(rowData).get('date');
+      if(da < 10)
+        strDate = "0"+da
+      else
+        strDate = ''+da
+      if(mo < 10)
+        strMon = "0"+mo 
+        else 
+        strMon = ''+mo
+      if(ye <1000){
+        strYea = "0" +ye
+        if(ye <100){
+          strYea = "0"+strYea
+          if(ye <10) 
+            strYea = "0"+strYea
+        }
+      }
+      else
+        strYea = ''+ye
+      return  strYea+"-"+strMon+"-"+strDate 
+  }
   checkValidate() {
 
     return false;
@@ -527,14 +557,16 @@ class InternPage extends React.Component {
                 {this.state.courseList.map(function (course, index) {
                   return <option key={index} value={course.ID}>{course.Name}</option>;
                 })}
-              </select>
+              </select><br/>
 
-              <DatePickers
+              {/* <DatePickers
                 label="Day of Birth"
                 name="dob"
                 value={this.state.dob}
                 onChange={this.handleChangeValue.bind(this)}
-              />
+              /> */}
+              <label>Date</label>
+              <input type="date" name="dob" value={this.state.dob}  onChange={this.handleChangeValue.bind(this)}/><br></br>
               <TextField label="University" name="text" name="University" value={this.state.University} onChange={this.handleChangeValue.bind(this)} />
               <div className="text-center mt-1-half">
                 <TextField fullWidth label="Faculty" name="text" name="Faculty" value={this.state.Faculty} onChange={this.handleChangeValue.bind(this)} />
