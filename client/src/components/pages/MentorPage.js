@@ -102,6 +102,13 @@ class MentorPage extends React.Component {
       isUpdate: false,
       checkValidate: false,
       btnMode: 'off',
+      doneName: false,
+      donePhone: false,
+      doneGender: false,
+      doneEmail: false,
+      doneDepartment: false,
+      doneDOB: false,
+      
 
     });
     // const dateInForm =
@@ -309,6 +316,7 @@ class MentorPage extends React.Component {
         isUpdate: true,
         checkValidate: true,
         btnMode: 'off',
+        
 
       });
 
@@ -378,6 +386,9 @@ class MentorPage extends React.Component {
           })
           e.target.className += " invalid"
         } else {
+          this.setState({
+            doneName: true,
+            })
           e.target.className += " valid"
         }
         break;
@@ -399,6 +410,9 @@ class MentorPage extends React.Component {
           })
           e.target.className += " invalid"
         } else {
+          this.setState({
+            donePhone: true,
+            })
           e.target.className += " valid"
         }
         break;
@@ -420,6 +434,9 @@ class MentorPage extends React.Component {
           })
           e.target.className += " invalid"
         } else {
+          this.setState({
+            doneEmail: true,
+            })
           e.target.className += " valid"
         }
         // console.log(this.state.dob)
@@ -427,55 +444,62 @@ class MentorPage extends React.Component {
         break;
       case "gender":
         this.setState({ gender: value })
-        this.setState({
-          btnMode: 'off',
-        })
+        if (value.trim().length > 0) {
+          this.setState({
+            doneGender: true,            
+          })
+        }
         // console.log(this.state.dob)
 
         break;
       case "dob":
         this.setState({ dob: value })
-        if (value.trim().length === 0) {
+        if (value.trim().length > 0) {
           this.setState({
-            btnMode: 'off',
+            doneDOB: true,            
           })
-          e.target.className += " invalid"
         }
-        console.log(this.state.dob)
-
         break;
       case "mentor":
         this.setState({ mentor: value })
-        if (value.trim().length === 0) {
+        if (value.trim().length > 0) {
           this.setState({
-            btnMode: 'off',
+            doneMentor: true,            
           })
-          e.target.className += " invalid"
+          e.target.className += " valid"
         }
         break;
       case "department":
         this.setState({ department: value })
-        if (value.trim().length === 0) {
+        if (value.trim().length > 0) {
           this.setState({
-            btnMode: 'off',
+            doneDepartment: true,            
           })
-          e.target.className += " invalid"
+          e.target.className += " valid"
         }
-        else
-          this.setState({
-            btnMode: 'on'
-          })
         break;
       default:
         break;
     }
-
-    // if(this.state.errorName+this.state.errorPhone.this.state.errorEmail === "")
-    // {
-    //   this.setState({
-    //     btnMode: "on"
-    //   })
-    // }
+    /*
+    doneName
+    donePhone
+    doneGender
+    doneEmail
+    doneDepartment
+    doneDOB
+    */
+    if(this.state.doneName ===  true && 
+      this.state.donePhone ===  true && 
+      this.state.doneGender ===  true && 
+      this.state.doneEmail ===  true && 
+      this.state.doneDepartment ===  true && 
+      this.state.doneDOB ===  true )
+    {
+      this.setState({
+        btnMode: "on"
+      })
+    }
   }
 
 
