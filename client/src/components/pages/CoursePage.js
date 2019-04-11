@@ -13,7 +13,9 @@ class CoursePage extends React.Component {
       endDateCourse: "",
       detailList: [],
       mentorList: [],
-      mentorNameList:[]
+      mentorNameList:[],
+      user : JSON.parse(sessionStorage.getItem('user')),
+      isIntern : false
     };
     
   }
@@ -213,24 +215,27 @@ class CoursePage extends React.Component {
       },
     },
     // Handle when click on row in table data
+    
     onRowClick: (rowData, rowState) => {
-      this.setState({
-        cnt: rowData[0],
-        trainingOutline : rowData[1],
-        content : rowData[2],
-        durationPlan : rowData[3],
-        durationActual : rowData[4],
-        objectives : rowData[5],
-        trainingMethod : rowData[6],
-        startDate : rowData[7],
-        endDate : rowData[8],
-        progress : rowData[9],
-        note : rowData[10],
-        title : "EDIT INFORMATION",
-        icon : "edit",
-        isUpdate : true
-      });
-      this.toggle()
+        this.setState({
+          cnt: rowData[0],
+          trainingOutline : rowData[1],
+          content : rowData[2],
+          durationPlan : rowData[3],
+          durationActual : rowData[4],
+          objectives : rowData[5],
+          trainingMethod : rowData[6],
+          startDate : rowData[7],
+          endDate : rowData[8],
+          progress : rowData[9],
+          note : rowData[10],
+          title : "EDIT INFORMATION",
+          icon : "edit",
+          isUpdate : true,
+        });
+      if (this.state.isIntern === false){
+        this.toggle()
+      }
     }
   }
   componentDidMount() {
@@ -239,6 +244,7 @@ class CoursePage extends React.Component {
   }
   componentWillMount(){
     this.handlerListMentor()
+    this.checkRole()
   }
   handlerListMentor() {
     fetch('http://localhost:8080/mentors')
@@ -352,6 +358,13 @@ class CoursePage extends React.Component {
     this.toggle()
   }
 
+  checkRole() {
+    if( this.state.user.Role === 1) {
+      this.setState ({
+        isIntern : true
+      })
+    }
+  }
 
   render(){
     return (
@@ -363,12 +376,15 @@ class CoursePage extends React.Component {
             <h3 className="h3 text-white"><strong>Schedule Training</strong></h3>
           </View>
           <CardBody>
-          <MDBBtn
-                  className="mb-3 blue darken-2"
-                  onClick={this.addDetailCourse}>
-                  Add
-                      </MDBBtn>
-
+            {
+              this.state.isIntern === false &&
+                 <MDBBtn
+                 className="mb-3 blue darken-2"
+                 onClick={this.addDetailCourse}>
+                 Add
+                     </MDBBtn>
+            }
+         
                 <hr></hr>
             <h4 className="mt-2 text-center">Course Name: {this.state.courseName}</h4>      
             <h5 className="text-center">From: {this.state.startDateCourse} To: {this.state.endDateCourse}</h5>  
