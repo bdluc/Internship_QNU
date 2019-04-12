@@ -13,7 +13,6 @@ class App extends Component {
       user : JSON.parse(sessionStorage.getItem('user')),
       dataLogin : ""
     };
-    console.log(this.state.user);
     }
 
   onLogin (value) {
@@ -22,7 +21,7 @@ class App extends Component {
         user : value
       });
       var user = this.state.user;
-      console.log( user.ID);
+      console.log(user);
       if (user.Role === 1){
         fetch('http://localhost:8080/attendance',
             {
@@ -56,7 +55,7 @@ class App extends Component {
     } else {
       return (
         <div className="flexible-content">
-          <TopNavigation onLogout = {this.onLogout.bind(this)}/>
+          <TopNavigation onLogout = {this.onLogout.bind(this)} name = {this.state.user.UserName}/>
           <SideNavigation />
           <div>
           <main id="content" className="p-5">
