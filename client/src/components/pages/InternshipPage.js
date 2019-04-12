@@ -3,6 +3,8 @@ import React from 'react'
 import {
   Row, Col, Card, CardBody, MDBIcon, MDBModalBody, MDBInput, MDBBtn, MDBModal,
 } from 'mdbreact';
+import ReactNotification from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 import TextField from '@material-ui/core/TextField';
 import MUIDataTable from "mui-datatables";
 import DatePickers from './sections/DatePickers'
@@ -50,6 +52,8 @@ class InternPage extends React.Component {
 
   constructor() {
     super();
+    this.addNotification = this.addNotification.bind(this);
+    this.notificationDOMRef = React.createRef();
     this.state = {
       modal: false,
       data: [],
@@ -60,6 +64,63 @@ class InternPage extends React.Component {
       checkValidate: true,
       courseName: ''
     };
+  }
+  addNotification(kind) {
+    switch(kind) {
+      case "successAdd" : 
+      this.notificationDOMRef.current.addNotification({
+        title: "Success",
+        message: "Add course successfully !",
+        type: "success", //success, danger, default, info, warning or custom
+        message : "This is a success message!",
+        insert: "top",
+        container: "top-right",
+        animationIn: ["animated", "fadeIn"],
+        animationOut: ["animated", "fadeOut"],
+        dismiss: { duration: 2000 },
+        dismissable: { click: true }
+      });
+      break;
+      case "errorAdd" :
+      this.notificationDOMRef.current.addNotification({
+        title: "Error",
+        message: "Add course fail",
+        type: "danger",
+        insert: "top",
+        container: "top-right",
+        animationIn: ["animated", "fadeIn"],
+        animationOut: ["animated", "fadeOut"],
+        dismiss: { duration: 2000 },
+        dismissable: { click: true }
+      });
+      break;
+      case "successUpdate" : 
+      this.notificationDOMRef.current.addNotification({
+        title: "Success",
+        message: "Update course successfully !",
+        type: "success", //success, danger, default, info, warning or custom
+        insert: "top",
+        container: "top-right",
+        animationIn: ["animated", "fadeIn"],
+        animationOut: ["animated", "fadeOut"],
+        dismiss: { duration: 2000 },
+        dismissable: { click: true }
+      });
+      break;
+      case "successDelete" : 
+      this.notificationDOMRef.current.addNotification({
+        title: "Success",
+        message: "Delete course successfully !",
+        type: "success", //success, danger, default, info, warning or custom
+        insert: "top",
+        container: "top-right",
+        animationIn: ["animated", "fadeIn"],
+        animationOut: ["animated", "fadeOut"],
+        dismiss: { duration: 2000 },
+        dismissable: { click: true }
+      });
+      break;
+    }
   }
 
   GetInternList() {
@@ -122,9 +183,9 @@ class InternPage extends React.Component {
   }
 
   handlerAddIntern = () => {
-    if (confirm("You definitely want to add intern ?")) { //eslint-disable-line
+    // if (confirm("You definitely want to add intern?")) { //eslint-disable-line
 
-    }
+    // }
     var moment = require('moment');
 
     const date = moment.utc(this.state.dob).format();
@@ -153,8 +214,8 @@ class InternPage extends React.Component {
       })
       .then(this.GetInternList())
     this.toggleIntern()
-
-    window.location.reload();
+    this.addNotification("successAdd")
+    // window.location.reload();
   }
 
 
@@ -174,10 +235,10 @@ class InternPage extends React.Component {
   }
 
   handlerDeleteIntern = () => {
-    if (confirm("You definitely want to delete ?")) { //eslint-disable-line
+    if (confirm("bạn chắc chắn muốn xóa ?")) { //eslint-disable-line
 
     }
-    fetch('http://localhost:8080/intern/${id}', {
+    fetch("http://localhost:8080/intern/" + this.state.id, {
       method: 'DELETE',
       mode: 'cors',
     })
@@ -220,6 +281,8 @@ class InternPage extends React.Component {
       .then(this.GetInternList())
     this.toggleIntern()
     console.log(this.state.id)
+
+    this.addNotification("successUpdate")
 
     window.location.reload();
   }
@@ -492,6 +555,9 @@ class InternPage extends React.Component {
           <Col md="12">
             <Card className="mt-5">
               <CardBody>
+              <div className="app-content">
+                <ReactNotification ref={this.notificationDOMRef} />
+              </div>
                 <MDBBtn
                   className="mb-3 blue darken-2"
                   onClick={this.addIntern}>

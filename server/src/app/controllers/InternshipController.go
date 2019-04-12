@@ -51,27 +51,29 @@ func UpdateIntern(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
 
 	intern := models.Intern{}
-	fmt.Println(intern)
 	buf, _ := c.GetRawData()
 	err := json.Unmarshal(buf, &intern)
 	if common.CheckError(c, err) {
 		return
 	}
+	intern.ID = bson.ObjectIdHex(c.Param("id"))
+	fmt.Println(intern)
 
-	err = database.C(models.CollectionIntern).UpdateId(bson.ObjectIdHex(c.Param("id")), intern)
+	err = database.C(models.CollectionIntern).UpdateId(intern.ID, intern)
 	if common.CheckError(c, err) {
 		return
 	}
 
 	// update User
-	hash, _ := bcrypt.GenerateFromPassword([]byte(common.DefaultPassword), bcrypt.DefaultCost)
 	user := models.User{}
+	err = database.C(models.CollectionUser).FindId(intern.ID).One(&user)
+	if common.CheckError(c, err) {
+		return
+	}
 	user.UserName = intern.Email
-	user.Password = string(hash)
-	user.Role = 1
 	user.ID = intern.ID
-	fmt.Println(user)
-	err = database.C(models.CollectionUser).UpdateId(bson.ObjectIdHex(c.Param("id")), user)
+	// fmt.Println(user)
+	err = database.C(models.CollectionUser).UpdateId(intern.ID, user)
 	if common.CheckError(c, err) {
 		return
 	}
