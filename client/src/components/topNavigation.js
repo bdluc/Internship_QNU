@@ -12,17 +12,11 @@ class TopNavigation extends Component {
         super(props);
         this.state = {
             collapse: false,
-            info : null
+            info : props.user
         };
     this.onClick = this.onClick.bind(this);
     this.toggle = this.toggle.bind(this);
-    this.getInfo()
 }
-
-    getInfo(){
-
-    }
-
     logOut(event){
         this.props.onLogout();
     }
@@ -64,7 +58,7 @@ class TopNavigation extends Component {
                     </NavLink> */}
                     <MDBDropdown>
                         <MDBDropdownToggle caret color="info">
-                            Bách
+                            {this.props.name}
                         </MDBDropdownToggle>
                         <MDBDropdownMenu color="info" basic>
                             <MDBDropdownItem>Infor</MDBDropdownItem>
