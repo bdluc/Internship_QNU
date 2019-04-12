@@ -13,11 +13,13 @@ class AttendancePage extends React.Component {
         this.state = {
             role: JSON.parse(sessionStorage.getItem('user')).Role
         };
+        console.log("OK")
   }
 
   render() {
     if(this.state.role === 1)
         return (
+            
             <InternAttendance></InternAttendance>
             
         );

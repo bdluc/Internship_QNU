@@ -164,10 +164,10 @@ func GetAttendancesBySupervisor(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
-func getDailyAttendancesByInternID(c *gin.Context, idTrainee bson.ObjectId, date time.Time) []models.Attendance {
+func getDailyAttendancesByInternID(c *gin.Context, idTrainee bson.ObjectId, date1 time.Time, date2 time.Time) []models.Attendance {
 	database := c.MustGet("db").(*mgo.Database)
 	atten := []models.Attendance{}
-	err := database.C(models.CollectionAttendance).Find(bson.M{"InternID": idTrainee, "IsDeleted": false, "Date": date}).All(&atten)
+	err := database.C(models.CollectionAttendance).Find(bson.M{"InternID": idTrainee, "IsDeleted": false, "$or": []bson.M{{"Date": date1}, {"Date": date2}}}).All(&atten)
 	if err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusNotFound, gin.H{
@@ -179,7 +179,7 @@ func getDailyAttendancesByInternID(c *gin.Context, idTrainee bson.ObjectId, date
 	return atten
 }
 
-func getDailyAttendancesByMentorId(c *gin.Context, idMentor bson.ObjectId, date time.Time) []Attendance {
+func getDailyAttendancesByMentorId(c *gin.Context, idMentor bson.ObjectId, date1 time.Time, date2 time.Time) []Attendance {
 	database := c.MustGet("db").(*mgo.Database)
 
 	courses := []models.Course{}
@@ -187,45 +187,55 @@ func getDailyAttendancesByMentorId(c *gin.Context, idMentor bson.ObjectId, date 
 	if common.IsError(c, err, "Could not get courses") {
 		return nil
 	}
-
-	courseTrainee := make(map[string][]models.Intern)
+	//courseTrainee := []models.Intern
+	resp := []Attendance{}
 	for _, course := range courses {
 		interns := []models.Intern{}
 		err = database.C(models.CollectionIntern).Find(bson.M{"CourseID": course.ID, "IsDeleted": false}).All(&interns)
 		if common.IsError(c, err, "Could not get trainees") {
 			return nil
 		}
-		courseTrainee[course.CourseName] = interns
-	}
-
-	resp := []Attendance{}
-
-	for course, trainees := range courseTrainee {
-		for _, trainee := range trainees {
-			atten := getDailyAttendancesByInternID(c, trainee.ID, date)
-			data := Attendance{Id: trainee.ID.Hex(), Name: trainee.Name, Course: course, Attendances: atten}
-			resp = append(resp, data)
+		for _, intern := range interns {
+			resp = append(resp, Attendance{
+				Id:          intern.ID.Hex(),
+				Name:        intern.Name,
+				Course:      course.CourseName,
+				StartDate:   course.StartDate,
+				EndDate:     course.EndDate,
+				Attendances: []models.Attendance{},
+			})
 		}
+
+	}
+	for i, trainee := range resp {
+		attens := getDailyAttendancesByInternID(c, bson.ObjectIdHex(trainee.Id), date1, date2)
+		resp[i].Attendances = attens
 	}
 	return resp
 }
 
-func getCurentDate(currentTime time.Time) time.Time {
-	return time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 0, 0, 0, 0, time.Local)
+func getCurentDate(currentTime time.Time, date1 *time.Time, date2 *time.Time) {
+	*date1 = time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 1, 0, 0, 0, time.Local)
+	*date2 = time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 2, 0, 0, 0, time.Local)
 }
 
 func GetDailyAttendanceByMentor(c *gin.Context) {
 	currentTime := time.Now()
-	daily := getCurentDate(currentTime)
+	date1 := time.Time{}
+	date2 := time.Time{}
+	getCurentDate(currentTime, &date1, &date2)
+	fmt.Print(date1)
 	idMentor := bson.ObjectIdHex(c.Param("id"))
-	resp := getDailyAttendancesByMentorId(c, idMentor, daily)
+	resp := getDailyAttendancesByMentorId(c, idMentor, date1, date2)
 	c.JSON(http.StatusOK, resp)
 }
 
 func GetDailyAttendanceBySupervisor(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
 	currentTime := time.Now()
-	daily := getCurentDate(currentTime)
+	date1 := time.Time{}
+	date2 := time.Time{}
+	getCurentDate(currentTime, &date1, &date2)
 
 	idSupervisor := bson.ObjectIdHex(c.Param("id"))
 	mentors := []models.Mentor{}
@@ -237,7 +247,7 @@ func GetDailyAttendanceBySupervisor(c *gin.Context) {
 	resp := []AttendanceSupervisor{}
 	for _, mentor := range mentors {
 		temp := AttendanceSupervisor{}
-		temp.AttendancesByMentor = getDailyAttendancesByMentorId(c, mentor.ID, daily)
+		temp.AttendancesByMentor = getDailyAttendancesByMentorId(c, mentor.ID, date1, date2)
 		temp.Name = mentor.Name
 		resp = append(resp, temp)
 	}

@@ -38,7 +38,7 @@ func setupRouter() *gin.Engine {
 	r.Use(cors())
 
 	//User
-	r.PUT("/user", controllers.CreateUser)
+	r.PUT("/user", controllers.UpdateUser)
 	r.GET("/users", controllers.ListUsers)
 	r.POST("/user", controllers.CreateUser)
 	r.PUT("/login", controllers.CheckLogin)

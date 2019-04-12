@@ -49,9 +49,7 @@ class DailyRow extends React.Component {
     }
 
     onCellEnter() {
-        if (this.state.iconClass !== "") {
             this.setState({showEdit: true});
-        }
         
     }
 

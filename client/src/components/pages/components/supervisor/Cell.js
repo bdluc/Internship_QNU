@@ -45,7 +45,8 @@ class Cell extends React.Component {
     }
 
     onCellEnter() {
-        if (this.state.iconClass !== "") {
+        var date = new Date().getDate()
+        if (this.state.iconClass !== "" || this.state.date == date ) {
             this.setState({showEdit: true});
         }
         
