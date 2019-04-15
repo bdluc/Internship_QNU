@@ -62,64 +62,65 @@ class InternPage extends React.Component {
       courseList: [],
       isUpdate: false,
       checkValidate: true,
-      courseName: ''
+      CourseName: ''
     };
   }
+
   addNotification(kind) {
-    switch(kind) {
-      case "successAdd" : 
-      this.notificationDOMRef.current.addNotification({
-        title: "Success",
-        message: "Add course successfully !",
-        type: "success", //success, danger, default, info, warning or custom
-        message : "This is a success message!",
-        insert: "top",
-        container: "top-right",
-        animationIn: ["animated", "fadeIn"],
-        animationOut: ["animated", "fadeOut"],
-        dismiss: { duration: 2000 },
-        dismissable: { click: true }
-      });
-      break;
-      case "errorAdd" :
-      this.notificationDOMRef.current.addNotification({
-        title: "Error",
-        message: "Add course fail",
-        type: "danger",
-        insert: "top",
-        container: "top-right",
-        animationIn: ["animated", "fadeIn"],
-        animationOut: ["animated", "fadeOut"],
-        dismiss: { duration: 2000 },
-        dismissable: { click: true }
-      });
-      break;
-      case "successUpdate" : 
-      this.notificationDOMRef.current.addNotification({
-        title: "Success",
-        message: "Update course successfully !",
-        type: "success", //success, danger, default, info, warning or custom
-        insert: "top",
-        container: "top-right",
-        animationIn: ["animated", "fadeIn"],
-        animationOut: ["animated", "fadeOut"],
-        dismiss: { duration: 2000 },
-        dismissable: { click: true }
-      });
-      break;
-      case "successDelete" : 
-      this.notificationDOMRef.current.addNotification({
-        title: "Success",
-        message: "Delete course successfully !",
-        type: "success", //success, danger, default, info, warning or custom
-        insert: "top",
-        container: "top-right",
-        animationIn: ["animated", "fadeIn"],
-        animationOut: ["animated", "fadeOut"],
-        dismiss: { duration: 2000 },
-        dismissable: { click: true }
-      });
-      break;
+    switch (kind) {
+      case "successAdd":
+        this.notificationDOMRef.current.addNotification({
+          title: "Success",
+          message: "Add course successfully !",
+          type: "success", //success, danger, default, info, warning or custom
+          message: "This is a success message!",
+          insert: "top",
+          container: "top-right",
+          animationIn: ["animated", "fadeIn"],
+          animationOut: ["animated", "fadeOut"],
+          dismiss: { duration: 2000 },
+          dismissable: { click: true }
+        });
+        break;
+      case "errorAdd":
+        this.notificationDOMRef.current.addNotification({
+          title: "Error",
+          message: "Add course fail",
+          type: "danger",
+          insert: "top",
+          container: "top-right",
+          animationIn: ["animated", "fadeIn"],
+          animationOut: ["animated", "fadeOut"],
+          dismiss: { duration: 2000 },
+          dismissable: { click: true }
+        });
+        break;
+      case "successUpdate":
+        this.notificationDOMRef.current.addNotification({
+          title: "Success",
+          message: "Update course successfully !",
+          type: "success", //success, danger, default, info, warning or custom
+          insert: "top",
+          container: "top-right",
+          animationIn: ["animated", "fadeIn"],
+          animationOut: ["animated", "fadeOut"],
+          dismiss: { duration: 2000 },
+          dismissable: { click: true }
+        });
+        break;
+      case "successDelete":
+        this.notificationDOMRef.current.addNotification({
+          title: "Success",
+          message: "Delete course successfully !",
+          type: "success", //success, danger, default, info, warning or custom
+          insert: "top",
+          container: "top-right",
+          animationIn: ["animated", "fadeIn"],
+          animationOut: ["animated", "fadeOut"],
+          dismiss: { duration: 2000 },
+          dismissable: { click: true }
+        });
+        break;
     }
   }
 
@@ -171,7 +172,7 @@ class InternPage extends React.Component {
       phone: "",
       email: "",
       gender: "",
-      courseName: "",
+      CourseName: "",
       dob: "",
       University: "",
       Faculty: "",
@@ -189,8 +190,7 @@ class InternPage extends React.Component {
     var moment = require('moment');
 
     const date = moment.utc(this.state.dob).format();
-    // const dt = this.state.dob.split(/-|\s/)
-    // let date = new Date(dt[2], dt[1], dt[0])
+
     const data = {
       "Name": this.state.name,
       "PhoneNumber": this.state.phone,
@@ -215,7 +215,7 @@ class InternPage extends React.Component {
       .then(this.GetInternList())
     this.toggleIntern()
     this.addNotification("successAdd")
-    // window.location.reload();
+    window.location.reload();
   }
 
 
@@ -270,6 +270,7 @@ class InternPage extends React.Component {
       "CourseID": this.state.course,
       "IsDeleted": false
     }
+    console.log(data)
     fetch("http://localhost:8080/internu/" + this.state.id, {
       method: 'PUT',
       mode: 'cors',
@@ -284,7 +285,7 @@ class InternPage extends React.Component {
 
     this.addNotification("successUpdate")
 
-    window.location.reload();
+    // window.location.reload();
   }
 
 
@@ -420,6 +421,7 @@ class InternPage extends React.Component {
         checkValidate: true
       });
       this.toggleIntern()
+      // console.log(this.state.course)
     }
   }
 
@@ -555,9 +557,9 @@ class InternPage extends React.Component {
           <Col md="12">
             <Card className="mt-5">
               <CardBody>
-              <div className="app-content">
-                <ReactNotification ref={this.notificationDOMRef} />
-              </div>
+                <div className="app-content">
+                  <ReactNotification ref={this.notificationDOMRef} />
+                </div>
                 <MDBBtn
                   className="mb-3 blue darken-2"
                   onClick={this.addIntern}>
@@ -583,67 +585,93 @@ class InternPage extends React.Component {
             size="md"
             cascading>
 
-            <MDBModalBody>
+            <MDBModalBody >
               <MDBInput fullwidth="true" size="" label="Name" name="name" value={this.state.name} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput fullwidth="true" label="Phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput fullwidth="true" label="Email" iconClass="dark-grey" name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
               {/* <MDBInput label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)} /> */}
-              <Select fullWidth label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)}>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </Select><br />
-              <label>Course</label>
+              <FormControl fullWidth>
+                <InputLabel htmlFor="select-multiple">Gender</InputLabel>
+                <Select fullWidth label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)}>
+                  <MenuItem value="Male">Male</MenuItem>
+                  <MenuItem value="Female">Female</MenuItem>
+                </Select>
+
+              </FormControl ><br />
+              <FormControl fullWidth>
+
+                <InputLabel htmlFor="select-multiple">Course</InputLabel>
+                <Select fullWidth label="Course" name="course" value={this.state.course} onChange={this.handleChangeValue.bind(this)}>
+                  {this.state.courseList.map(function (course, index) {
+                    return <MenuItem key={index} value={course.Name}>{course.Name}</MenuItem>;
+                  })}
+                </Select>
+              </FormControl>
+
+              {/* <label>Course</label>
               <select className="browser-default custom-select custom-dropdown custom-margin" onChange={this.handleChangeValue.bind(this)} name="course" size="lg">
                 {this.state.courseList.map(function (course, index) {
                   return <option key={index} value={course.ID}>{course.Name}</option>;
                 })}
-              </select><br />
+              </select><br /> */}
 
-              <label>Date</label>
-              <input type="date" name="dob" size="lg" value={this.state.dob} onChange={this.handleChangeValue.bind(this)} /><br></br>
-              <TextField label="University" name="text" name="University" value={this.state.University} onChange={this.handleChangeValue.bind(this)} />
+              <MDBInput
+                label="Dob" name="dob" id="date" type="date"
+                value={this.state.dob}
+                onChange={this.handleChangeValue.bind(this)}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+
+              {/* <label>Date</label>
+              <input type="date" name="dob" size="lg" value={this.state.dob} onChange={this.handleChangeValue.bind(this)} /><br></br> */}
+
+              <TextField fullWidth label="University" name="text" name="University" value={this.state.University} onChange={this.handleChangeValue.bind(this)} />
               <div className="text-center mt-1-half">
-                <TextField fullWidth label="Faculty" name="text" name="Faculty" value={this.state.Faculty} onChange={this.handleChangeValue.bind(this)} />
-                <div className="text-center mt-1-half">
-                  {
-                    this.state.isUpdate === false &&
-                    <MDBBtn
-                      className="mb-2 blue darken-2"
-                      onClick={this.handlerAddIntern}
-                    >
-                      Create
+                {/* <TextField fullWidth="true" lable="University" name="text" name="University" value={this.state.University} onChange={this.handleChangeValue.bind(this)} />
+                <div className="text-center mt-1-half"> */}
+                  <TextField fullWidth label="Faculty" name="text" name="Faculty" value={this.state.Faculty} onChange={this.handleChangeValue.bind(this)} />
+                  <div className="text-center mt-1-half">
+                    {
+                      this.state.isUpdate === false &&
+                      <MDBBtn
+                        className="mb-2 blue darken-2"
+                        onClick={this.handlerAddIntern}
+                      >
+                        Create
                   <MDBIcon icon="send" className="ml-1" />
-                    </MDBBtn>
-                  }
-                  {
-                    this.state.isUpdate &&
+                      </MDBBtn>
+                    }
+                    {
+                      this.state.isUpdate &&
 
 
-                    <MDBBtn
-                      className="mb-2 blue darken-2"
-                      onClick={this.handlerEditIntern}>
-                      Update
+                      <MDBBtn
+                        className="mb-2 blue darken-2"
+                        onClick={this.handlerEditIntern}>
+                        Update
                   <MDBIcon icon="edit" className="ml-1" />
-                    </MDBBtn>
-                  }
-                  {
-                    this.state.isUpdate &&
+                      </MDBBtn>
+                    }
+                    {
+                      this.state.isUpdate &&
 
 
-                    <MDBBtn
-                      className="mb-2 blue darken-2"
-                      onClick={this.handlerDeleteIntern}>
-                      Delete
+                      <MDBBtn
+                        className="mb-2 blue darken-2"
+                        onClick={this.handlerDeleteIntern}>
+                        Delete
                   <MDBIcon icon="trash" className="ml-1" />
-                    </MDBBtn>
-                  }
+                      </MDBBtn>
+                    }
+                  </div>
                 </div>
-              </div>
             </MDBModalBody>
           </MDBModal>
         </Row>
       </React.Fragment>
-    )
-  }
-}
+        )
+      }
+    }
 export default withStyles(styles)(InternPage);
