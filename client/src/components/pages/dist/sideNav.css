@@ -1,0 +1,29 @@
+.container {
+    display: grid;
+    grid-template-columns: 0.30fr 0.70fr;
+    grid-template-rows: auto;
+    grid-template-areas: "header header" "sidebar main";
+  }
+  
+  .mobileview {
+    grid-template-columns: 0fr 1fr;
+  }
+  
+  .mobileview.sidebar {
+    float: left;
+  }
+  
+  .header {
+    grid-area: header;
+    background-color: yellow;
+  }
+  
+  .sidebar {
+    grid-area: sidebar;
+    background-color: lightblue;
+  }
+  
+  .main {
+    grid-area: main;
+    background-color: green;
+  }

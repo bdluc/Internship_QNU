@@ -354,6 +354,7 @@ class MentorPageForSup extends React.Component {
   optionsMentor = {
     filterType: "dropdown",
     responsive: "scroll",
+    rowsPerPage: 5,
     download: false,
     print: false,
     selectableRows: false,
@@ -598,8 +599,7 @@ class MentorPageForSup extends React.Component {
       <React.Fragment>
         <Row>
           <Col md="12">
-            <Card className="mt-5">
-
+            <Card>
               <CardBody>
                 <MDBBtn
                   className="mb-3 blue darken-2"
