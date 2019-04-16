@@ -9,7 +9,7 @@ import (
 	"../models"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
-	"gopkg.in/mgo.v2"
+	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -98,4 +98,16 @@ func CheckLogin(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, user)
 	}
+}
+
+func CheckUserExit(c *gin.Context) {
+	database := c.MustGet("db").(*mgo.Database)
+	user := models.User{}
+	err := database.C(models.CollectionUser).Find(bson.M{"UserName": (c.Param("Email"))}).One(&user)
+	if common.CheckNotFound(c, err) {
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Exits",
+	})
 }
