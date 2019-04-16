@@ -3,6 +3,11 @@ import React from 'react'
 import { Row, Col, View, Card, CardBody, MDBIcon, MDBBtn ,MDBModal, MDBModalHeader,
   MDBModalBody,MDBInput } from 'mdbreact';
 import MUIDataTable from "mui-datatables"; 
+import {
+  createBrowserHistory,
+  createHashHistory,
+  createMemoryHistory
+} from 'history';
 
 class CoursePage extends React.Component {
   constructor(){
@@ -22,28 +27,37 @@ class CoursePage extends React.Component {
 
   // Get data of course from DB
   GetCourse(id){
+    const history = createBrowserHistory();
     const DATE_OPTIONS = { year: 'numeric', month: 'numeric', day: 'numeric' };
     fetch('http://localhost:8080/course/'+id)
-      .then(response => response.json())
-        .then(result => {
-          let DetailSchedule = []
-          let cnt = 0
-          result.Detail.map(row => {
-            DetailSchedule.push([cnt, row.TrainingOutline, row.Content, row.DurationPlan, row.DurationActual, row.Objectives, row.TrainingMethod,
-            (new Date(row.StartDate)).toLocaleDateString('en-US', DATE_OPTIONS), (new Date(row.EndDate)).toLocaleDateString('en-US', DATE_OPTIONS),
-            row.Progress, row.Note])
-            cnt++
-            return DetailSchedule
+      .then(response =>  {
+        console.log(id)
+        if(!response.ok){
+          history.push({ pathname: '/404' })
+        }else {
+          response.json()
+          .then(result => {
+            let DetailSchedule = []
+            let cnt = 0
+            result.Detail.map(row => {
+              DetailSchedule.push([cnt, row.TrainingOutline, row.Content, row.DurationPlan, row.DurationActual, row.Objectives, row.TrainingMethod,
+              (new Date(row.StartDate)).toLocaleDateString('en-US', DATE_OPTIONS), (new Date(row.EndDate)).toLocaleDateString('en-US', DATE_OPTIONS),
+              row.Progress, row.Note])
+              cnt++
+              return DetailSchedule
+            })
+            this.setState({
+              courseName : result.CourseName,
+              // Format date time
+              startDateCourse : (new Date(result.StartDate)).toLocaleDateString('en-US', DATE_OPTIONS),
+              endDateCourse : (new Date(result.EndDate)).toLocaleDateString('en-US', DATE_OPTIONS),
+              detailList : DetailSchedule,
+              mentorList : result.MentorID,
           })
-          this.setState({
-            courseName : result.CourseName,
-            // Format date time
-            startDateCourse : (new Date(result.StartDate)).toLocaleDateString('en-US', DATE_OPTIONS),
-            endDateCourse : (new Date(result.EndDate)).toLocaleDateString('en-US', DATE_OPTIONS),
-            detailList : DetailSchedule,
-            mentorList : result.MentorID,
-        })
-    });
+        });
+        }}
+      )
+      
   }
 
   // Show modal popup to edit data
@@ -239,12 +253,13 @@ class CoursePage extends React.Component {
     }
   }
   componentDidMount() {
-    const { match: { params } } = this.props
-    this.GetCourse(params.id)
+    
   }
   componentWillMount(){
     this.handlerListMentor()
     this.checkRole()
+    const { match: { params } } = this.props
+    this.GetCourse(params.id)
   }
   handlerListMentor() {
     fetch('http://localhost:8080/mentors')
