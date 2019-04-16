@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"../common"
@@ -45,7 +46,7 @@ func CreateIntern(c *gin.Context) {
 	c.JSON(http.StatusCreated, intern)
 }
 
-// Edit an intern
+// update intern
 func UpdateIntern(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
 
@@ -55,14 +56,48 @@ func UpdateIntern(c *gin.Context) {
 	if common.CheckError(c, err) {
 		return
 	}
+	intern.ID = bson.ObjectIdHex(c.Param("id"))
+	fmt.Println(intern)
 
-	err = database.C(models.CollectionIntern).UpdateId(bson.ObjectIdHex(c.Param("id")), intern)
+	err = database.C(models.CollectionIntern).UpdateId(intern.ID, intern)
 	if common.CheckError(c, err) {
 		return
 	}
 
+	// update User
+	user := models.User{}
+	err = database.C(models.CollectionUser).FindId(intern.ID).One(&user)
+	if common.CheckError(c, err) {
+		return
+	}
+	user.UserName = intern.Email
+	user.ID = intern.ID
+	// fmt.Println(user)
+	err = database.C(models.CollectionUser).UpdateId(intern.ID, user)
+	if common.CheckError(c, err) {
+		return
+	}
 	c.JSON(http.StatusOK, nil)
 }
+
+// Edit an intern
+// func UpdateIntern(c *gin.Context) {
+// 	database := c.MustGet("db").(*mgo.Database)
+
+// 	intern := models.Intern{}
+// 	buf, _ := c.GetRawData()
+// 	err := json.Unmarshal(buf, &intern)
+// 	if common.CheckError(c, err) {
+// 		return
+// 	}
+
+// 	err = database.C(models.CollectionIntern).UpdateId(bson.ObjectIdHex(c.Param("id")), intern)
+// 	if common.CheckError(c, err) {
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusOK, nil)
+// }
 
 //Delete intern
 func DeleteIntern(c *gin.Context) {

@@ -5,12 +5,13 @@ import (
 	"net/http"
 	"strconv"
 
+	"fmt"
+
 	"../common"
 	"../models"
 	"github.com/gin-gonic/gin"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"fmt"
 )
 
 func ListCourses(c *gin.Context) {
@@ -274,6 +275,7 @@ func GetCourseByIntern(c *gin.Context) {
 	errCourse := database.C(models.CollectionCourse).FindId(intern.CourseID).One(&course)
 	common.CheckError(c, errCourse)
 
+	fmt.Print("OOOOOO", course)
 	c.JSON(http.StatusOK, course)
 }
 
