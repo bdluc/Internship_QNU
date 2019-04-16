@@ -42,7 +42,7 @@ func setupRouter() *gin.Engine {
 	r.GET("/users", controllers.ListUsers)
 	r.POST("/user", controllers.CreateUser)
 	r.PUT("/login", controllers.CheckLogin)
-
+	r.GET("/checkemail/:Email", controllers.CheckUserExit)
 	//Mentor
 
 	r.POST("/mentor", controllers.CreateMentor)
