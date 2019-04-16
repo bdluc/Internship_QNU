@@ -21,7 +21,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
 import './attendance.css';
-
+import $ from 'jquery';
 /* Import MUIDataTable using command "npm install mui-datatables --save" */
 
 function TabContainer(props) {
@@ -136,20 +136,18 @@ class InternPage extends React.Component {
             (new Date(row.Intern.DoB)).toLocaleDateString('en-US', options),
             row.Intern.University, row.Intern.Faculty, row.Course,
             // format datetime,
-            row.Department, row.CourseID])
+            ])
           stt++
-          return NewData
+          return NewData,
+          console.log(NewData)
         })
         this.setState({
           internList: NewData
         })
-        console.log(data)
+        // console.log(data)
       });
   }
 
-  handleChangeTab = (event, value) => {
-    this.setState({ value });
-  };
 
   componentDidMount() {
 
@@ -160,11 +158,9 @@ class InternPage extends React.Component {
 
   toggleIntern = () => {
     this.setState({
-      modalIntern: !this.state.modalIntern,
+      modalIntern: !this.state.modalIntern,/*false*/
     });
   };
-
-
 
   addIntern = () => {
     this.setState({
@@ -203,19 +199,30 @@ class InternPage extends React.Component {
       "IsDeleted": false
     }
     console.log(data)
-    fetch("http://localhost:8080/intern",
-      {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      })
-      .then(this.GetInternList())
+    $.ajax({
+      url: "http://localhost:8080/intern",
+      type: "POST",
+      dataType: "json",
+      data: JSON.stringify(data),
+      success: function( response ) {
+        
+      }
+    });
+    
     this.toggleIntern()
-    this.addNotification("successAdd")
-    window.location.reload();
+    // fetch("http://localhost:8080/intern",
+    //   {
+    //     method: "POST",
+    //     mode: "no-cors",
+    //     headers: {
+    //       "Content-Type": "application/json"
+    //     },
+    //     body: JSON.stringify(data)d
+    //   })
+    //   .then(this.GetInternList())
+    // this.toggleIntern()
+    // this.addNotification("successAdd")
+    // window.location.reload();
   }
 
 
@@ -236,16 +243,23 @@ class InternPage extends React.Component {
 
   handlerDeleteIntern = () => {
     if (confirm("bạn chắc chắn muốn xóa ?")) { //eslint-disable-line
-
-    }
-    fetch("http://localhost:8080/intern/" + this.state.id, {
-      method: 'DELETE',
-      mode: 'cors',
-    })
-      .then(this.GetInternList())
-    this.toggleIntern()
-
+      fetch("http://localhost:8080/intern/" + this.state.id, {
+        method: 'DELETE',
+        mode: 'cors',
+      })
+        .then(this.GetInternList())
+        
+      this.toggleIntern()
+      alert("OK")
     window.location.reload();
+    }
+    else
+    {
+      this.toggleIntern()
+      alert("FAIL")
+    }
+
+    
   }
 
   handlerEditIntern = () => {
@@ -253,11 +267,6 @@ class InternPage extends React.Component {
 
     const date = moment.utc(this.state.dob).format();
 
-    // const dt = this.state.dob.split(/-|\s/)
-    // let date = new Date(dt[2], dt[1], dt[0])
-
-    //new Date(dt[2], dt[1], dt[0])
-    // console.log(this.state.date)
     console.log("dt" + date);
     const data = {
       "Name": this.state.name,
@@ -301,7 +310,7 @@ class InternPage extends React.Component {
       name: "ID",
       options: {
         filter: false,
-        sort: false,
+        sort: true,
         display: "excluded"
       }
     },
@@ -405,6 +414,8 @@ class InternPage extends React.Component {
     },
     onRowClick: (rowData, rowState) => {
       let std = this.convertDate(rowData[6])
+      // let courseid = (rowData[9])
+    
       this.setState({
 
         id: rowData[1],
@@ -424,7 +435,15 @@ class InternPage extends React.Component {
       // console.log(this.state.course)
     }
   }
-
+  // convertCourse(courseName){
+  //   fetch("http://localhost:8080/coursename/" + courseName, {
+  //     method: 'GET',
+  //     mode: 'cors',
+  //     headers: {
+  //       "Content-Type": "application/json"
+  //     }
+  //   })
+  // }
   convertDate(rowData) {
     var moment = require('moment')
     let strDate = ""
@@ -589,7 +608,6 @@ class InternPage extends React.Component {
               <MDBInput fullwidth="true" size="" label="Name" name="name" value={this.state.name} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput fullwidth="true" label="Phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput fullwidth="true" label="Email" iconClass="dark-grey" name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
-              {/* <MDBInput label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)} /> */}
               <FormControl fullWidth>
                 <InputLabel htmlFor="select-multiple">Gender</InputLabel>
                 <Select fullWidth label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)}>
@@ -603,7 +621,7 @@ class InternPage extends React.Component {
                 <InputLabel htmlFor="select-multiple">Course</InputLabel>
                 <Select fullWidth label="Course" name="course" value={this.state.course} onChange={this.handleChangeValue.bind(this)}>
                   {this.state.courseList.map(function (course, index) {
-                    return <MenuItem key={index} value={course.Name}>{course.Name}</MenuItem>;
+                    return <MenuItem key={index} value={course.ID}>{course.Name}</MenuItem>;
                   })}
                 </Select>
               </FormControl>
