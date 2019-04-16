@@ -40,7 +40,7 @@ class MentorAttendance extends React.Component {
         url: "http://localhost:8080/attendance/" + this.state.mentorId +"/mentor",
         type: "GET",
         success: function (response) {
-            if(response === []){
+            if(response.length === 0){
                 this.setState({
                     showData: false
                 });
@@ -137,7 +137,7 @@ class MentorAttendance extends React.Component {
 
   onSelectChange(event) {
     var curValue = event.target.value;
-    var month = this.getCurrentMonth();
+    var month = this.getCurrentMonth(this.state.currentStudentId);
         this.setState({currentMonth: month.Month});
         if (curValue === "Calendar"){
             this.setState({
@@ -319,6 +319,7 @@ class MentorAttendance extends React.Component {
                 dailyData: response,
                 showData: true
             });
+            console.log(response)
         }.bind(this),
         error: function (xhr, status) {
             this.setState({

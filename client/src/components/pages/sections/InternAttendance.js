@@ -35,7 +35,7 @@ class MentorAttendance extends React.Component {
         url: "http://localhost:8080/attendance/" + this.state.internId +"/intern",
         type: "GET",
         success: function (response) {
-            if(response === []){
+            if(response.length === 0){
                 this.setState({
                     showData: false
                 });

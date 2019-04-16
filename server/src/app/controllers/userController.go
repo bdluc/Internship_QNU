@@ -99,3 +99,20 @@ func CheckLogin(c *gin.Context) {
 		c.JSON(http.StatusOK, user)
 	}
 }
+
+func UpdateUser(c *gin.Context) {
+	database := c.MustGet("db").(*mgo.Database)
+	buf, _ := c.GetRawData()
+	user := models.User{}
+	err := json.Unmarshal(buf, &user)
+	hash, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	user.Password = string(hash)
+	err = database.C(models.CollectionUser).UpdateId(user.ID, user)
+	if common.CheckNotFound(c, err) {
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Update successful",
+	})
+}
