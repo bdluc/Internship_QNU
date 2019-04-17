@@ -1,5 +1,6 @@
 
 import React from 'react'
+import $ from 'jquery';
 import {
   Row, Col, Card, CardBody, MDBIcon, MDBModalBody, MDBInput, MDBBtn, MDBModal,
 } from 'mdbreact';
@@ -21,7 +22,6 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
 import './attendance.css';
-import $ from 'jquery';
 /* Import MUIDataTable using command "npm install mui-datatables --save" */
 
 function TabContainer(props) {
@@ -85,7 +85,7 @@ class InternPage extends React.Component {
       case "errorAdd":
         this.notificationDOMRef.current.addNotification({
           title: "Error",
-          message: "Add course fail",
+          message: "Email has been duplicated ",
           type: "danger",
           insert: "top",
           container: "top-right",
@@ -172,6 +172,7 @@ class InternPage extends React.Component {
       dob: "",
       University: "",
       Faculty: "",
+      Rom: "",
       icon: "plus",
       isUpdate: false,
       checkValidate: false
@@ -196,17 +197,46 @@ class InternPage extends React.Component {
       "CourseID": this.state.course,
       "IsDeleted": false
     }
-    console.log(data)
+    console.log("Dung",data['Email'])
+    var checkAdd = false
     $.ajax({
-      url: "http://localhost:8080/intern",
-      type: "POST",
-      dataType: "json",
-      data: JSON.stringify(data),
+      url: "http://localhost:8080/checkemail/" + data['Email'],
+      type: "GET",
+      async: false,
       success: function (response) {
-
+        // console.log("RSP", response['message'])
+        if(response['message'] == "Success"){
+          // console.log("OKKKKKKKKKKKKKK")
+          $.ajax({
+            url: "http://localhost:8080/intern",
+            type: "POST",
+            async: false,
+            dataType: "json",
+            data: JSON.stringify(data),
+            success: function (response) {
+              if(response.ID === undefined){
+                checkAdd = false
+              }else{
+                checkAdd = true
+              }
+            }
+          });
+          // if(checkAdd === true){
+          //   this.addNotification("successAdd")
+          // }else{
+          //   this.addNotification("errorAdd")
+          // }
+        }
       }
     });
-    this.toggleIntern()
+    console.log(checkAdd)
+    if(checkAdd == true){
+      this.toggleIntern()
+      this.addNotification("successAdd")
+    }
+    else{
+      this.addNotification("errorAdd")
+    }
     // fetch("http://localhost:8080/intern",
     //   {
     //     method: "POST",
@@ -633,7 +663,7 @@ class InternPage extends React.Component {
                   <MDBIcon icon="edit" className="ml-1" />
                     </MDBBtn>
                   }
-                  {/* {
+                  {
                     this.state.isUpdate &&
                     <MDBBtn
                       className="mb-2 blue darken-2"
@@ -641,7 +671,7 @@ class InternPage extends React.Component {
                       Delete
                   <MDBIcon icon="trash" className="ml-1" />
                     </MDBBtn>
-                  } */}
+                  }
                 </div>
               </div>
             </MDBModalBody>

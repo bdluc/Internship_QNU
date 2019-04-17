@@ -472,7 +472,7 @@ class CoursePages extends React.Component {
               <label>Start Date</label>
               <input type="date" className="form-control" name="startDate" value={this.state.startDate} onChange={this.onChangeDate}/>
               {/* <DatePickers
-                // label="Start Date"
+                label="Start Date"
                 name="startDate"
                 value={this.state.startDate}
                 onChange={this.onChangeDate}
