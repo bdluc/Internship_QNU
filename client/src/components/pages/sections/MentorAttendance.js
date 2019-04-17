@@ -13,8 +13,7 @@ class MentorAttendance extends React.Component {
         this.state = {
             mentorId: JSON.parse(sessionStorage.getItem('user')).ID,
             courses: [],
-            names: [],
-            ids: [],
+            students: [],
             currentName:"",
             traineesData: [],
             tableData: [],
@@ -46,13 +45,12 @@ class MentorAttendance extends React.Component {
                 });
             }
             else{
-                var names = this.getNames(response, "All");
+                var students = this.getStudentsByCourse(response, "All");
                 this.setState({traineesData: response, 
                     currentStudentId: response[0].Id, 
                     courses: this.getCourses(response),
-                    names: names,
-                    ids: this.getIds(response, "All"),
-                    currentName: names[0],
+                    students: students,
+                    currentName: students[0].name,
                     now: new Date()
                 });
                 this.processAttendancesData();
@@ -88,31 +86,33 @@ class MentorAttendance extends React.Component {
       return courses;
   }
 
-  getNames(traineeData, course){
-    var names = [];
+  getStudentsByCourse(traineeData, course){
+    var students = [];
     if(course === "All")
         for(var i = 0 ; i < traineeData.length ; i++)
-        names.push(traineeData[i].Name);
+        students.push({id: traineeData[i].Id, name: traineeData[i].Name});
     else 
         for(var i = 0 ; i < traineeData.length ; i++){
-            if(traineeData[i].Course === course)
-            names.push(traineeData[i].Name);
+            if(traineeData[i].Course === course){
+                students.push({id: traineeData[i].Id, name: traineeData[i].Name});
+            }
+            
         }
-    return names;
+    return students;
   }
 
-  getIds(traineeData, course){
-    var ids = [];
-    if(course === "All")
-        for(var i = 0 ; i < traineeData.length ; i++)
-        ids.push(traineeData[i].Id);
-    else 
-        for(var i = 0 ; i < traineeData.length ; i++){
-            if(traineeData[i].Course === course)
-            ids.push(traineeData[i].Id);
-        }
-    return ids;
-  }
+//   getIds(traineeData, course){
+//     var ids = [];
+//     if(course === "All")
+//         for(var i = 0 ; i < traineeData.length ; i++)
+//         ids.push(traineeData[i].Id);
+//     else 
+//         for(var i = 0 ; i < traineeData.length ; i++){
+//             if(traineeData[i].Course === course)
+//             ids.push(traineeData[i].Id);
+//         }
+//     return ids;
+//   }
 
   handleCellChange(object){
     $.ajax({
@@ -161,9 +161,10 @@ class MentorAttendance extends React.Component {
   }
 
   onSelectStudentChange(event){
-      console.log(event.target.selectedIndex);
-    var studentId = this.state.ids[event.target.selectedIndex];
+    console.log(event.target.value)
+    var studentId = event.target.value;
     var traineeData = this.getStudentById(studentId);
+    console.log(traineeData.Name)
     var month = this.getCurrentMonth(traineeData.Id)
     this.setState({
         currentStudentId: traineeData.Id,
@@ -179,14 +180,12 @@ class MentorAttendance extends React.Component {
 
   onSelectCourseChange(event){
         var curValue = event.target.value;
-        var ids = this.getIds(this.state.traineesData, curValue);
-        var names = this.getNames(this.state.traineesData, curValue);
-        var traineeData = this.getStudentById(ids[0]);
-        var month = this.getCurrentMonth(ids[0])
+        var students = this.getStudentsByCourse(this.state.traineesData, curValue);
+        var traineeData = this.getStudentById(students[0].id);
+        var month = this.getCurrentMonth(students[0].id)
         this.setState({
             currentStudentId: traineeData.Id,
-            ids: ids,
-            names: names,
+            students: students,
             currentName: traineeData.Name,
             months: this.createMonthsData(traineeData.StartDate, traineeData.EndDate),
             currentMonth: month.Month,
@@ -554,9 +553,9 @@ class MentorAttendance extends React.Component {
                                 return <option key={index} value={data}>{data}</option>;
                             })}      
                         </select>
-                        <select className="browser-default custom-select custom-dropdown custom-margin" value={this.state.currentName} onChange={this.onSelectStudentChange.bind(this)}>      
-                            {this.state.names.map(function(data, index){
-                                    return <option key={index} value={data}>{data}</option>;
+                        <select className="browser-default custom-select custom-dropdown custom-margin" value={this.state.currentStudentId} onChange={this.onSelectStudentChange.bind(this)}>      
+                            {this.state.students.map(function(data, index){
+                                    return <option key={index} value={data.id}>{data.name}</option>;
                             })}      
                         </select>
                     </span> : null}
