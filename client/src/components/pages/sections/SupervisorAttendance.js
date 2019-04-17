@@ -13,8 +13,7 @@ class SupervisorAttendance extends React.Component {
         this.state = {
             supervisorId: JSON.parse(sessionStorage.getItem('user')).ID,
             courses: [],
-            names: [],
-            ids: [],
+            students: [],
             currentName:"",
             traineesData: [],
             tableData: [],
@@ -58,14 +57,13 @@ class SupervisorAttendance extends React.Component {
                         }
                     }
                     console.log(traineesData);
-                    var names = this.getNames(traineesData, "All");
+                    var students = this.getStudentsByCourse(traineesData, "All");
                 this.setState({
                     traineesData: traineesData,
                     currentStudentId: traineesData[0].Id, 
                     courses: this.getCourses(traineesData),
-                    names: names,
-                    ids: this.getIds(traineesData, "All"),
-                    currentName: names[0],
+                    students: students,
+                    currentName: students[0].name,
                     now: new Date()
                 });
                 this.processAttendancesData();
@@ -113,30 +111,19 @@ class SupervisorAttendance extends React.Component {
       return courses;
   }
 
-  getNames(traineeData, course){
-    var names = [];
+  getStudentsByCourse(traineeData, course){
+    var students = [];
     if(course === "All")
         for(var i = 0 ; i < traineeData.length ; i++)
-        names.push(traineeData[i].Name);
+        students.push({id: traineeData[i].Id, name: traineeData[i].Name});
     else 
         for(var i = 0 ; i < traineeData.length ; i++){
-            if(traineeData[i].Course === course)
-            names.push(traineeData[i].Name);
+            if(traineeData[i].Course === course){
+                students.push({id: traineeData[i].Id, name: traineeData[i].Name});
+            }
+            
         }
-    return names;
-  }
-
-  getIds(traineeData, course){
-    var ids = [];
-    if(course === "All")
-        for(var i = 0 ; i < traineeData.length ; i++)
-        ids.push(traineeData[i].Id);
-    else 
-        for(var i = 0 ; i < traineeData.length ; i++){
-            if(traineeData[i].Course === course)
-            ids.push(traineeData[i].Id);
-        }
-    return ids;
+    return students;
   }
 
   handleCellChange(object){
@@ -186,8 +173,7 @@ class SupervisorAttendance extends React.Component {
   }
 
   onSelectStudentChange(event){
-      console.log(event.target.selectedIndex);
-    var studentId = this.state.ids[event.target.selectedIndex];
+    var studentId = event.target.value;
     var traineeData = this.getStudentById(studentId);
     var month = this.getCurrentMonth(traineeData.Id)
     this.setState({
@@ -204,14 +190,12 @@ class SupervisorAttendance extends React.Component {
 
   onSelectCourseChange(event){
         var curValue = event.target.value;
-        var ids = this.getIds(this.state.traineesData, curValue);
-        var names = this.getNames(this.state.traineesData, curValue);
-        var traineeData = this.getStudentById(ids[0]);
-        var month = this.getCurrentMonth(ids[0])
+        var students = this.getStudentsByCourse(this.state.traineesData, curValue);
+        var traineeData = this.getStudentById(students[0].id);
+        var month = this.getCurrentMonth(students[0].id)
         this.setState({
             currentStudentId: traineeData.Id,
-            ids: ids,
-            names: names,
+            students: students,
             currentName: traineeData.Name,
             months: this.createMonthsData(traineeData.StartDate, traineeData.EndDate),
             currentMonth: month.Month,
@@ -578,9 +562,9 @@ class SupervisorAttendance extends React.Component {
                                 return <option key={index} value={data}>{data}</option>;
                             })}      
                         </select>
-                        <select className="browser-default custom-select custom-dropdown custom-margin" value={this.state.currentName} onChange={this.onSelectStudentChange.bind(this)}>      
-                            {this.state.names.map(function(data, index){
-                                    return <option key={index} value={data}>{data}</option>;
+                        <select className="browser-default custom-select custom-dropdown custom-margin" value={this.state.currentStudentId} onChange={this.onSelectStudentChange.bind(this)}>      
+                            {this.state.students.map(function(data, index){
+                                    return <option key={index} value={data.id}>{data.name}</option>;
                             })}      
                         </select>
                     </span> : null}

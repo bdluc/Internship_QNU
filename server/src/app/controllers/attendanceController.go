@@ -268,48 +268,59 @@ func CreateAttendance(c *gin.Context) {
 	}
 
 	currentTime := time.Now()
-	date1 := time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 1, 0, 0, 0, time.Local)
-	date2 := time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 2, 0, 0, 0, time.Local)
-	if currentTime.Hour() < 13 {
-		atten.Date = date1
-	} else {
-		atten.Date = date2
-	}
-	atten.Status = "P"
-	atten.IsDeleted = false
-
-	check := models.Attendance{}
-	err = database.C(models.CollectionAttendance).Find(bson.M{"InternID": atten.InternID, "$or": []bson.M{{"Date": date1}, {"Date": date2}}}).One(&check)
-	if err == nil && ((check.Status == "PP") || (currentTime.Hour() < 13 && check.Status == "P") || (check.Date.Hour() == 2 && check.Status == "P")) {
+	course := models.Course{}
+	intern := models.Intern{}
+	err = database.C(models.CollectionIntern).FindId(atten.InternID).One(&intern)
+	err = database.C(models.CollectionCourse).FindId(intern.CourseID).One(&course)
+	if currentTime.Before(course.StartDate) || currentTime.After(course.EndDate) {
 		c.JSON(http.StatusNotFound, gin.H{
 			common.Status:  "error",
-			common.Message: "attendance is exit",
-		})
-		return
-	} else if err == nil && currentTime.Hour() > 13 && check.Status == "P" {
-		atten.ID = check.ID
-		atten.Status = "PP"
-		updateAttendance(c, database, atten)
-		c.JSON(http.StatusOK, gin.H{
-			common.Status:  "updated",
-			common.Message: "Attendance updated",
+			common.Message: "Could not create attendance",
 		})
 		return
 	} else {
-		err = database.C(models.CollectionAttendance).Insert(atten)
-		if err != nil {
+		date1 := time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 1, 0, 0, 0, time.Local)
+		date2 := time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 2, 0, 0, 0, time.Local)
+		if currentTime.Hour() < 13 {
+			atten.Date = date1
+		} else {
+			atten.Date = date2
+		}
+		atten.Status = "P"
+		atten.IsDeleted = false
+
+		check := models.Attendance{}
+		err = database.C(models.CollectionAttendance).Find(bson.M{"InternID": atten.InternID, "$or": []bson.M{{"Date": date1}, {"Date": date2}}}).One(&check)
+		if err == nil && ((check.Status == "PP") || (currentTime.Hour() < 13 && check.Status == "P") || (check.Date.Hour() == 2 && check.Status == "P")) {
 			c.JSON(http.StatusNotFound, gin.H{
 				common.Status:  "error",
-				common.Message: "Could not create attendance",
+				common.Message: "attendance is exit",
 			})
 			return
+		} else if err == nil && currentTime.Hour() > 13 && check.Status == "P" {
+			atten.ID = check.ID
+			atten.Status = "PP"
+			updateAttendance(c, database, atten)
+			c.JSON(http.StatusOK, gin.H{
+				common.Status:  "updated",
+				common.Message: "Attendance updated",
+			})
+			return
+		} else {
+			err = database.C(models.CollectionAttendance).Insert(atten)
+			if err != nil {
+				c.JSON(http.StatusNotFound, gin.H{
+					common.Status:  "error",
+					common.Message: "Could not create attendance",
+				})
+				return
+			}
+			c.JSON(http.StatusCreated, gin.H{
+				common.Status:  "created",
+				common.Message: "Created attendance",
+			})
 		}
-		c.JSON(http.StatusCreated, gin.H{
-			common.Status:  "created",
-			common.Message: "Created attendance",
-		})
 	}
-
 }
 
 func updateAttendance(c *gin.Context, database *mgo.Database, atten models.Attendance) {

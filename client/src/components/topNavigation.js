@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { Navbar, NavbarBrand, NavbarNav, NavbarToggler, Collapse, MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem } from 'mdbreact';
 import { MDBIcon, MDBModalBody, MDBInput, MDBBtn, MDBModal} from 'mdbreact';
 // import Fab from '@material-ui/core/Fab';
-import { NavLink } from 'react-router-dom';
-import { ListGroupItem, Fa } from 'mdbreact';
 
 
 
@@ -82,41 +80,41 @@ class TopNavigation extends Component {
                 response.json()
                 )
                 .then(data => {
-                if (data.ID === undefined) {
-                    this.setState({
-                        error: "Current password is not correct",
-                        showError: true,
-                        showSuccess: false
-                        });
-                }
-                else {
-                    data.Password = this.state.password;
-                    fetch('http://localhost:8080/user',
-                    {
-                        method: "PUT",
-                        headers:{
-                        "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify(data)
-                    }).then(response => 
-                        response.json()
-                    ).then((data) =>{
-                        if(data.message === "Update successful"){
-                            this.setState({
-                                success: data.message,
-                                showError: false,
-                                showSuccess: true
-                            })
-                        }
-                        else
-                            this.setState({
-                                error:"Could not update password! ",
-                                showError: true,
-                                showSuccess: false
-                            })
+                    if (data.ID === undefined) {
+                        this.setState({
+                            error: "Current password is not correct",
+                            showError: true,
+                            showSuccess: false
+                            });
+                    }
+                    else {
+                        data.Password = this.state.password;
+                        fetch('http://localhost:8080/user',
+                        {
+                            method: "PUT",
+                            headers:{
+                            "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify(data)
+                        }).then(response => 
+                            response.json()
+                        ).then((data) =>{
+                            if(data.message === "Update successful"){
+                                this.setState({
+                                    success: data.message,
+                                    showError: false,
+                                    showSuccess: true
+                                })
+                            }
+                            else
+                                this.setState({
+                                    error:"Could not update password! ",
+                                    showError: true,
+                                    showSuccess: false
+                                })
 
-                    })
-                }
+                        })
+                    }
                 });     
         }   
     }
@@ -192,6 +190,10 @@ class TopNavigation extends Component {
                         <div className="alert alert-danger custom-top">
                             {this.state.error}
                         </div> : null}
+                    {this.state.showSuccess ?
+                    <div className="alert alert-success custom-top">
+                        {this.state.success}
+                    </div> : null}
                     <div className="text-center mt-4">
                         <MDBBtn
                         color="light-blue"
