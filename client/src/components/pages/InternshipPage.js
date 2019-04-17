@@ -1,5 +1,6 @@
 
 import React from 'react'
+import $ from 'jquery';
 import {
   Row, Col, Card, CardBody, MDBIcon, MDBModalBody, MDBInput, MDBBtn, MDBModal,
 } from 'mdbreact';
@@ -21,7 +22,6 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
 import './attendance.css';
-import $ from 'jquery';
 /* Import MUIDataTable using command "npm install mui-datatables --save" */
 
 function TabContainer(props) {
@@ -85,7 +85,7 @@ class InternPage extends React.Component {
       case "errorAdd":
         this.notificationDOMRef.current.addNotification({
           title: "Error",
-          message: "Add course fail",
+          message: "Email has been duplicated ",
           type: "danger",
           insert: "top",
           container: "top-right",
@@ -136,10 +136,10 @@ class InternPage extends React.Component {
             (new Date(row.Intern.DoB)).toLocaleDateString('en-US', options),
             row.Intern.University, row.Intern.Faculty, row.Course,
             // format datetime,
-            ])
+          ])
           stt++
           return NewData,
-          console.log(NewData)
+            console.log(NewData)
         })
         this.setState({
           internList: NewData
@@ -172,6 +172,7 @@ class InternPage extends React.Component {
       dob: "",
       University: "",
       Faculty: "",
+      Rom: "",
       icon: "plus",
       isUpdate: false,
       checkValidate: false
@@ -184,9 +185,7 @@ class InternPage extends React.Component {
 
     // }
     var moment = require('moment');
-
     const date = moment.utc(this.state.dob).format();
-
     const data = {
       "Name": this.state.name,
       "PhoneNumber": this.state.phone,
@@ -198,18 +197,46 @@ class InternPage extends React.Component {
       "CourseID": this.state.course,
       "IsDeleted": false
     }
-    console.log(data)
+    console.log("Dung",data['Email'])
+    var checkAdd = false
     $.ajax({
-      url: "http://localhost:8080/intern",
-      type: "POST",
-      dataType: "json",
-      data: JSON.stringify(data),
-      success: function( response ) {
-        
+      url: "http://localhost:8080/checkemail/" + data['Email'],
+      type: "GET",
+      async: false,
+      success: function (response) {
+        // console.log("RSP", response['message'])
+        if(response['message'] == "Success"){
+          // console.log("OKKKKKKKKKKKKKK")
+          $.ajax({
+            url: "http://localhost:8080/intern",
+            type: "POST",
+            async: false,
+            dataType: "json",
+            data: JSON.stringify(data),
+            success: function (response) {
+              if(response.ID === undefined){
+                checkAdd = false
+              }else{
+                checkAdd = true
+              }
+            }
+          });
+          // if(checkAdd === true){
+          //   this.addNotification("successAdd")
+          // }else{
+          //   this.addNotification("errorAdd")
+          // }
+        }
       }
     });
-    
-    this.toggleIntern()
+    console.log(checkAdd)
+    if(checkAdd == true){
+      this.toggleIntern()
+      this.addNotification("successAdd")
+    }
+    else{
+      this.addNotification("errorAdd")
+    }
     // fetch("http://localhost:8080/intern",
     //   {
     //     method: "POST",
@@ -224,7 +251,6 @@ class InternPage extends React.Component {
     // this.addNotification("successAdd")
     // window.location.reload();
   }
-
 
   GetListCourse() {
     fetch('http://localhost:8080/courses')
@@ -248,26 +274,21 @@ class InternPage extends React.Component {
         mode: 'cors',
       })
         .then(this.GetInternList())
-        
+
       this.toggleIntern()
       alert("OK")
-    window.location.reload();
+      window.location.reload();
     }
-    else
-    {
+    else {
       this.toggleIntern()
       alert("FAIL")
     }
-
-    
   }
 
   handlerEditIntern = () => {
     var moment = require('moment');
 
     const date = moment.utc(this.state.dob).format();
-
-    console.log("dt" + date);
     const data = {
       "Name": this.state.name,
       "PhoneNumber": this.state.phone,
@@ -279,7 +300,6 @@ class InternPage extends React.Component {
       "CourseID": this.state.course,
       "IsDeleted": false
     }
-    console.log(data)
     fetch("http://localhost:8080/internu/" + this.state.id, {
       method: 'PUT',
       mode: 'cors',
@@ -290,13 +310,9 @@ class InternPage extends React.Component {
     })
       .then(this.GetInternList())
     this.toggleIntern()
-    console.log(this.state.id)
-
     this.addNotification("successUpdate")
-
     // window.location.reload();
   }
-
 
   columnsIntern = [
     {
@@ -376,6 +392,8 @@ class InternPage extends React.Component {
   optionsIntern = {
     filterType: "dropdown",
     responsive: "scroll",
+    rowsPerPage: 4,
+    rowsPerPageOptions: [5, 5, 5],
     download: false,
     print: false,
     selectableRows: false,
@@ -415,7 +433,7 @@ class InternPage extends React.Component {
     onRowClick: (rowData, rowState) => {
       let std = this.convertDate(rowData[6])
       // let courseid = (rowData[9])
-    
+
       this.setState({
 
         id: rowData[1],
@@ -432,18 +450,9 @@ class InternPage extends React.Component {
         checkValidate: true
       });
       this.toggleIntern()
-      // console.log(this.state.course)
     }
   }
-  // convertCourse(courseName){
-  //   fetch("http://localhost:8080/coursename/" + courseName, {
-  //     method: 'GET',
-  //     mode: 'cors',
-  //     headers: {
-  //       "Content-Type": "application/json"
-  //     }
-  //   })
-  // }
+
   convertDate(rowData) {
     var moment = require('moment')
     let strDate = ""
@@ -555,12 +564,11 @@ class InternPage extends React.Component {
       case "Faculty":
         this.setState({ Faculty: value })
         break;
+      case "Course":
+      this.setState({ Course: value})
       default:
         break;
     }
-  }
-  onSelect = (course) => {
-    console.log(course.Name);
   }
 
   handleChanges() {
@@ -574,7 +582,7 @@ class InternPage extends React.Component {
       <React.Fragment>
         <Row>
           <Col md="12">
-            <Card className="mt-5">
+            <Card>
               <CardBody>
                 <div className="app-content">
                   <ReactNotification ref={this.notificationDOMRef} />
@@ -614,10 +622,8 @@ class InternPage extends React.Component {
                   <MenuItem value="Male">Male</MenuItem>
                   <MenuItem value="Female">Female</MenuItem>
                 </Select>
-
               </FormControl ><br />
               <FormControl fullWidth>
-
                 <InputLabel htmlFor="select-multiple">Course</InputLabel>
                 <Select fullWidth label="Course" name="course" value={this.state.course} onChange={this.handleChangeValue.bind(this)}>
                   {this.state.courseList.map(function (course, index) {
@@ -625,13 +631,6 @@ class InternPage extends React.Component {
                   })}
                 </Select>
               </FormControl>
-
-              {/* <label>Course</label>
-              <select className="browser-default custom-select custom-dropdown custom-margin" onChange={this.handleChangeValue.bind(this)} name="course" size="lg">
-                {this.state.courseList.map(function (course, index) {
-                  return <option key={index} value={course.ID}>{course.Name}</option>;
-                })}
-              </select><br /> */}
 
               <MDBInput
                 label="Dob" name="dob" id="date" type="date"
@@ -641,55 +640,45 @@ class InternPage extends React.Component {
                   shrink: true,
                 }}
               />
-
-              {/* <label>Date</label>
-              <input type="date" name="dob" size="lg" value={this.state.dob} onChange={this.handleChangeValue.bind(this)} /><br></br> */}
-
               <TextField fullWidth label="University" name="text" name="University" value={this.state.University} onChange={this.handleChangeValue.bind(this)} />
               <div className="text-center mt-1-half">
-                {/* <TextField fullWidth="true" lable="University" name="text" name="University" value={this.state.University} onChange={this.handleChangeValue.bind(this)} />
-                <div className="text-center mt-1-half"> */}
-                  <TextField fullWidth label="Faculty" name="text" name="Faculty" value={this.state.Faculty} onChange={this.handleChangeValue.bind(this)} />
-                  <div className="text-center mt-1-half">
-                    {
-                      this.state.isUpdate === false &&
-                      <MDBBtn
-                        className="mb-2 blue darken-2"
-                        onClick={this.handlerAddIntern}
-                      >
-                        Create
+                <TextField fullWidth label="Faculty" name="text" name="Faculty" value={this.state.Faculty} onChange={this.handleChangeValue.bind(this)} />
+                <div className="text-center mt-1-half">
+                  {
+                    this.state.isUpdate === false &&
+                    <MDBBtn
+                      className="mb-2 blue darken-2"
+                      onClick={this.handlerAddIntern}
+                    >
+                      Create
                   <MDBIcon icon="send" className="ml-1" />
-                      </MDBBtn>
-                    }
-                    {
-                      this.state.isUpdate &&
-
-
-                      <MDBBtn
-                        className="mb-2 blue darken-2"
-                        onClick={this.handlerEditIntern}>
-                        Update
+                    </MDBBtn>
+                  }
+                  {
+                    this.state.isUpdate &&
+                    <MDBBtn
+                      className="mb-2 blue darken-2"
+                      onClick={this.handlerEditIntern}>
+                      Update
                   <MDBIcon icon="edit" className="ml-1" />
-                      </MDBBtn>
-                    }
-                    {
-                      this.state.isUpdate &&
-
-
-                      <MDBBtn
-                        className="mb-2 blue darken-2"
-                        onClick={this.handlerDeleteIntern}>
-                        Delete
+                    </MDBBtn>
+                  }
+                  {
+                    this.state.isUpdate &&
+                    <MDBBtn
+                      className="mb-2 blue darken-2"
+                      onClick={this.handlerDeleteIntern}>
+                      Delete
                   <MDBIcon icon="trash" className="ml-1" />
-                      </MDBBtn>
-                    }
-                  </div>
+                    </MDBBtn>
+                  }
                 </div>
+              </div>
             </MDBModalBody>
           </MDBModal>
         </Row>
       </React.Fragment>
-        )
-      }
-    }
+    )
+  }
+}
 export default withStyles(styles)(InternPage);

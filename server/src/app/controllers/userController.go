@@ -117,6 +117,7 @@ func UpdateUser(c *gin.Context) {
 	})
 }
 
+// check user email
 func CheckUserExit(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
 	user := models.User{}
@@ -125,6 +126,6 @@ func CheckUserExit(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Exits",
+		"message": "Error",
 	})
 }
