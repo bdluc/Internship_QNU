@@ -2,12 +2,10 @@ import React from 'react'
 import {
   Row, Col, Card, CardBody, MDBIcon, MDBModalBody, MDBInput, MDBBtn, MDBModal,
 } from 'mdbreact';
-// import TextField from '@material-ui/core/TextField';
 import MUIDataTable from "mui-datatables";
-// import DatePickers from './sections/DatePickers'
-// import Checkbox from './sections/Checkbox';
-// import DatePickers from 'react-date-picker'
-
+import ReactNotification from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
+import { Redirect } from 'react-router';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
@@ -37,21 +35,85 @@ const styles = theme => ({
   }
 });
 
+
 class CoursePages extends React.Component {
 
   constructor() {
     super();
+    this.addNotification = this.addNotification.bind(this);
+    this.notificationDOMRef = React.createRef();
     this.state = {
       modal: false,
       data: [],
       value: 0,
       courseList: [],
       mentorList:[],
+      numberofCheck : 0,
       isUpdate: false,
-      checkValidate: true
+      checkValidate: true,
+      user : JSON.parse(sessionStorage.getItem('user')),
+      isIntern : false,
+      CourseID : ""
     };
   }
 
+  addNotification(kind) {
+    switch(kind) {
+      case "successAdd" : 
+      this.notificationDOMRef.current.addNotification({
+        title: "Success",
+        message: "Add course successfully !",
+        type: "success", //success, danger, default, info, warning or custom
+        insert: "top",
+        container: "top-right",
+        animationIn: ["animated", "fadeIn"],
+        animationOut: ["animated", "fadeOut"],
+        dismiss: { duration: 2000 },
+        dismissable: { click: true }
+      });
+      break;
+      case "errorAdd" :
+      this.notificationDOMRef.current.addNotification({
+        title: "Error",
+        message: "Add course fail",
+        type: "danger",
+        insert: "top",
+        container: "top-right",
+        animationIn: ["animated", "fadeIn"],
+        animationOut: ["animated", "fadeOut"],
+        dismiss: { duration: 2000 },
+        dismissable: { click: true }
+      });
+      break;
+      case "successUpdate" : 
+      this.notificationDOMRef.current.addNotification({
+        title: "Success",
+        message: "Update course successfully !",
+        type: "success", //success, danger, default, info, warning or custom
+        insert: "top",
+        container: "top-right",
+        animationIn: ["animated", "fadeIn"],
+        animationOut: ["animated", "fadeOut"],
+        dismiss: { duration: 2000 },
+        dismissable: { click: true }
+      });
+      break;
+      case "successDelete" : 
+      this.notificationDOMRef.current.addNotification({
+        title: "Success",
+        message: "Delete course successfully !",
+        type: "success", //success, danger, default, info, warning or custom
+        insert: "top",
+        container: "top-right",
+        animationIn: ["animated", "fadeIn"],
+        animationOut: ["animated", "fadeOut"],
+        dismiss: { duration: 2000 },
+        dismissable: { click: true }
+      });
+      break;
+    }
+    
+  }
   GetCourseList() {
     const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
     fetch('http://localhost:8080/courses')
@@ -76,21 +138,41 @@ class CoursePages extends React.Component {
   handleChangeTab = (event, value) => {
     this.setState({ value });
   };
-
+ 
   componentDidMount() {
-
-    this.GetCourseList()
-    this.ListMentor()
+    
   }
-
+  componentWillMount() {
+    if(this.state.user.Role === 1) {
+      fetch('http://localhost:8080/intern/'+this.state.user.ID)
+      .then(response => response.json())
+      .then(data => {
+        this.setState({
+          CourseID : data.CourseID,
+          isIntern : true
+        })
+      })
+    }else {
+      this.GetCourseList()
+      this.ListMentor()
+    }
+  }
   handleCheckChieldElement = (event) => {
     let mentorList = this.state.mentorList
     mentorList.forEach(mentor => {
-      if (mentor.ID === event.target.value)
-          mentor.isChecked =  event.target.checked
+      if (mentor.ID === event.target.value){
+         mentor.isChecked =  event.target.checked
+      }
     })
-    this.setState({mentorList: mentorList})
-    console.log(this.state.mentorList)
+    let ischeck = event.target.checked
+    let count = this.state.numberofCheck
+    if(ischeck)
+      count +=1 
+    else 
+      count -=1
+    this.setState({mentorList: mentorList,
+      numberofCheck : count
+    })
   }
 
   toggleCourse = () => {
@@ -147,12 +229,9 @@ class CoursePages extends React.Component {
       })
       .then(this.GetCourseList())
     this.toggleCourse()
+    this.addNotification("successUpdate")
   }
   handlerAddCourse = () => {
-    // const dts = this.state.startDate.split(/-|\s/)
-    // const dte = this.state.endDate.split(/-|\s/)
-    // let dates = new Date(dts[2], dts[1], dts[0])
-    // let datee = new Date(dte[2], dte[1], dte[0])
     var moment = require('moment');
     const std = moment.utc(this.state.startDate).format(); //=> "2013-10-06T00:00:00+00:00"
     const etd = moment.utc(this.state.endDate).format();
@@ -182,6 +261,7 @@ class CoursePages extends React.Component {
       .then(this.GetCourseList())
     this.toggleCourse()
     this.setState({ games: [] });
+    this.addNotification("successAdd")
   }
 
   ListMentor(){
@@ -205,6 +285,7 @@ class CoursePages extends React.Component {
     })
       .then(this.GetCourseList())
     this.toggleCourse()
+    this.addNotification("successDelete")
     // window.location.reload();
   }
 
@@ -366,7 +447,78 @@ class CoursePages extends React.Component {
   onChangeDate = (e) => {
     const name = e.target.name
     const value = e.target.value
-        this.setState({ [name] : value })
+        this.setState({ [name] : value },
+          () => { this.validateField(name, value) });
+  }
+  validateField(fieldname, value) {
+    var constDate = new Date('2016/1/1');
+    var standard = constDate.getTime();
+    var startDateValid = 0;
+    var endDateValid = 0;
+    var courseNameValid = 0;
+    switch(fieldname) {
+      case "startDate" : 
+        var sdNumber = new Date(new Date(value).toLocaleString()).getTime();
+        var cp = sdNumber - standard ;
+        if(value === ""){
+          startDateValid = 1;
+          courseNameValid = this.state.courseNameValid;
+        }else {
+          if(cp <= 0){
+            startDateValid = 2;
+            courseNameValid = this.state.courseNameValid;
+          }
+          else {
+            startDateValid = 0 ;
+            courseNameValid = this.state.courseNameValid;
+          }
+        }
+        if (this.state.endDate === ""){
+          endDateValid = 0 // end date undefine
+          courseNameValid = this.state.courseNameValid;
+        }else {
+          var edNumber2 = new Date(new Date(this.state.endDate).toLocaleString()).getTime();
+          var nurse = edNumber2 - sdNumber ;
+          if(nurse > 0) {
+            courseNameValid = this.state.courseNameValid;
+            endDateValid = 0
+          }else {
+            courseNameValid = this.state.courseNameValid;
+            endDateValid = 1 // end date is before start date
+          }
+        }
+      break;
+
+      case "endDate" :
+      var edNumber = new Date(new Date(value).toLocaleString()).getTime();
+      var sdNumber2 = new Date(new Date(this.state.startDate).toLocaleString()).getTime();
+      var hieu = edNumber -  sdNumber2;
+      if (hieu <= 0){
+        courseNameValid = this.state.courseNameValid;
+        endDateValid = 1; 
+      }
+        // end date is not after start date
+      else {
+          endDateValid = 0; //  end date is after start date
+          courseNameValid = this.state.courseNameValid;
+
+      }
+      break;
+      case "courseName" :
+      if(value === "") 
+        courseNameValid = 1;
+      else {
+        if(value.length <=5)
+          courseNameValid = 2;
+          else 
+          courseNameValid = 0; 
+      }
+    }
+    this.setState({
+      startDateValid : startDateValid,
+      endDateValid :endDateValid,
+      courseNameValid : courseNameValid
+    })
   }
   handleChangeValue(e) {
     const { name, value } = e.target;
@@ -377,63 +529,33 @@ class CoursePages extends React.Component {
         if (value.trim().length === 0) {
           this.setState({
             courseName: " ",
-            errorName: "Course name can not be blank"
+            errorName: "Course name can not be blank",
           })
           e.target.className += " invalid"
         } else if (value.trim().length < 6) {
           this.setState({
-            errorName: "Course name contains more than 5 characters"
+            errorName: "Course name contains more than 5 characters",
           })
           e.target.className += " invalid"
         } else {
           e.target.className += " valid"
         }
         break;
-      // case "startDate":
-      //   this.setState({ startDate })
-      //   e.target.className = "form-control"
-      //   const age = Math.floor((new Date() - new Date(e.target.startDate.value)) / 1000 / 60 / 60 / 24 / 365.25)
-      //   if (e.target.startDate.value === "") {
-      //     this.setState({
-      //       errorPhone: "Start date can not be blank"
-      //     })
-      //     e.target.className += " invalid"
-      //   } else if (age <0) {
-      //     this.setState({
-      //       errorPhone: "Start date must be after current time"
-      //     })
-      //     e.target.className += " invalid"
-      //   } else {
-      //     e.target.className += " valid"
-      //   }
-      //   break;
-      // case "endDate":
-      // this.setState({ endDate : value})
-      // e.target.className="form-control"
-      // const ages = Math.floor((new Date(e.target.endDate.value) - new Date(e.target.startDate.value)) / 1000 / 60 / 60 / 24 / 365.25)
-      // if(e.target.endDate.value === ""){
-      //   this.setState({
-      //     errorEmail:"End date can not be blank"
-      //   })
-      //   e.target.className += " invalid"
-      // } else if (ages < 0){
-      //   this.setState({
-      //     errorEmail: "End date must be after Start date"
-      //   })
-      //   e.target.className +=" invalid"
-      // } else {
-      //   e.target.className +=" valid"
-      // }
-      //   break;
       default:
         break;
     }
   }
 
   render() {
-    this.state.courseList.map((value, key) => {
-      return (<option key={key} value={value[1]}>{value[1]}</option>)
-    })
+   
+    if(this.state.isIntern === true){
+      return (  
+            <Redirect from='/courses' to={`/course/${this.state.CourseID}`}/>
+      )
+    }else {
+      this.state.courseList.map((value, key) => {
+        return (<option key={key} value={value[1]}>{value[1]}</option>)
+      })  
     return (
       <React.Fragment>
         <Row>
@@ -441,6 +563,9 @@ class CoursePages extends React.Component {
             <Card className="mt-5">
 
               <CardBody>
+              <div className="app-content">
+                <ReactNotification ref={this.notificationDOMRef} />
+              </div>
                 <MDBBtn
                   className="mb-3 blue darken-2"
                   onClick={this.addCourse}>
@@ -456,10 +581,6 @@ class CoursePages extends React.Component {
               </CardBody>
             </Card>
           </Col>
-
-          {
-            // AddMentor, Edit table
-          }
           <MDBModal
             isOpen={this.state.modalCourse}
             toggle={this.toggleCourse}
@@ -468,23 +589,31 @@ class CoursePages extends React.Component {
 
             <MDBModalBody>
             <input type="hidden" name="id" value={this.state.id} />
-              <MDBInput fullwidth="true" size="" label="Course name" name="courseName" value={this.state.courseName} onChange={this.handleChangeValue.bind(this)} />
+              <MDBInput fullwidth="true" size="" label="Course name" name="courseName" value={this.state.courseName} onChange={this.onChangeDate.bind(this)} />
+              {
+                this.state.courseNameValid === 1 && 
+                <div className="alert alert-danger custom-top"> Course name must be not blank</div>
+              }
+              {
+                this.state.courseNameValid === 2 && 
+                <div className="alert alert-danger custom-top"> Course name must be more than 5 characters</div>
+              }
               <label>Start Date</label>
-              <input type="date" className="form-control" name="startDate" value={this.state.startDate} onChange={this.onChangeDate}/>
-              {/* <DatePickers
-                // label="Start Date"
-                name="startDate"
-                value={this.state.startDate}
-                onChange={this.onChangeDate}
-              /> */}
+              <input type="date" className="form-control" name="startDate" value={this.state.startDate} onChange={this.onChangeDate.bind(this)}/>
+              {
+                this.state.startDateValid === 1 && 
+                <div className="alert alert-danger custom-top"> Start Date undefined</div>
+              }
+              {
+                this.state.startDateValid === 2 && 
+                <div className="alert alert-danger custom-top"> Start must be after 1/1/2016</div>
+              }
               <label>End Date</label>
-              <input type="date" className="form-control" name="endDate" value={this.state.endDate} onChange={this.onChangeDate}/>
-              {/* <DatePickers
-                label="End Date"
-                name="endDate"
-                value={this.state.endDate}
-                onChange={this.handleChangeValue.bind(this)}
-              /> */}
+              <input type="date" className="form-control" name="endDate" value={this.state.endDate} onChange={this.onChangeDate.bind(this)}/>
+              {
+                this.state.endDateValid === 1 && 
+                <div className="alert alert-danger custom-top"> End date must be after Start date </div>
+              }
               <label>Mentor</label>
               {
                 this.state.mentorList.map((mentor,index) => {
@@ -495,6 +624,10 @@ class CoursePages extends React.Component {
                       </div>
                   )
                 })
+              }
+              {
+                this.state.numberofCheck === 0 && 
+                <div className="alert alert-danger custom-top">Please ! Choose mentor Lực or some one</div>
               }
               <div className="text-center mt-1-half">
                 {
@@ -546,7 +679,6 @@ class CoursePages extends React.Component {
       </React.Fragment>
 
     )
-
-  }
+  }}
 }
 export default withStyles(styles)(CoursePages);

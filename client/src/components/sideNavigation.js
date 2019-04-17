@@ -6,37 +6,6 @@ import { NavLink } from 'react-router-dom';
 class TopNavigation extends Component {
     constructor() {
         super();
-        this.state = {
-            user : JSON.parse(sessionStorage.getItem('user')),
-            isIntern : false,
-            courseID : ""
-        };
-      }
-      GetCourseByIntern(){
-        fetch('http://localhost:8080/intern/'+this.state.user.ID)
-        .then(response => response.json())
-            .then(data => {
-                this.setState({
-                    courseID : data.CourseID
-                })
-            });
-      }
-      CheckIntern = ()=> {
-          let hihi = this.state.user.Role 
-          if( hihi === 1){
-            this.setState ({
-                isIntern : true
-              })
-          }
-      }
-      componentWillMount() {
-          
-      }
-      componentDidMount(){
-          this.CheckIntern()
-          if( this.state.user.Role === 1) {
-              this.GetCourseByIntern()
-          }
       }
     render() {
         return (
@@ -57,24 +26,13 @@ class TopNavigation extends Component {
                             Internship
                         </ListGroupItem>
                     </NavLink>
-                    {
-                        this.state.isIntern === false && 
-                        <NavLink to="/courses" activeClassName="activeClass">
+                   
+                    <NavLink to="/courses" activeClassName="activeClass">
                         <ListGroupItem>
                             <Fa icon="book" className="mr-3"/>
                             Course
                         </ListGroupItem>
-                        </NavLink>
-                    }
-                    {
-                        this.state.isIntern === true && 
-                        <NavLink to={`/course/${this.state.courseID}`} activeClassName="activeClass">
-                        <ListGroupItem>
-                            <Fa icon="book" className="mr-3"/>
-                            Course
-                        </ListGroupItem>
-                        </NavLink>
-                    }
+                    </NavLink>
                     <NavLink to="/attendance" activeClassName="activeClass">
                         <ListGroupItem>
                             <Fa icon="calendar" className="mr-3"/>

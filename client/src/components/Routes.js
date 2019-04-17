@@ -26,6 +26,7 @@ class Routes extends React.Component {
         <Route path='/login' exact component={Login}  />
 
         <Route path='/404' component={NotFoundPage} />
+        <Route path='/:something' component={NotFoundPage} />
       </Switch>
     );
   }
