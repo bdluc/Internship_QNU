@@ -19,8 +19,8 @@ func CheckError(c *gin.Context, err error) bool {
 
 func CheckNotFound(c *gin.Context, err error) bool {
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"message": err.Error(),
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Success",
 		})
 		return true
 	}
