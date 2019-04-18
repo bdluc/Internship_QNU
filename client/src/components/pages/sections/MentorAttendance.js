@@ -115,24 +115,35 @@ class MentorAttendance extends React.Component {
 //   }
 
   handleCellChange(object){
+      var check = false;
     $.ajax({
         url: "http://localhost:8080/attendance",
         type: "PUT",
+        async: false,
         data: JSON.stringify(object),
         success: function (response) {
-            this.setState({
-                showSuccess: true, 
-                showError: false
-            });
-            return true
+            if(response.status === "updated"){
+                this.setState({
+                    showSuccess: true, 
+                    showError: false
+                });
+                check = true
+            }
+            else{
+                this.setState({
+                    showSuccess: false, showError: true
+                });
+                check = false
+            }
         }.bind(this),
         error: function (xhr, status) {
             this.setState({
                 showSuccess: false, showError: true
             });
-            return false
+            check = false
         }.bind(this)
     });
+    return check;
   }
 
   onSelectChange(event) {
