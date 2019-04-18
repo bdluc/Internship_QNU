@@ -93,8 +93,9 @@ class Cell extends React.Component {
             IsDeleted: false
         };
         if (this.state.selectCurrentValue !== this.state.selectDefaultValue) {
-            this.props.onCellChange(object);
-            this.setState({showModal: false, showEdit: false});   
+            var isChange = this.props.onCellChange(object);
+            if(isChange)
+                this.setState({showModal: false, showEdit: false, selectDefaultValue: this.state.selectCurrentValue});   
         }
     }
 
