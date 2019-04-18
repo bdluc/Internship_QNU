@@ -215,22 +215,31 @@ func GetCoursesByMentorID(c *gin.Context) {
 
 	query := []bson.M{
 		{
-			"$unwind": "$MentorID",
-		},
-		{
 			"$lookup": bson.M{ // lookup the documents table here
 				"from":         "mentor",
 				"localField":   "MentorID",
 				"foreignField": "_id",
 				"as":           "Mentor",
 			}},
-		{
-			"$unwind": "$Mentor",
-		},
+		// {
+		// 	"$unwind": "$Mentor",
+		// },
 		{"$match": bson.M{
 			"IsDeleted": false,
 			"MentorID":  mentor.ID,
 		}},
+		{
+			"$group": bson.M{
+				"_id":        "$_id",
+				"CourseName": bson.M{"$first": "$CourseName"},
+				"StartDate":  bson.M{"$first": "$StartDate"},
+				"EndDate":    bson.M{"$first": "$EndDate"},
+				"Detail":     bson.M{"$first": "$Detail"},
+				"IsDeleted":  bson.M{"$first": "$IsDeleted"},
+				"MentorID":   bson.M{"$first": "$MentorID"},
+				"MentorName": bson.M{"$first": "$Mentor.Name"},
+			},
+		},
 		{
 			"$project": bson.M{
 				"CourseName": 1,
@@ -239,7 +248,7 @@ func GetCoursesByMentorID(c *gin.Context) {
 				"Detail":     1,
 				"MentorID":   1,
 				"IsDeleted":  1,
-				"MentorName": "$Mentor.Name",
+				"MentorName": "$MentorName",
 			},
 		},
 	}
@@ -275,7 +284,6 @@ func GetCourseByIntern(c *gin.Context) {
 	errCourse := database.C(models.CollectionCourse).FindId(intern.CourseID).One(&course)
 	common.CheckError(c, errCourse)
 
-	fmt.Print("OOOOOO", course)
 	c.JSON(http.StatusOK, course)
 }
 
@@ -290,4 +298,17 @@ func GetDetailCourseByIntern(c *gin.Context) {
 	common.CheckError(c, errCourse)
 
 	c.JSON(http.StatusOK, course.Detail)
+}
+func GetMentorByInternID(c *gin.Context) {
+	_, intern := getInternByID(c, c.Param("id"))
+	idcourse := intern.CourseID.Hex()
+
+	course := getCourseByID(c, idcourse)
+	mentorList := []models.Mentor{}
+	for _, v := range course.MentorID {
+		iidd := v.Hex()
+		_, mentor := getMentorByID(c, iidd)
+		mentorList = append(mentorList, *mentor)
+	}
+	c.JSON(http.StatusOK, mentorList)
 }
