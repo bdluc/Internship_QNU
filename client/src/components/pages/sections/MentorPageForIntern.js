@@ -123,6 +123,7 @@ class MentorPageForIntern extends React.Component {
     super();
     this.state = {
       modal: false,
+      internId: JSON.parse(sessionStorage.getItem('user')).ID,
       data: [],
       value: 0,
       mentorList: [],
@@ -135,19 +136,20 @@ class MentorPageForIntern extends React.Component {
   }
 
   GetMentorList() {
+    const internId = this.state.internId
     const options = { month: 'numeric', day: 'numeric', year: 'numeric' };
-    fetch('http://localhost:8080/mentors')
+    fetch('http://localhost:8080/course/'+ internId +'/mentor')
       .then(response => response.json())
       .then(data => {
         let NewData = []
-        // let cnt = 1
-        // data.map(row => {
-        //   NewData.push([cnt, row.ID, row.Name, row.PhoneNumber, row.Email, row.Gender ? "Male" : "Female",
-        //     (new Date(row.DoB)).toLocaleDateString('en-US', options), row.Department])
-        //   //, row.SupervisorID
-        //   cnt++
-        //   return NewData
-        // })
+        let cnt = 1
+        data.map(row => {
+          NewData.push([cnt, row.ID, row.Name, row.PhoneNumber, row.Email, row.Gender ? "Male" : "Female",
+            (new Date(row.DoB)).toLocaleDateString('en-US', options), row.Department])
+          //, row.SupervisorID
+          cnt++
+          return NewData
+        })
         this.setState({
           mentorList: NewData
         })

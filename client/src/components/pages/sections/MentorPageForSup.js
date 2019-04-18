@@ -122,9 +122,7 @@ class MentorPageForSup extends React.Component {
 
   constructor() {
     super();
-    // this.addNotification = this.addNotification.bind(this);
-    this.editNotification = this.editNotification.bind(this);
-    // this.deleteNotification = this.deleteNotification.bind(this);
+    this.editNotification = this.addNotification.bind(this);
     this.notificationDOMRef = React.createRef();
     this.state = {
       modal: false,
@@ -138,21 +136,9 @@ class MentorPageForSup extends React.Component {
   }
 
 
-  // addNotification() {
-  //   this.notificationDOMRef.current.addNotification({
-  //     title: "Added",
-  //     message: "Mentor Added!",
-  //     type: "success",
-  //     insert: "top",
-  //     container: "top-right",
-  //     animationIn: ["animated", "fadeIn"],
-  //     animationOut: ["animated", "fadeOut"],
-  //     dismiss: { duration: 2000 },
-  //     dismissable: { click: true }
-  //   });
-  // }
 
-  editNotification() {
+
+  addNotification() {
     this.notificationDOMRef.current.addNotification({
       title: "Edited",
       message: "Mentor Edited!",
@@ -166,19 +152,6 @@ class MentorPageForSup extends React.Component {
     });
   }
 
-  // deleteNotification(){
-  //   this.notificationDOMRef.current.deleteNotification({
-  //     title: "Deleted",
-  //     message: "Mentor Deleted!",
-  //     type: "danger",
-  //     insert: "top",
-  //     container: "top-right",
-  //     animationIn: ["animated", "fadeIn"],
-  //     animationOut: ["animated", "fadeOut"],
-  //     dismiss: { duration: 2000 },
-  //     dismissable: { click: true }
-  //   });
-  // }
 
   GetMentorList() {
     const options = { month: 'numeric', day: 'numeric', year: 'numeric' };

@@ -149,7 +149,7 @@ class TopNavigation extends Component {
                             {this.props.name}
                         </MDBDropdownToggle>
                         <MDBDropdownMenu color="info" basic>
-                            <MDBDropdownItem>Infor</MDBDropdownItem>
+                            <MDBDropdownItem href="/editinfor">Infor</MDBDropdownItem>
                             <MDBDropdownItem onClick = {this.toggleChangePassword.bind(this)}>Change password</MDBDropdownItem>
                             <MDBDropdownItem>About</MDBDropdownItem>
                             <MDBDropdownItem divider />

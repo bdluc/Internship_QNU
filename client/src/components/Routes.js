@@ -5,6 +5,7 @@ import MentorPage from './pages/MentorPage';
 import InternshipPage from './pages/InternshipPage'
 import CoursePage from './pages/CoursePage'
 import CoursePages from './pages/CoursePages'
+import EditInfor from './pages/EditInfor'
 
 import AttendancePage from './pages/Attendance'
 import Login from './pages/LoginPage'
@@ -22,6 +23,7 @@ class Routes extends React.Component {
         <Route path='/internship' exact component={InternshipPage}  />
         <Route path='/course/:id' exact component={CoursePage}  />
         <Route path='/courses' exact component={CoursePages}  />
+        <Route path='/editinfor' exact component={EditInfor}  />
         <Route path='/attendance' exact component={AttendancePage}  />
         <Route path='/login' exact component={Login}  />
 
