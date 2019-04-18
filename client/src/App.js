@@ -15,6 +15,10 @@ class App extends Component {
     };
     }
 
+  componentDidMount(){
+      document.title = "Internship Management"
+    }
+  
   onLogin (value) {
     if (value !== null) {
       this.setState({

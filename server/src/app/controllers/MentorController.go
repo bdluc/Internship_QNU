@@ -93,6 +93,18 @@ func DeleteMentor(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
+func ListMentorByID(c *gin.Context) {
+	database := c.MustGet("db").(*mgo.Database)
+	id := bson.ObjectIdHex(c.Param("id"))
+	mentor := models.Mentor{}
+	err := database.C(models.CollectionMentor).Find(bson.M{"_id": id}).One(&mentor)
+	//err := database.C(models.CollectionMentor).Find(bson.M{"$or": []bson.M{{"Name": bson.RegEx{"12312", "$i"}}, {"Email": bson.RegEx{"q", "$i"}}, {"Department": bson.RegEx{"DC20", "$i"}}}}).All(&mentor)
+	if common.CheckError(c, err) {
+		return
+	}
+	c.JSON(http.StatusOK, mentor)
+}
+
 // List all mentors
 func ListMentors(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
