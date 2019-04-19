@@ -28,7 +28,7 @@ class App extends Component {
                 headers:{
                   "Content-Type": "application/json"
                 },
-                body: JSON.stringify({"InternID": user.ID})
+                body: JSON.stringify({"InternID": user.ID, "Status": "PA"})
             })
       }
       

@@ -3,13 +3,17 @@ import '../attendance.css';
 import Table from '../components/mentor/Table'
 import DailyTable from '../components/DailyTable'
 import BarChart from '../components/BarChart'
+import ReactNotification from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 import $ from 'jquery';
 
 
 class MentorAttendance extends React.Component {
 
   constructor(props) {
-        super(props);   
+        super(props);
+        this.addNotification = this.addNotification.bind(this);
+        this.notificationDOMRef = React.createRef.call(this); 
         this.state = {
             mentorId: JSON.parse(sessionStorage.getItem('user')).ID,
             courses: [],
@@ -31,6 +35,37 @@ class MentorAttendance extends React.Component {
             now: null
         };
         this.getStudents();
+  }
+
+  addNotification(kind, mess) {
+    switch (kind) {
+      case "errorUpdate":
+        this.notificationDOMRef.current.addNotification({
+          title: "Error",
+          message: mess,
+          type: "danger",
+          insert: "top",
+          container: "top-right",
+          animationIn: ["animated", "fadeIn"],
+          animationOut: ["animated", "fadeOut"],
+          dismiss: { duration: 2000 },
+          dismissable: { click: true }
+        });
+        break;
+      case "successUpdate":
+        this.notificationDOMRef.current.addNotification({
+          title: "Success",
+          message: mess,
+          type: "success", //success, danger, default, info, warning or custom
+          insert: "top",
+          container: "top-right",
+          animationIn: ["animated", "fadeIn"],
+          animationOut: ["animated", "fadeOut"],
+          dismiss: { duration: 2000 },
+          dismissable: { click: true }
+        });
+        break;
+    }
   }
   
 
@@ -101,38 +136,18 @@ class MentorAttendance extends React.Component {
     return students;
   }
 
-//   getIds(traineeData, course){
-//     var ids = [];
-//     if(course === "All")
-//         for(var i = 0 ; i < traineeData.length ; i++)
-//         ids.push(traineeData[i].Id);
-//     else 
-//         for(var i = 0 ; i < traineeData.length ; i++){
-//             if(traineeData[i].Course === course)
-//             ids.push(traineeData[i].Id);
-//         }
-//     return ids;
-//   }
-
-  handleCellChange(object){
+ handleCellChange(object){
       var check = false;
-    $.ajax({
-        url: "http://localhost:8080/attendance",
-        type: "PUT",
-        async: false,
-        data: JSON.stringify(object),
-        success: function (response) {
-            if(response.status === "updated"){
-                this.setState({
-                    showSuccess: true, 
-                    showError: false
-                });
+      if(object.ID === "now"){
+         $.ajax({url:'http://localhost:8080/attendance',
+            type: "POST",
+            async: false,
+            data: JSON.stringify({"InternID": object.InternID, "Status": object.Status}),
+            success: function (response) {
+            if(response.status === "created"){
                 check = true
             }
-            else{
-                this.setState({
-                    showSuccess: false, showError: true
-                });
+            else {
                 check = false
             }
         }.bind(this),
@@ -143,8 +158,43 @@ class MentorAttendance extends React.Component {
             check = false
         }.bind(this)
     });
+    }else{
+        $.ajax({
+            url: "http://localhost:8080/attendance",
+            type: "PUT",
+            async: false,
+            data: JSON.stringify(object),
+            success: function (response) {
+                if(response.status === "updated"){
+                    this.setState({
+                        showSuccess: true, 
+                        showError: false
+                    });
+                    check = true
+                }
+                else{
+                    this.setState({
+                        showSuccess: false, showError: true
+                    });
+                    check = false
+                }
+            }.bind(this),
+            error: function (xhr, status) {
+                this.setState({
+                    showSuccess: false, showError: true
+                });
+                check = false
+            }.bind(this)
+        });
+    }
+    if(check)
+        this.addNotification("successUpdate", "Update attendance successfully");
+    else
+        this.addNotification("errorUpdate", "Could not update attendance")
     return check;
   }
+
+
 
   onSelectChange(event) {
     var curValue = event.target.value;
@@ -156,7 +206,6 @@ class MentorAttendance extends React.Component {
                 show: 0
             });
         } else if(curValue === "Daily"){
-            console.log(this.state.dailyData);
             this.loadDailyData()
             this.setState({
                 show: 1
@@ -172,10 +221,8 @@ class MentorAttendance extends React.Component {
   }
 
   onSelectStudentChange(event){
-    console.log(event.target.value)
     var studentId = event.target.value;
     var traineeData = this.getStudentById(studentId);
-    console.log(traineeData.Name)
     var month = this.getCurrentMonth(traineeData.Id)
     this.setState({
         currentStudentId: traineeData.Id,
@@ -329,7 +376,6 @@ class MentorAttendance extends React.Component {
                 dailyData: response,
                 showData: true
             });
-            console.log(response)
         }.bind(this),
         error: function (xhr, status) {
             this.setState({
@@ -431,21 +477,30 @@ class MentorAttendance extends React.Component {
     var start = new Date(startYear, startMonth, startDay);
     var end = new Date(endYear, endMonth, endDay);
     var mid = new Date(year, month, day);
-    var today = new Date();
+    var day = new Date();
+    var today = new Date(day.getFullYear(), day.getMonth(), day.getDate()) 
 
     if (mid >= start && mid <= end) {
         if (mid >= start && mid <= today) {
             for (var i = 0; i < traineeData.Attendances.length; i++) {
                 var strDate = traineeData.Attendances[i].Date;
                 var date = new Date(this.getYear(strDate), this.getMonth(strDate)-1, this.getDay(strDate));
+                console.log(mid.getDate(),date, i,mid.getTime() === date.getTime())
                 if (mid.getTime() === date.getTime()) {
                     return {
                         id: traineeData.Attendances[i].ID,
                         InternID: id,
                         fullDate: strDate,
                         attendance: traineeData.Attendances[i].Status,
-                    }
-                        
+                    }  
+                }
+            }
+            if(mid.getTime() === today.getTime()){
+                return {
+                    id: "now",
+                    InternID: id,
+                    fullDate: "",
+                    attendance: "",
                 }
             }
             return "N.A"
@@ -592,6 +647,7 @@ class MentorAttendance extends React.Component {
                 {this.state.show === 0 ? 
                 <div className="card mt-6">
                     <div className="card-body">
+                        <ReactNotification ref={this.notificationDOMRef} />
                         <Table tableData={this.state.tableData} text={this.state.currentMonth} onCellChange={this.handleCellChange.bind(this)}/>
                     </div>
                 </div> : null}  
@@ -601,14 +657,6 @@ class MentorAttendance extends React.Component {
                     <div className="card-body"> 
                         <BarChart arr={this.state.chartData}/> 
                     </div>
-                </div> : null}
-                {this.state.showSuccess ?
-                <div className="alert alert-success custom-top">
-                    Update attendance successfully.
-                </div> : null}
-                {this.state.showError ?
-                <div className="alert alert-danger custom-top">
-                    Update attendance failed.
                 </div> : null}
             </div> : null}
         </div>
