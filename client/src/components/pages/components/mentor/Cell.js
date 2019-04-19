@@ -77,7 +77,14 @@ class Cell extends React.Component {
     }
 
     onEditClick() {
-        this.setState({showModal: true});
+        if(this.props.cellData.id === "now")
+            this.setState({
+                iconClass: this.getIconClass("AR"),
+                selectCurrentValue: "AR"
+            });
+        this.setState({
+            showModal: true
+        })
     }
 
     onCloseClick() {
@@ -98,6 +105,7 @@ class Cell extends React.Component {
                 IsDeleted: false
             };
             if (this.state.selectCurrentValue !== this.state.selectDefaultValue) {
+                console.log(object)
                 var isChange = this.props.onCellChange(object);
                 if(isChange)
                     this.setState({showModal: false, showEdit: false, selectDefaultValue: this.state.selectCurrentValue});   

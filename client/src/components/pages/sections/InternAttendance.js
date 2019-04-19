@@ -197,8 +197,8 @@ class MentorAttendance extends React.Component {
 
   loadChartData( month, year) {
     var arr = [];
-    var ppCount, pCount, aCount, arCount, naCount;
-    ppCount = pCount = aCount = arCount = naCount = 0;
+    var ppCount, pCount, paCount , aCount, arCount, a2rCount ,naCount;
+    ppCount = pCount = paCount = aCount = arCount = a2rCount = naCount = 0;
 
     var days = this.getDaysInMonth(month, year);
     for (var i = 0; i < days.length; i++) {
@@ -213,11 +213,17 @@ class MentorAttendance extends React.Component {
                 case "P" :
                     pCount++;
                     break;
+                case "PA" :
+                    paCount++;
+                    break;
                 case "A" :
                     aCount++;
                     break;
                 case "AR" :
                     arCount++;
+                    break;
+                case "ARR" :
+                    a2rCount++;
                     break;
                 case "N.A" :
                     naCount++;
@@ -231,9 +237,12 @@ class MentorAttendance extends React.Component {
 
     arr.push(ppCount);
     arr.push(pCount);
-    arr.push(aCount);
+    arr.push(paCount);
     arr.push(arCount);
+    arr.push(a2rCount);
+    arr.push(aCount);
     arr.push(naCount);
+    console.log(arr)
     return arr;
   }
   

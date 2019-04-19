@@ -16,6 +16,7 @@ class MentorAttendance extends React.Component {
         this.notificationDOMRef = React.createRef.call(this); 
         this.state = {
             mentorId: JSON.parse(sessionStorage.getItem('user')).ID,
+            position: JSON.parse(sessionStorage.getItem('user')).Role === 2 ? "mentor" : "supervisor",
             courses: [],
             students: [],
             currentName:"",
@@ -71,7 +72,7 @@ class MentorAttendance extends React.Component {
 
   getStudents() {
     $.ajax({
-        url: "http://localhost:8080/attendance/" + this.state.mentorId +"/mentor",
+        url: "http://localhost:8080/attendance/" + this.state.mentorId +"/" + this.state.position,
         type: "GET",
         success: function (response) {
             if(response.length === 0){
@@ -145,6 +146,17 @@ class MentorAttendance extends React.Component {
             data: JSON.stringify({"InternID": object.InternID, "Status": object.Status}),
             success: function (response) {
             if(response.status === "created"){
+                var intern = this.getStudentById(object.InternID);
+                intern.Attendances.push(response.attendance)
+                intern = this.getdailyStudentById(object.InternID);
+                intern.Attendances.push(response.attendance)
+                
+                var month = this.getCurrentMonth(this.state.currentStudentId);
+                this.setState({
+                    tableData: this.loadTableData(this.state.currentStudentId, month.MonthNow, month.YearNow),
+                    chartData: this.loadChartData(this.state.currentStudentId, month.MonthNow, month.YearNow),
+
+                });
                 check = true
             }
             else {
@@ -369,7 +381,7 @@ class MentorAttendance extends React.Component {
 
   loadDailyData(){
     $.ajax({
-        url: "http://localhost:8080/attendance/"+this.state.mentorId+"/mentor/daily",
+        url: "http://localhost:8080/attendance/"+this.state.mentorId+"/"+this.state.position+"/daily",
         type: "GET",
         success: function (response) {
             this.setState({
@@ -388,8 +400,8 @@ class MentorAttendance extends React.Component {
 
   loadChartData(id, month, year) {
     var arr = [];
-    var ppCount, pCount, aCount, arCount, naCount;
-    ppCount = pCount = aCount = arCount = naCount = 0;
+    var ppCount, pCount, paCount , aCount, arCount, a2rCount ,naCount;
+    ppCount = pCount = paCount = aCount = arCount = a2rCount = naCount = 0;
 
     var days = this.getDaysInMonth(month, year);
     for (var i = 0; i < days.length; i++) {
@@ -404,11 +416,17 @@ class MentorAttendance extends React.Component {
                 case "P" :
                     pCount++;
                     break;
+                case "PA" :
+                    paCount++;
+                    break;
                 case "A" :
                     aCount++;
                     break;
                 case "AR" :
                     arCount++;
+                    break;
+                case "ARR" :
+                    a2rCount++;
                     break;
                 case "N.A" :
                     naCount++;
@@ -422,8 +440,10 @@ class MentorAttendance extends React.Component {
 
     arr.push(ppCount);
     arr.push(pCount);
-    arr.push(aCount);
+    arr.push(paCount);
     arr.push(arCount);
+    arr.push(a2rCount);
+    arr.push(aCount);
     arr.push(naCount);
     return arr;
   }
@@ -457,6 +477,16 @@ class MentorAttendance extends React.Component {
 
       return null;
   }
+
+  getdailyStudentById(id) {
+    for (var i = 0; i < this.state.dailyData.length; i++) {
+        if (this.state.dailyData[i].Id === id) {
+            return this.state.dailyData[i];
+        }
+    }
+
+    return null;
+}
   
 
   getAttendanceData(id, day, month, year) {
@@ -485,7 +515,6 @@ class MentorAttendance extends React.Component {
             for (var i = 0; i < traineeData.Attendances.length; i++) {
                 var strDate = traineeData.Attendances[i].Date;
                 var date = new Date(this.getYear(strDate), this.getMonth(strDate)-1, this.getDay(strDate));
-                console.log(mid.getDate(),date, i,mid.getTime() === date.getTime())
                 if (mid.getTime() === date.getTime()) {
                     return {
                         id: traineeData.Attendances[i].ID,
@@ -599,7 +628,6 @@ class MentorAttendance extends React.Component {
                         <option>Daily</option> 
                         <option>Chart</option>         
                     </select>
-
                     {this.state.show === 1 ? 
                     <div className="card mt-6">
                         <div className="card-body">
@@ -647,7 +675,6 @@ class MentorAttendance extends React.Component {
                 {this.state.show === 0 ? 
                 <div className="card mt-6">
                     <div className="card-body">
-                        <ReactNotification ref={this.notificationDOMRef} />
                         <Table tableData={this.state.tableData} text={this.state.currentMonth} onCellChange={this.handleCellChange.bind(this)}/>
                     </div>
                 </div> : null}  
@@ -659,6 +686,7 @@ class MentorAttendance extends React.Component {
                     </div>
                 </div> : null}
             </div> : null}
+            <ReactNotification ref={this.notificationDOMRef} />
         </div>
     );
   }

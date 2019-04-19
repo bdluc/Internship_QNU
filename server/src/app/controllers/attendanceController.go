@@ -267,6 +267,7 @@ func CreateAttendance(c *gin.Context) {
 		return
 	}
 
+	atten.ID = bson.NewObjectId()
 	currentTime := time.Now()
 	course := models.Course{}
 	intern := models.Intern{}
@@ -333,6 +334,7 @@ func CreateAttendance(c *gin.Context) {
 			c.JSON(http.StatusCreated, gin.H{
 				common.Status:  "created",
 				common.Message: "Created attendance",
+				"attendance":   atten,
 			})
 		}
 	}
