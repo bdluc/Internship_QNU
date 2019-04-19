@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Navbar, NavbarBrand, NavbarNav, NavbarToggler, Collapse, MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem } from 'mdbreact';
 import { MDBIcon, MDBModalBody, MDBInput, MDBBtn, MDBModal} from 'mdbreact';
+import { Link } from 'react-router-dom'
+
 // import Fab from '@material-ui/core/Fab';
 
 
@@ -18,7 +20,8 @@ class TopNavigation extends Component {
             showError: false,
             error: "",
             success: "",
-            showSuccess: false
+            showSuccess: false,
+            user : JSON.parse(sessionStorage.getItem('user'))
         };
     this.onClick = this.onClick.bind(this);
     this.toggle = this.toggle.bind(this);
@@ -147,7 +150,7 @@ class TopNavigation extends Component {
                             {this.props.name}
                         </MDBDropdownToggle>
                         <MDBDropdownMenu color="info" basic>
-                            <MDBDropdownItem>Infor</MDBDropdownItem>
+                            <MDBDropdownItem> <Link to={`/profile/${this.state.user.ID}`} >Infor</Link></MDBDropdownItem>
                             <MDBDropdownItem onClick = {this.toggleChangePassword.bind(this)}>Change password</MDBDropdownItem>
                             <MDBDropdownItem>About</MDBDropdownItem>
                             <MDBDropdownItem divider />

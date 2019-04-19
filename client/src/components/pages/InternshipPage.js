@@ -8,19 +8,13 @@ import ReactNotification from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
 import TextField from '@material-ui/core/TextField';
 import MUIDataTable from "mui-datatables";
-import DatePickers from './sections/DatePickers'
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
-import Input from '@material-ui/core/Input';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
-import FilledInput from '@material-ui/core/FilledInput';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import Button from '@material-ui/core/Button';
 import './attendance.css';
 /* Import MUIDataTable using command "npm install mui-datatables --save" */
 
@@ -134,7 +128,7 @@ class InternPage extends React.Component {
         data.map(row => {
           NewData.push([stt, row.Intern.ID, row.Intern.Name, row.Intern.PhoneNumber, row.Intern.Email, row.Intern.Gender ? "Male" : "Female",
             (new Date(row.Intern.DoB)).toLocaleDateString('en-US', options),
-            row.Intern.University, row.Intern.Faculty, row.Course,
+            row.Intern.University, row.Intern.Faculty, row.Course, row.Intern.CourseID,
             // format datetime,
           ])
           stt++
@@ -172,7 +166,6 @@ class InternPage extends React.Component {
       dob: "",
       University: "",
       Faculty: "",
-      Rom: "",
       icon: "plus",
       isUpdate: false,
       checkValidate: false
@@ -268,7 +261,7 @@ class InternPage extends React.Component {
   }
 
   handlerDeleteIntern = () => {
-    if (confirm("bạn chắc chắn muốn xóa ?")) { //eslint-disable-line
+    if (confirm("b?n ch?c ch?n mu?n xóa ?")) { //eslint-disable-line
       fetch("http://localhost:8080/intern/" + this.state.id, {
         method: 'DELETE',
         mode: 'cors',
@@ -297,7 +290,7 @@ class InternPage extends React.Component {
       "DoB": date,
       "University": this.state.University,
       "Faculty": this.state.Faculty,
-      "CourseID": this.state.course,
+      "CourseID": this.state.courseID,
       "IsDeleted": false
     }
     fetch("http://localhost:8080/internu/" + this.state.id, {
@@ -433,7 +426,7 @@ class InternPage extends React.Component {
     onRowClick: (rowData, rowState) => {
       let std = this.convertDate(rowData[6])
       // let courseid = (rowData[9])
-
+      console.log(rowState.dataIndex, rowState.rowIndex)
       this.setState({
 
         id: rowData[1],
@@ -445,6 +438,7 @@ class InternPage extends React.Component {
         University: rowData[7],
         Faculty: rowData[8],
         course: rowData[9],
+        courseID: this.state.internList[rowState.rowIndex][10],
         icon: "edit",
         isUpdate: true,
         checkValidate: true
@@ -550,7 +544,7 @@ class InternPage extends React.Component {
         this.setState({ gender: value })
         break;
       case "course":
-        this.setState({ course: value })
+        this.setState({ courseID: value })
         break;
       case "dob":
         this.setState({ dob: value })
@@ -564,8 +558,6 @@ class InternPage extends React.Component {
       case "Faculty":
         this.setState({ Faculty: value })
         break;
-      case "Course":
-      this.setState({ Course: value})
       default:
         break;
     }
@@ -625,7 +617,7 @@ class InternPage extends React.Component {
               </FormControl ><br />
               <FormControl fullWidth>
                 <InputLabel htmlFor="select-multiple">Course</InputLabel>
-                <Select fullWidth label="Course" name="course" value={this.state.course} onChange={this.handleChangeValue.bind(this)}>
+                <Select fullWidth label="Course" name="course" value={this.state.courseID} onChange={this.handleChangeValue.bind(this)}>
                   {this.state.courseList.map(function (course, index) {
                     return <MenuItem key={index} value={course.ID}>{course.Name}</MenuItem>;
                   })}
