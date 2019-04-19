@@ -357,6 +357,8 @@ class MentorPageForMentor extends React.Component {
     responsive: "scroll",
     download: false,
     print: false,
+    rowsPerPage: 5,
+    rowsPerPageOptions: [5,10,20],
     selectableRows: false,
     textLabels: {
       body: {
@@ -454,141 +456,7 @@ class MentorPageForMentor extends React.Component {
 
   //   return false;
   // }
-  handleChangeValue(e) {
-    const { name, value } = e.target;
-    e.target.className = "form-control"
-    switch (name) {
-      case "name":
-        this.setState({ name: value })
-        if (value.trim().length === 0) {
-          this.setState({
-            btnMode: 'off',
-            name: " ",
-            errorName: "Name can not be blank"
-          })
-          e.target.className += " invalid"
-        } else if (value.trim().length < 6) {
-          this.setState({
-            btnMode: 'off',
-            errorName: "Name contains more than 5 characters"
-          })
-          e.target.className += " invalid"
-        } else {
-          this.setState({
-            doneName: true,
-            })
-          e.target.className += " valid"
-        }
-        break;
-      case "phone":
-        this.setState({ phone: value })
-        e.target.className = "form-control"
-        const regexPhone = /^[0-9\b]+$/
-        if (value.trim().length === 0) {
-          this.setState({
-            btnMode: 'off',
-            phone: " ",
-            errorPhone: "Phone can not be blank"
-          })
-          e.target.className += " invalid"
-        } else if (!regexPhone.test(value.trim())) {
-          this.setState({
-            btnMode: 'off',
-            errorPhone: "Phone contains only numeric characters"
-          })
-          e.target.className += " invalid"
-        } else {
-          this.setState({
-            donePhone: true,
-            })
-          e.target.className += " valid"
-        }
-        break;
-      case "email":
-        this.setState({ email: value })
-        e.target.className = "form-control"
-        const regexEmail = /^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i;
-        if (value.trim().length === 0) {
-          this.setState({
-            btnMode: 'off',
-            email: " ",
-            errorEmail: "Email can not be blank"
-          })
-          e.target.className += " invalid"
-        } else if (!regexEmail.test(value.trim())) {
-          this.setState({
-            btnMode: 'off',
-            errorEmail: "Not a valid email address"
-          })
-          e.target.className += " invalid"
-        } else {
-          this.setState({
-            doneEmail: true,
-            })
-          e.target.className += " valid"
-        }
-        // console.log(this.state.dob)
-
-        break;
-      case "gender":
-        this.setState({ gender: value })
-        if (value.trim().length > 0) {
-          this.setState({
-            doneGender: true,            
-          })
-        }
-        // console.log(this.state.dob)
-
-        break;
-      case "dob":
-        this.setState({ dob: value })
-        if (value.trim().length > 0) {
-          this.setState({
-            doneDOB: true,            
-          })
-        }
-        break;
-      case "mentor":
-        this.setState({ mentor: value })
-        if (value.trim().length > 0) {
-          this.setState({
-            doneMentor: true,            
-          })
-          e.target.className += " valid"
-        }
-        break;
-      case "department":
-        this.setState({ department: value })
-        if (value.trim().length > 0) {
-          this.setState({
-            doneDepartment: true,            
-          })
-          e.target.className += " valid"
-        }
-        break;
-      default:
-        break;
-    }
-    /*
-    doneName
-    donePhone
-    doneGender
-    doneEmail
-    doneDepartment
-    doneDOB
-    */
-    if(this.state.doneName ===  true && 
-      this.state.donePhone ===  true && 
-      this.state.doneGender ===  true && 
-      this.state.doneEmail ===  true && 
-      this.state.doneDepartment ===  true && 
-      this.state.doneDOB ===  true )
-    {
-      this.setState({
-        btnMode: "on"
-      })
-    }
-  }
+ 
 
 
   render() {
@@ -599,7 +467,7 @@ class MentorPageForMentor extends React.Component {
       <React.Fragment>
         <Row>
           <Col md="12">
-            <Card className="mt-5">
+            <Card>
 
               <CardBody>
                 {/* <MDBBtn
@@ -636,93 +504,6 @@ class MentorPageForMentor extends React.Component {
             message="Đã cập nhật thành công!"
           />
         </Snackbar>
-
-          {
-            // AddMentor, Edit table
-          }
-          <MDBModal
-            isOpen={this.state.modalMentor}
-            toggle={this.toggleMentor}
-            size="md"
-            cascading>
-
-            <MDBModalBody>
-              <MDBInput label="Name" name="name" value={this.state.name} onChange={this.handleChangeValue.bind(this)} />
-              <MDBInput label="Phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
-              <MDBInput label="Email" name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
-              <FormControl fullWidth >
-              <InputLabel htmlFor="select-multiple">Gender</InputLabel>
-              <Select fullWidth label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)}>
-                <MenuItem value="Male">Male</MenuItem>
-                <MenuItem value="Female">Female</MenuItem>
-              </Select>
-              </FormControl>
-
-              <MDBInput
-
-                label="Dob"
-                name="dob"
-                id="date"
-                type="date"
-                value={this.state.dob}
-                onChange={this.handleChangeValue.bind(this)}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-
-              <MDBInput label="Department" name="department" value={this.state.department} onChange={this.handleChangeValue.bind(this)} />
-              <div className="text-center mt-1-half">
-                {
-                  (this.state.isUpdate === false) &&
-                  this.state.btnMode === 'on' &&
-                  <MDBBtn
-                    className="mb-2 blue darken-2"
-                    onClick={this.handlerAddMentor}
-                  >
-                    Create
-                  <MDBIcon icon="send" className="ml-1" />
-                  </MDBBtn>
-                }
-
-                {
-                  (this.state.isUpdate === false) &&
-
-                  this.state.btnMode === 'off' &&
-                  <MDBBtn
-                    className="mb-2 blue darken-2"
-                    onClick={this.handlerAddMentor}
-                    disabled="true"
-                  >
-                    Create
-                  <MDBIcon icon="send" className="ml-1" />
-                  </MDBBtn>
-
-                }
-
-                {
-                  this.state.isUpdate &&
-                  <MDBBtn
-                    className="mb-2 blue darken-2"
-                    onClick={this.handlerEditMentor}>
-                    Update
-                  <MDBIcon icon="edit" className="ml-1" />
-                  </MDBBtn>
-                }
-                {
-                  this.state.isUpdate &&
-
-
-                  <MDBBtn
-                    className="mb-2 blue darken-2"
-                    onClick={this.handlerDeleteMentor}>
-                    Delete
-                  <MDBIcon icon="trash" className="ml-1" />
-                  </MDBBtn>
-                }
-              </div>
-            </MDBModalBody>
-          </MDBModal>
         </Row>
 
 

@@ -81,7 +81,7 @@ func UpdateIntern(c *gin.Context) {
 }
 
 // list InternById
-func ListMentorByID(c *gin.Context) {
+func ListInternByID(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
 
 	id := bson.ObjectIdHex(c.Param("id"))
@@ -90,7 +90,13 @@ func ListMentorByID(c *gin.Context) {
 	if common.CheckError(c, err) {
 		return
 	}
-	c.JSON(http.StatusOK, intern)
+	course := models.Course{}
+	internResp := Intern{}
+	database.C(models.CollectionCourse).Find(bson.M{"_id": intern.CourseID, "IsDeleted": false}).One(&course)
+	internResp.Intern = intern
+	internResp.Course = course.CourseName
+	c.JSON(http.StatusOK, internResp)
+
 }
 
 //Delete intern
@@ -149,10 +155,12 @@ type Intern struct {
 
 // Get an intern
 func GetIntern(c *gin.Context) {
+
 	err, intern := getInternByID(c, c.Param("id"))
 	if common.CheckNotFound(c, err) {
 		return
 	}
+
 	c.JSON(http.StatusOK, intern)
 }
 

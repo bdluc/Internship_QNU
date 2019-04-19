@@ -354,7 +354,10 @@ func UpdateAttendance(c *gin.Context) {
 		return
 	}
 	updateAttendance(c, database, atten)
-	c.JSON(http.StatusCreated, nil)
+	c.JSON(http.StatusCreated, gin.H{
+		"status":  "updated",
+		"message": "Update attendance successfully",
+	})
 
 }
 

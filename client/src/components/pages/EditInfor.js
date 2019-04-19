@@ -1,7 +1,11 @@
 import React from 'react';
 import MentorPageForSup from './sections/MentorPageForSup';
-import MentorPageForMentor from './sections/MentorPageForMentor';
-import MentorPageForIntern from './sections/MentorPageForIntern';
+import EditInforForMentor from './sections/EditInforForMentor';
+import EditInforForIntern from './sections/EditInternInfor';
+
+
+// import SupervisorAttendance from './sections/SupervisorAttendance';
+// import $ from 'jquery';
 
 
 class MentorPage extends React.Component {
@@ -21,11 +25,11 @@ class MentorPage extends React.Component {
         );
     else if(this.state.role === 2)
         return (
-            <MentorPageForMentor></MentorPageForMentor>
+            <EditInforForMentor></EditInforForMentor>
         );
     else{
         return (
-            <MentorPageForIntern></MentorPageForIntern>
+            <EditInforForIntern></EditInforForIntern>
         );
     }
   }

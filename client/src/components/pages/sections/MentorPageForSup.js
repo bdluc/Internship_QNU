@@ -21,6 +21,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import WarningIcon from '@material-ui/icons/Warning';
 import classNames from 'classnames';
 import IconButton from '@material-ui/core/IconButton';
+import ReactNotification from "react-notifications-component";
 
 // /* Import MUIDataTable using command "npm install mui-datatables --save" */
 
@@ -121,6 +122,8 @@ class MentorPageForSup extends React.Component {
 
   constructor() {
     super();
+    this.editNotification = this.addNotification.bind(this);
+    this.notificationDOMRef = React.createRef();
     this.state = {
       modal: false,
       data: [],
@@ -130,9 +133,25 @@ class MentorPageForSup extends React.Component {
       // checkValidate: true,
       btnMode: 'off'
     };
-
-
   }
+
+
+
+
+  addNotification() {
+    this.notificationDOMRef.current.addNotification({
+      title: "Edited",
+      message: "Mentor Edited!",
+      type: "success",
+      insert: "top",
+      container: "top-right",
+      animationIn: ["animated", "fadeIn"],
+      animationOut: ["animated", "fadeOut"],
+      dismiss: { duration: 2000 },
+      dismissable: { click: true }
+    });
+  }
+
 
   GetMentorList() {
     const options = { month: 'numeric', day: 'numeric', year: 'numeric' };
@@ -223,6 +242,7 @@ class MentorPageForSup extends React.Component {
         },
         body: JSON.stringify(data)
       })
+      .then(this.addNotification)
       .then(this.GetMentorList())
     this.toggleMentor()
 
@@ -235,6 +255,7 @@ class MentorPageForSup extends React.Component {
       method: 'DELETE',
       mode: 'cors'
     })
+    .then(this.deleteNotification)
       .then(this.GetMentorList())
     this.toggleMentor()
 
@@ -263,7 +284,7 @@ class MentorPageForSup extends React.Component {
       },
       body: JSON.stringify(data)
     })
-      .then(this.setState({ open: true }))
+      .then(this.addNotification)
       .then(this.GetMentorList())
 
     this.toggleMentor()
@@ -597,6 +618,8 @@ class MentorPageForSup extends React.Component {
     })
     return (
       <React.Fragment>
+        <ReactNotification ref={this.notificationDOMRef} />
+
         <Row>
           <Col md="12">
             <Card>
