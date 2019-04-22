@@ -1,6 +1,5 @@
 
 import React from 'react'
-import $ from 'jquery';
 import {
     Row, Col, Card, CardBody, MDBIcon, MDBModalBody, MDBInput, MDBBtn, MDBModal,
 } from 'mdbreact';
@@ -15,6 +14,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import $ from 'jquery';
 /* Import MUIDataTable using command "npm install mui-datatables --save" */
 
 function TabContainer(props) {
@@ -137,17 +137,14 @@ class InternPageForIntern extends React.Component {
                 this.setState({
                     internList: NewData
                 })
-                // console.log(data)
             });
     }
-
 
     componentDidMount() {
 
         this.GetInternList()
         this.GetListCourse()
     }
-
 
     toggleIntern = () => {
         this.setState({
@@ -170,13 +167,60 @@ class InternPageForIntern extends React.Component {
             });
     }
 
-    handlerEditIntern = () => {
+    handlerAddIntern = () => {
         var moment = require('moment');
+        const date = moment.utc(this.state.dob).format();
+        const data = {
+          "Name": this.state.name,
+          "PhoneNumber": this.state.phone,
+          "Email": this.state.email,
+          "Gender": this.state.gender === "Male" ? true : false,
+          "DoB": date,
+          "University": this.state.University,
+          "Faculty": this.state.Faculty,
+          "CourseID": this.state.course,
+          "IsDeleted": false
+        }
+        var checkAdd = false
+        $.ajax({
+          url: "http://localhost:8080/checkemail/" + data['Email'],
+          type: "GET",
+          async: false,
+          success: function (response) {
+            if(response['message'] == "Success"){
+              $.ajax({
+                url: "http://localhost:8080/intern",
+                type: "POST",
+                async: false,
+                dataType: "json",
+                data: JSON.stringify(data),
+                success: function (response) {
+                  if(response.ID === undefined){
+                    checkAdd = false
+                  }else{
+                    checkAdd = true
+                  }
+                }
+              });
+            }
+          }
+        });
+        console.log(checkAdd)
+        if(checkAdd == true){
+          this.toggleIntern()
+          this.addNotification("successAdd")
+        }
+        else{
+          this.addNotification("errorAdd")
+        }
+    }
 
+handlerEditIntern = () => {
+        var moment = require('moment');
         const date = moment.utc(this.state.dob).format();
         const data = {
             "Name": this.state.name,
-            "PhoneNumber": this.state.phone,
+            "PhoneNumber": this.state.phone,    
             "Email": this.state.email,
             "Gender": this.state.gender === "Male" ? true : false,
             "DoB": date,
@@ -201,7 +245,7 @@ class InternPageForIntern extends React.Component {
 
     columnsIntern = [
         {
-            name: "STT",
+            name: "#",
             options: {
                 filter: false,
                 sort: true,
@@ -520,15 +564,6 @@ class InternPageForIntern extends React.Component {
                                 <TextField fullWidth label="Faculty" name="text" name="Faculty" value={this.state.Faculty} onChange={this.handleChangeValue.bind(this)} />
                                 <div className="text-center mt-1-half">
 
-                                    {
-                                        this.state.isUpdate &&
-                                        <MDBBtn
-                                            className="mb-2 blue darken-2"
-                                            onClick={this.handlerEditIntern}>
-                                            Update
-                  <MDBIcon icon="edit" className="ml-1" />
-                                        </MDBBtn>
-                                    }
                                 </div>
                             </div>
                         </MDBModalBody>
