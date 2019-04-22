@@ -26,12 +26,16 @@ class Cell extends React.Component {
         switch(attendance){
             case "PP":
                 return "fa fa-check custom-icon-green";
-            case "P":
+            case  "P":
                 return "fa fa-check custom-icon-yellow";
+            case "PA":
+                return "fa fa-check custom-icon-red";
             case "A":
                 return "fa fa-remove custom-icon-red";
             case "AR":
-                return "fa fa-remove custom-icon-blue";
+                return "fa fa-remove custom-icon-blue"
+            case "ARR":
+                return "fa fa-remove custom-icon-green";
             default:
                 return "";
         }
