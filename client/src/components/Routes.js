@@ -11,6 +11,7 @@ import AttendancePage from './pages/Attendance'
 import Login from './pages/LoginPage'
 
 import NotFoundPage from './pages/NotFoundPage';
+import InternshipInfor from './pages/InternshipInfor';
 
 class Routes extends React.Component {
   constructor() {
@@ -26,9 +27,11 @@ class Routes extends React.Component {
         <Route path='/editinfor' exact component={EditInfor}  />
         <Route path='/attendance' exact component={AttendancePage}  />
         <Route path='/login' exact component={Login}  />
-
+        <Route path='/profile/:id' component={InternshipInfor} />
+        
         <Route path='/404' component={NotFoundPage} />
         <Route path='/:something' component={NotFoundPage} />
+        
       </Switch>
     );
   }

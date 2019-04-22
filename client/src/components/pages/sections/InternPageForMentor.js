@@ -15,7 +15,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import './attendance.css';
 /* Import MUIDataTable using command "npm install mui-datatables --save" */
 
 function TabContainer(props) {
@@ -42,7 +41,7 @@ const styles = theme => ({
 });
 
 
-class Internshipfor extends React.Component {
+class InternPageForMentor extends React.Component {
 
   constructor() {
     super();
@@ -152,9 +151,90 @@ class Internshipfor extends React.Component {
 
   toggleIntern = () => {
     this.setState({
-      modalIntern: /*!this.state.modalIntern,*/false,
+      modalIntern: !this.state.modalIntern,/*false*/
     });
   };
+
+  addIntern = () => {
+    this.setState({
+      name: "",
+      phone: "",
+      email: "",
+      gender: "",
+      CourseName: "",
+      dob: "",
+      University: "",
+      Faculty: "",
+      icon: "plus",
+      isUpdate: false,
+      checkValidate: false
+    });
+    this.toggleIntern()
+  }
+
+  handlerAddIntern = () => {
+    // if (confirm("You definitely want to add intern?")) { //eslint-disable-line
+
+    // }
+    var moment = require('moment');
+    const date = moment.utc(this.state.dob).format();
+    const data = {
+      "Name": this.state.name,
+      "PhoneNumber": this.state.phone,
+      "Email": this.state.email,
+      "Gender": this.state.gender === "Male" ? true : false,
+      "DoB": date,
+      "University": this.state.University,
+      "Faculty": this.state.Faculty,
+      "CourseID": this.state.course,
+      "IsDeleted": false
+    }
+    var checkAdd = false
+    $.ajax({
+      url: "http://localhost:8080/checkemail/" + data['Email'],
+      type: "GET",
+      async: false,
+      success: function (response) {
+        if(response['message'] == "Success"){
+          $.ajax({
+            url: "http://localhost:8080/intern",
+            type: "POST",
+            async: false,
+            dataType: "json",
+            data: JSON.stringify(data),
+            success: function (response) {
+              if(response.ID === undefined){
+                checkAdd = false
+              }else{
+                checkAdd = true
+              }
+            }
+          });
+        }
+      }
+    });
+    console.log(checkAdd)
+    if(checkAdd == true){
+      this.toggleIntern()
+      this.addNotification("successAdd")
+    }
+    else{
+      this.addNotification("errorAdd")
+    }
+    // fetch("http://localhost:8080/intern",
+    //   {
+    //     method: "POST",
+    //     mode: "no-cors",
+    //     headers: {
+    //       "Content-Type": "application/json"
+    //     },
+    //     body: JSON.stringify(data)d
+    //   })
+    //   .then(this.GetInternList())
+    // this.toggleIntern()
+    // this.addNotification("successAdd")
+    // window.location.reload();
+  }
 
   GetListCourse() {
     fetch('http://localhost:8080/courses')
@@ -169,6 +249,24 @@ class Internshipfor extends React.Component {
           courseList: NewData,
         })
       });
+  }
+
+  handlerDeleteIntern = () => {
+    if (confirm("b?n ch?c ch?n mu?n xóa ?")) { //eslint-disable-line
+      fetch("http://localhost:8080/intern/" + this.state.id, {
+        method: 'DELETE',
+        mode: 'cors',
+      })
+        .then(this.GetInternList())
+
+      this.toggleIntern()
+      alert("OK")
+      window.location.reload();
+    }
+    else {
+      this.toggleIntern()
+      alert("FAIL")
+    }
   }
 
   handlerEditIntern = () => {
@@ -469,7 +567,7 @@ class Internshipfor extends React.Component {
           <Col md="12">
             <Card>
               <CardBody>
-                <div className="app-content">SS
+                <div className="app-content">
                   <ReactNotification ref={this.notificationDOMRef} />
                 </div>
                 <MDBBtn
@@ -510,11 +608,11 @@ class Internshipfor extends React.Component {
               </FormControl ><br />
               <FormControl fullWidth>
                 <InputLabel htmlFor="select-multiple">Course</InputLabel>
-                <FormControl fullWidth>
-    
-                                    <MDBInput label="Course" name="course" htmlFor="select-multiple" value={this.state.course} display='false' />
-    
-                                </FormControl>
+                <Select fullWidth label="Course" name="course" value={this.state.courseID} onChange={this.handleChangeValue.bind(this)}>
+                  {this.state.courseList.map(function (course, index) {
+                    return <MenuItem key={index} value={course.ID}>{course.Name}</MenuItem>;
+                  })}
+                </Select>
               </FormControl>
 
               <MDBInput
@@ -529,7 +627,16 @@ class Internshipfor extends React.Component {
               <div className="text-center mt-1-half">
                 <TextField fullWidth label="Faculty" name="text" name="Faculty" value={this.state.Faculty} onChange={this.handleChangeValue.bind(this)} />
                 <div className="text-center mt-1-half">
-                  
+                  {
+                    this.state.isUpdate === false &&
+                    <MDBBtn
+                      className="mb-2 blue darken-2"
+                      onClick={this.handlerAddIntern}
+                    >
+                      Create
+                  <MDBIcon icon="send" className="ml-1" />
+                    </MDBBtn>
+                  }
                   {
                     this.state.isUpdate &&
                     <MDBBtn
@@ -537,6 +644,15 @@ class Internshipfor extends React.Component {
                       onClick={this.handlerEditIntern}>
                       Update
                   <MDBIcon icon="edit" className="ml-1" />
+                    </MDBBtn>
+                  }
+                  {
+                    this.state.isUpdate &&
+                    <MDBBtn
+                      className="mb-2 blue darken-2"
+                      onClick={this.handlerDeleteIntern}>
+                      Delete
+                  <MDBIcon icon="trash" className="ml-1" />
                     </MDBBtn>
                   }
                 </div>
@@ -548,4 +664,4 @@ class Internshipfor extends React.Component {
     )
   }
 }
-export default withStyles(styles)(Internshipfor);
+export default withStyles(styles)(InternPageForMentor);
