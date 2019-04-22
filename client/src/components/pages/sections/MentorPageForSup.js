@@ -122,7 +122,7 @@ class MentorPageForSup extends React.Component {
 
   constructor() {
     super();
-    this.editNotification = this.addNotification.bind(this);
+    this.addNotification = this.addNotification.bind(this);
     this.notificationDOMRef = React.createRef();
     this.state = {
       modal: false,
@@ -138,19 +138,50 @@ class MentorPageForSup extends React.Component {
 
 
 
-  addNotification() {
-    this.notificationDOMRef.current.addNotification({
-      title: "Edited",
-      message: "Mentor Edited!",
-      type: "success",
-      insert: "top",
-      container: "top-right",
-      animationIn: ["animated", "fadeIn"],
-      animationOut: ["animated", "fadeOut"],
-      dismiss: { duration: 2000 },
-      dismissable: { click: true }
-    });
-  }
+  addNotification(kind) {
+    switch (kind) {
+        case "errEmail":
+            this.notificationDOMRef.current.addNotification({
+                title: "Error",
+                message: "Email exist",
+                type: "danger",
+                insert: "top",
+                container: "top-right",
+                animationIn: ["animated", "fadeIn"],
+                animationOut: ["animated", "fadeOut"],
+                dismiss: { duration: 2000 },
+                dismissable: { click: true }
+            });
+            break;
+        case "successUpdate":
+            this.notificationDOMRef.current.addNotification({
+                title: "Success",
+                message: "Update mentor info successfully !",
+                type: "success", //success, danger, default, info, warning or custom
+                insert: "top",
+                container: "top-right",
+                animationIn: ["animated", "fadeIn"],
+                animationOut: ["animated", "fadeOut"],
+                dismiss: { duration: 2000 },
+                dismissable: { click: true }
+            });
+            break;
+        case "successAdd":
+            this.notificationDOMRef.current.addNotification({
+                title: "Success",
+                message: "Add mentor info successfully !",
+                type: "success", //success, danger, default, info, warning or custom
+                insert: "top",
+                container: "top-right",
+                animationIn: ["animated", "fadeIn"],
+                animationOut: ["animated", "fadeOut"],
+                dismiss: { duration: 2000 },
+                dismissable: { click: true }
+            });
+            break;
+
+    }
+}
 
 
   GetMentorList() {
@@ -242,7 +273,7 @@ class MentorPageForSup extends React.Component {
         },
         body: JSON.stringify(data)
       })
-      .then(this.addNotification)
+      .then(this.addNotification("successAdd"))
       .then(this.GetMentorList())
     this.toggleMentor()
 
@@ -255,7 +286,7 @@ class MentorPageForSup extends React.Component {
       method: 'DELETE',
       mode: 'cors'
     })
-    .then(this.deleteNotification)
+    .then(this.addNotification("successAdd"))
       .then(this.GetMentorList())
     this.toggleMentor()
 
@@ -284,7 +315,7 @@ class MentorPageForSup extends React.Component {
       },
       body: JSON.stringify(data)
     })
-      .then(this.addNotification)
+      .then(this.addNotification("successUpdate"))
       .then(this.GetMentorList())
 
     this.toggleMentor()
