@@ -299,7 +299,7 @@ func CreateAttendance(c *gin.Context) {
 			})
 			return
 		} else {
-			if err == nil && currentTime.Hour() > 13 && (check.Status == "PA" || check.Status == "AR") {
+			if err == nil && (check.Status == "PA" || check.Status == "AR") {
 				atten.ID = check.ID
 				if check.Status == "PA" && atten.Status == "PA" {
 					atten.Status = "PP"

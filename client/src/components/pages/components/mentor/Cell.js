@@ -35,7 +35,7 @@ class Cell extends React.Component {
             case "PP":
                 return "fa fa-check custom-icon-green";
             case  "P":
-                return "fa fa-check custom-icon-yellow";
+                return "fa fa-check custom-icon-blue";
             case "PA":
                 return "fa fa-check custom-icon-red";
             case "A":
@@ -105,7 +105,7 @@ class Cell extends React.Component {
                 IsDeleted: false
             };
             if (this.state.selectCurrentValue !== this.state.selectDefaultValue) {
-                console.log(object)
+
                 var isChange = this.props.onCellChange(object);
                 if(isChange)
                     this.setState({showModal: false, showEdit: false, selectDefaultValue: this.state.selectCurrentValue});   
@@ -125,7 +125,7 @@ class Cell extends React.Component {
                 <Modal isOpen={this.state.showModal}>
                     <ModalHeader>Edit</ModalHeader>
                     <ModalBody>
-                        {this.props.cellData.id === "now" ?
+                        {this.state.date == this.state.now.getDate() ?
                             <select className="browser-default custom-select td-dropdown" value={this.state.selectCurrentValue} onChange={this.onSelectChange.bind(this)}>
                                 <option value="AR" className="custom-icon-blue custom-bold">AR</option>
                                 <option value="ARR" className="custom-icon-green custom-bold">ARR</option>
@@ -137,7 +137,7 @@ class Cell extends React.Component {
                                 <option value="PP" className="fa fa-check custom-icon-green custom-bold">PP</option>
                                 : null}
                                 { this.state.date != this.state.now.getDate()?
-                                <option value="P" className="custom-icon-yellow custom-bold">P</option>
+                                <option value="P" className="custom-icon-blue custom-bold">P</option>
                                 : null}
                                 <option value="PA" className="custom-icon-red custom-bold">PA</option>
                                 <option value="AR" className="custom-icon-blue custom-bold">AR</option>

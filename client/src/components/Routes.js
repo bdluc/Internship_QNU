@@ -26,7 +26,6 @@ class Routes extends React.Component {
         <Route path='/courses' exact component={CoursePages}  />
         <Route path='/editinfor' exact component={EditInfor}  />
         <Route path='/attendance' exact component={AttendancePage}  />
-        <Route path='/login' exact component={Login}  />
         <Route path='/profile/:id' component={InternshipInfor} />
         
         <Route path='/404' component={NotFoundPage} />
