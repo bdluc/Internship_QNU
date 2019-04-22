@@ -23,15 +23,10 @@ class AttendancePage extends React.Component {
             <InternAttendance></InternAttendance>
             
         );
-    else if(this.state.role === 2)
+    else 
         return (
             <MentorAttendance></MentorAttendance>
         );
-    else{
-        return (
-            <SupervisorAttendance></SupervisorAttendance>
-        );
-    }
   }
 }
 

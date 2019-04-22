@@ -267,6 +267,7 @@ func CreateAttendance(c *gin.Context) {
 		return
 	}
 
+	atten.ID = bson.NewObjectId()
 	currentTime := time.Now()
 	course := models.Course{}
 	intern := models.Intern{}
@@ -286,45 +287,60 @@ func CreateAttendance(c *gin.Context) {
 		} else {
 			atten.Date = date2
 		}
-		atten.Status = "P"
+
 		atten.IsDeleted = false
 
 		check := models.Attendance{}
 		err = database.C(models.CollectionAttendance).Find(bson.M{"InternID": atten.InternID, "$or": []bson.M{{"Date": date1}, {"Date": date2}}}).One(&check)
-		if err == nil && ((check.Status == "PP") || (currentTime.Hour() < 13 && check.Status == "P") || (check.Date.Hour() == 2 && check.Status == "P")) {
+		if err == nil && ((check.Status == "PP") || (check.Status == "P") || (currentTime.Hour() < 13 && check.Status == "PA") || (check.Date.Hour() == 2 && check.Status == "PA")) {
 			c.JSON(http.StatusNotFound, gin.H{
 				common.Status:  "error",
 				common.Message: "attendance is exit",
 			})
 			return
-		} else if err == nil && currentTime.Hour() > 13 && check.Status == "P" {
-			atten.ID = check.ID
-			atten.Status = "PP"
-			updateAttendance(c, database, atten)
-			c.JSON(http.StatusOK, gin.H{
-				common.Status:  "updated",
-				common.Message: "Attendance updated",
-			})
-			return
 		} else {
-			err = database.C(models.CollectionAttendance).Insert(atten)
-			if err != nil {
-				c.JSON(http.StatusNotFound, gin.H{
-					common.Status:  "error",
-					common.Message: "Could not create attendance",
-				})
-				return
+			if err == nil && currentTime.Hour() > 13 && (check.Status == "PA" || check.Status == "AR") {
+				atten.ID = check.ID
+				if check.Status == "PA" && atten.Status == "PA" {
+					atten.Status = "PP"
+				} else if (check.Status == "PA" && atten.Status == "AR") || (check.Status == "AR" && atten.Status == "PA") {
+					atten.Status = "P"
+				}
+				if !updateAttendance(c, database, atten) {
+					c.JSON(http.StatusNotFound, gin.H{
+						common.Status:  "error",
+						common.Message: "Could not create attendance",
+					})
+					return
+				}
+			} else if err == nil {
+				if !updateAttendance(c, database, atten) {
+					c.JSON(http.StatusNotFound, gin.H{
+						common.Status:  "error",
+						common.Message: "Could not create attendance",
+					})
+					return
+				}
+			} else {
+				err = database.C(models.CollectionAttendance).Insert(atten)
+				if err != nil {
+					c.JSON(http.StatusNotFound, gin.H{
+						common.Status:  "error",
+						common.Message: "Could not create attendance",
+					})
+					return
+				}
 			}
 			c.JSON(http.StatusCreated, gin.H{
 				common.Status:  "created",
 				common.Message: "Created attendance",
+				"attendance":   atten,
 			})
 		}
 	}
 }
 
-func updateAttendance(c *gin.Context, database *mgo.Database, atten models.Attendance) {
-
+func updateAttendance(c *gin.Context, database *mgo.Database, atten models.Attendance) bool {
 	check := models.Attendance{}
 	err := database.C(models.CollectionAttendance).Find(bson.M{"$not": bson.M{"_id": atten.ID}, "InternID": atten.ID, "Date": atten.Date}).One(&check)
 	if err == nil {
@@ -332,14 +348,15 @@ func updateAttendance(c *gin.Context, database *mgo.Database, atten models.Atten
 			common.Status:  "error",
 			common.Message: "attendance is exit",
 		})
-		return
+		return false
 	}
 
 	err = database.C(models.CollectionAttendance).UpdateId(atten.ID, atten)
 	if common.IsError(c, err, "Could not update attendance") {
-		return
+		return false
+	} else {
+		return true
 	}
-
 }
 
 func UpdateAttendance(c *gin.Context) {
@@ -347,17 +364,25 @@ func UpdateAttendance(c *gin.Context) {
 	buff, err := c.GetRawData()
 	if common.IsError(c, err, "Could not update attendance") {
 		return
+	} else {
+		atten := models.Attendance{}
+		err = json.Unmarshal(buff, &atten)
+		if common.IsError(c, err, "Could not update attendance") {
+			return
+		} else {
+			if atten.Status == "PP" {
+				atten.Date = time.Date(atten.Date.Year(), atten.Date.Month(), atten.Date.Day(), 2, 0, 0, 0, time.Local)
+			}
+			if updateAttendance(c, database, atten) {
+				c.JSON(http.StatusCreated, gin.H{
+					"status":  "updated",
+					"message": "Update attendance successfully",
+				})
+			}
+
+		}
+
 	}
-	atten := models.Attendance{}
-	err = json.Unmarshal(buff, &atten)
-	if common.IsError(c, err, "Could not update attendance") {
-		return
-	}
-	updateAttendance(c, database, atten)
-	c.JSON(http.StatusCreated, gin.H{
-		"status":  "updated",
-		"message": "Update attendance successfully",
-	})
 
 }
 

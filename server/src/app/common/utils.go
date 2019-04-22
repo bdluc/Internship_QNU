@@ -33,7 +33,6 @@ func IsError(c *gin.Context, e error, m string) bool {
 			"status":  "error",
 			"message": m,
 		})
-		c.Error(e)
 		return true
 	}
 	return false

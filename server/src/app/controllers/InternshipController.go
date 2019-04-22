@@ -80,24 +80,24 @@ func UpdateIntern(c *gin.Context) {
 	c.JSON(http.StatusOK, nil)
 }
 
-// Edit an intern
-// func UpdateIntern(c *gin.Context) {
-// 	database := c.MustGet("db").(*mgo.Database)
+// list InternById
+func ListInternByID(c *gin.Context) {
+	database := c.MustGet("db").(*mgo.Database)
 
-// 	intern := models.Intern{}
-// 	buf, _ := c.GetRawData()
-// 	err := json.Unmarshal(buf, &intern)
-// 	if common.CheckError(c, err) {
-// 		return
-// 	}
+	id := bson.ObjectIdHex(c.Param("id"))
+	intern := models.Intern{}
+	err := database.C(models.CollectionIntern).Find(bson.M{"_id": id}).One(&intern)
+	if common.CheckError(c, err) {
+		return
+	}
+	course := models.Course{}
+	internResp := Intern{}
+	database.C(models.CollectionCourse).Find(bson.M{"_id": intern.CourseID, "IsDeleted": false}).One(&course)
+	internResp.Intern = intern
+	internResp.Course = course.CourseName
+	c.JSON(http.StatusOK, internResp)
 
-// 	err = database.C(models.CollectionIntern).UpdateId(bson.ObjectIdHex(c.Param("id")), intern)
-// 	if common.CheckError(c, err) {
-// 		return
-// 	}
-
-// 	c.JSON(http.StatusOK, nil)
-// }
+}
 
 //Delete intern
 func DeleteIntern(c *gin.Context) {
@@ -155,10 +155,12 @@ type Intern struct {
 
 // Get an intern
 func GetIntern(c *gin.Context) {
+
 	err, intern := getInternByID(c, c.Param("id"))
 	if common.CheckNotFound(c, err) {
 		return
 	}
+
 	c.JSON(http.StatusOK, intern)
 }
 

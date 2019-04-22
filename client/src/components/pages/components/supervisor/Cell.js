@@ -14,7 +14,8 @@ class Cell extends React.Component {
             showModal: false,
             selectDefaultValue: props.cellData.attendance,
             selectCurrentValue: props.cellData.attendance,
-            editClass: "fa fa-edit custom-edit"
+            editClass: "fa fa-edit custom-edit",
+            now: new Date()
         }
     }
 
@@ -93,8 +94,9 @@ class Cell extends React.Component {
             IsDeleted: false
         };
         if (this.state.selectCurrentValue !== this.state.selectDefaultValue) {
-            this.props.onCellChange(object);
-            this.setState({showModal: false, showEdit: false});   
+            var isChange = this.props.onCellChange(object);
+            if(isChange)
+                this.setState({showModal: false, showEdit: false, selectDefaultValue: this.state.selectCurrentValue});   
         }
     }
 
@@ -111,12 +113,21 @@ class Cell extends React.Component {
                 <Modal isOpen={this.state.showModal}>
                     <ModalHeader>Edit</ModalHeader>
                     <ModalBody>
-                        <select className="browser-default custom-select td-dropdown" value={this.state.selectCurrentValue} onChange={this.onSelectChange.bind(this)}>
-                        <option value="PP" className="custom-icon-green custom-bold">PP</option>
-                            <option value="P" className="custom-icon-yellow custom-bold">P</option>
-                            <option value="A" className="custom-icon-red custom-bold">A</option>
-                            <option value="AR" className="custom-icon-blue custom-bold">AR</option>
-                        </select>
+                        {this.props.cellData.id === "now" ?
+                            <select className="browser-default custom-select td-dropdown" value={this.state.selectCurrentValue} onChange={this.onSelectChange.bind(this)}>
+                                <option value="A" className="custom-icon-red custom-bold">A</option>
+                                <option value="AR" className="custom-icon-blue custom-bold">AR</option>
+                            </select>
+                        :
+                            <select className="browser-default custom-select td-dropdown" value={this.state.selectCurrentValue} onChange={this.onSelectChange.bind(this)}>
+                                { this.state.now.getHours() > 13 || this.state.date != this.state.now.getDate()? 
+                                <option value="PP" className="custom-icon-green custom-bold">PP</option>
+                                : null}
+                                <option value="P" className="custom-icon-yellow custom-bold">P</option>
+                                <option value="A" className="custom-icon-red custom-bold">A</option>
+                                <option value="AR" className="custom-icon-blue custom-bold">AR</option>
+                            </select>
+                        }
                     </ModalBody>
                     <ModalFooter>
                         <Button color="secondary" onClick={this.onCloseClick.bind(this)}>Close</Button>

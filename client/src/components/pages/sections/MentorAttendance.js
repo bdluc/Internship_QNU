@@ -3,15 +3,20 @@ import '../attendance.css';
 import Table from '../components/mentor/Table'
 import DailyTable from '../components/DailyTable'
 import BarChart from '../components/BarChart'
+import ReactNotification from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 import $ from 'jquery';
 
 
 class MentorAttendance extends React.Component {
 
   constructor(props) {
-        super(props);   
+        super(props);
+        this.addNotification = this.addNotification.bind(this);
+        this.notificationDOMRef = React.createRef.call(this); 
         this.state = {
             mentorId: JSON.parse(sessionStorage.getItem('user')).ID,
+            position: JSON.parse(sessionStorage.getItem('user')).Role === 2 ? "mentor" : "supervisor",
             courses: [],
             students: [],
             currentName:"",
@@ -32,11 +37,42 @@ class MentorAttendance extends React.Component {
         };
         this.getStudents();
   }
+
+  addNotification(kind, mess) {
+    switch (kind) {
+      case "errorUpdate":
+        this.notificationDOMRef.current.addNotification({
+          title: "Error",
+          message: mess,
+          type: "danger",
+          insert: "top",
+          container: "top-right",
+          animationIn: ["animated", "fadeIn"],
+          animationOut: ["animated", "fadeOut"],
+          dismiss: { duration: 2000 },
+          dismissable: { click: true }
+        });
+        break;
+      case "successUpdate":
+        this.notificationDOMRef.current.addNotification({
+          title: "Success",
+          message: mess,
+          type: "success", //success, danger, default, info, warning or custom
+          insert: "top",
+          container: "top-right",
+          animationIn: ["animated", "fadeIn"],
+          animationOut: ["animated", "fadeOut"],
+          dismiss: { duration: 2000 },
+          dismissable: { click: true }
+        });
+        break;
+    }
+  }
   
 
   getStudents() {
     $.ajax({
-        url: "http://localhost:8080/attendance/" + this.state.mentorId +"/mentor",
+        url: "http://localhost:8080/attendance/" + this.state.mentorId +"/" + this.state.position,
         type: "GET",
         success: function (response) {
             if(response.length === 0){
@@ -101,38 +137,29 @@ class MentorAttendance extends React.Component {
     return students;
   }
 
-//   getIds(traineeData, course){
-//     var ids = [];
-//     if(course === "All")
-//         for(var i = 0 ; i < traineeData.length ; i++)
-//         ids.push(traineeData[i].Id);
-//     else 
-//         for(var i = 0 ; i < traineeData.length ; i++){
-//             if(traineeData[i].Course === course)
-//             ids.push(traineeData[i].Id);
-//         }
-//     return ids;
-//   }
-
-  handleCellChange(object){
+ handleCellChange(object){
       var check = false;
-    $.ajax({
-        url: "http://localhost:8080/attendance",
-        type: "PUT",
-        async: false,
-        data: JSON.stringify(object),
-        success: function (response) {
-            if(response.status === "updated"){
+      if(object.ID === "now"){
+         $.ajax({url:'http://localhost:8080/attendance',
+            type: "POST",
+            async: false,
+            data: JSON.stringify({"InternID": object.InternID, "Status": object.Status}),
+            success: function (response) {
+            if(response.status === "created"){
+                var intern = this.getStudentById(object.InternID);
+                intern.Attendances.push(response.attendance)
+                intern = this.getdailyStudentById(object.InternID);
+                intern.Attendances.push(response.attendance)
+                
+                var month = this.getCurrentMonth(this.state.currentStudentId);
                 this.setState({
-                    showSuccess: true, 
-                    showError: false
+                    tableData: this.loadTableData(this.state.currentStudentId, month.MonthNow, month.YearNow),
+                    chartData: this.loadChartData(this.state.currentStudentId, month.MonthNow, month.YearNow),
+
                 });
                 check = true
             }
-            else{
-                this.setState({
-                    showSuccess: false, showError: true
-                });
+            else {
                 check = false
             }
         }.bind(this),
@@ -143,8 +170,43 @@ class MentorAttendance extends React.Component {
             check = false
         }.bind(this)
     });
+    }else{
+        $.ajax({
+            url: "http://localhost:8080/attendance",
+            type: "PUT",
+            async: false,
+            data: JSON.stringify(object),
+            success: function (response) {
+                if(response.status === "updated"){
+                    this.setState({
+                        showSuccess: true, 
+                        showError: false
+                    });
+                    check = true
+                }
+                else{
+                    this.setState({
+                        showSuccess: false, showError: true
+                    });
+                    check = false
+                }
+            }.bind(this),
+            error: function (xhr, status) {
+                this.setState({
+                    showSuccess: false, showError: true
+                });
+                check = false
+            }.bind(this)
+        });
+    }
+    if(check)
+        this.addNotification("successUpdate", "Update attendance successfully");
+    else
+        this.addNotification("errorUpdate", "Could not update attendance")
     return check;
   }
+
+
 
   onSelectChange(event) {
     var curValue = event.target.value;
@@ -156,7 +218,6 @@ class MentorAttendance extends React.Component {
                 show: 0
             });
         } else if(curValue === "Daily"){
-            console.log(this.state.dailyData);
             this.loadDailyData()
             this.setState({
                 show: 1
@@ -172,10 +233,8 @@ class MentorAttendance extends React.Component {
   }
 
   onSelectStudentChange(event){
-    console.log(event.target.value)
     var studentId = event.target.value;
     var traineeData = this.getStudentById(studentId);
-    console.log(traineeData.Name)
     var month = this.getCurrentMonth(traineeData.Id)
     this.setState({
         currentStudentId: traineeData.Id,
@@ -322,14 +381,13 @@ class MentorAttendance extends React.Component {
 
   loadDailyData(){
     $.ajax({
-        url: "http://localhost:8080/attendance/"+this.state.mentorId+"/mentor/daily",
+        url: "http://localhost:8080/attendance/"+this.state.mentorId+"/"+this.state.position+"/daily",
         type: "GET",
         success: function (response) {
             this.setState({
                 dailyData: response,
                 showData: true
             });
-            console.log(response)
         }.bind(this),
         error: function (xhr, status) {
             this.setState({
@@ -342,8 +400,8 @@ class MentorAttendance extends React.Component {
 
   loadChartData(id, month, year) {
     var arr = [];
-    var ppCount, pCount, aCount, arCount, naCount;
-    ppCount = pCount = aCount = arCount = naCount = 0;
+    var ppCount, pCount, paCount , aCount, arCount, a2rCount ,naCount;
+    ppCount = pCount = paCount = aCount = arCount = a2rCount = naCount = 0;
 
     var days = this.getDaysInMonth(month, year);
     for (var i = 0; i < days.length; i++) {
@@ -358,11 +416,17 @@ class MentorAttendance extends React.Component {
                 case "P" :
                     pCount++;
                     break;
+                case "PA" :
+                    paCount++;
+                    break;
                 case "A" :
                     aCount++;
                     break;
                 case "AR" :
                     arCount++;
+                    break;
+                case "ARR" :
+                    a2rCount++;
                     break;
                 case "N.A" :
                     naCount++;
@@ -376,8 +440,10 @@ class MentorAttendance extends React.Component {
 
     arr.push(ppCount);
     arr.push(pCount);
-    arr.push(aCount);
+    arr.push(paCount);
     arr.push(arCount);
+    arr.push(a2rCount);
+    arr.push(aCount);
     arr.push(naCount);
     return arr;
   }
@@ -411,6 +477,16 @@ class MentorAttendance extends React.Component {
 
       return null;
   }
+
+  getdailyStudentById(id) {
+    for (var i = 0; i < this.state.dailyData.length; i++) {
+        if (this.state.dailyData[i].Id === id) {
+            return this.state.dailyData[i];
+        }
+    }
+
+    return null;
+}
   
 
   getAttendanceData(id, day, month, year) {
@@ -431,7 +507,8 @@ class MentorAttendance extends React.Component {
     var start = new Date(startYear, startMonth, startDay);
     var end = new Date(endYear, endMonth, endDay);
     var mid = new Date(year, month, day);
-    var today = new Date();
+    var day = new Date();
+    var today = new Date(day.getFullYear(), day.getMonth(), day.getDate()) 
 
     if (mid >= start && mid <= end) {
         if (mid >= start && mid <= today) {
@@ -444,8 +521,15 @@ class MentorAttendance extends React.Component {
                         InternID: id,
                         fullDate: strDate,
                         attendance: traineeData.Attendances[i].Status,
-                    }
-                        
+                    }  
+                }
+            }
+            if(mid.getTime() === today.getTime()){
+                return {
+                    id: "now",
+                    InternID: id,
+                    fullDate: "",
+                    attendance: "",
                 }
             }
             return "N.A"
@@ -544,7 +628,6 @@ class MentorAttendance extends React.Component {
                         <option>Daily</option> 
                         <option>Chart</option>         
                     </select>
-
                     {this.state.show === 1 ? 
                     <div className="card mt-6">
                         <div className="card-body">
@@ -602,15 +685,8 @@ class MentorAttendance extends React.Component {
                         <BarChart arr={this.state.chartData}/> 
                     </div>
                 </div> : null}
-                {this.state.showSuccess ?
-                <div className="alert alert-success custom-top">
-                    Update attendance successfully.
-                </div> : null}
-                {this.state.showError ?
-                <div className="alert alert-danger custom-top">
-                    Update attendance failed.
-                </div> : null}
             </div> : null}
+            <ReactNotification ref={this.notificationDOMRef} />
         </div>
     );
   }
