@@ -41,7 +41,7 @@ const styles = theme => ({
 });
 
 
-class InternPageForMentor extends React.Component {
+class InternPage extends React.Component {
 
   constructor() {
     super();
@@ -137,7 +137,6 @@ class InternPageForMentor extends React.Component {
         this.setState({
           internList: NewData
         })
-        // console.log(data)
       });
   }
 
@@ -167,15 +166,22 @@ class InternPageForMentor extends React.Component {
       Faculty: "",
       icon: "plus",
       isUpdate: false,
-      checkValidate: false
+      // checkValidate: false
+      btnMode: 'off',
+      doneName: false,
+      donePhone: false,
+      doneEmail: false,
+      doneGender: false,
+      doneCourse: false,
+      doneDOB: false,
+      doneUniversity: false,
+      doneFaculty: false,
     });
     this.toggleIntern()
   }
 
   handlerAddIntern = () => {
-    // if (confirm("You definitely want to add intern?")) { //eslint-disable-line
 
-    // }
     var moment = require('moment');
     const date = moment.utc(this.state.dob).format();
     const data = {
@@ -186,55 +192,38 @@ class InternPageForMentor extends React.Component {
       "DoB": date,
       "University": this.state.University,
       "Faculty": this.state.Faculty,
-      "CourseID": this.state.course,
+      "CourseID": this.state.courseID,
       "IsDeleted": false
     }
-    var checkAdd = false
-    $.ajax({
-      url: "http://localhost:8080/checkemail/" + data['Email'],
-      type: "GET",
-      async: false,
-      success: function (response) {
-        if(response['message'] == "Success"){
-          $.ajax({
-            url: "http://localhost:8080/intern",
-            type: "POST",
-            async: false,
-            dataType: "json",
-            data: JSON.stringify(data),
-            success: function (response) {
-              if(response.ID === undefined){
-                checkAdd = false
-              }else{
-                checkAdd = true
-              }
-            }
-          });
-        }
-      }
-    });
-    console.log(checkAdd)
-    if(checkAdd == true){
-      this.toggleIntern()
-      this.addNotification("successAdd")
-    }
-    else{
-      this.addNotification("errorAdd")
-    }
-    // fetch("http://localhost:8080/intern",
-    //   {
-    //     method: "POST",
-    //     mode: "no-cors",
-    //     headers: {
-    //       "Content-Type": "application/json"
-    //     },
-    //     body: JSON.stringify(data)d
-    //   })
-    //   .then(this.GetInternList())
-    // this.toggleIntern()
-    // this.addNotification("successAdd")
-    // window.location.reload();
+    fetch("http://localhost:8080/intern",
+      {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      .then(this.GetInternList())
+    this.toggleIntern()
+
+
   }
+
+  //   fetch("http://localhost:8080/intern",
+  //     {
+  //       method: "POST",
+  //       mode: "no-cors",
+  //       headers: {
+  //         "Content-Type": "application/json"
+  //       },
+  //       body: JSON.stringify(data)
+  //     })
+  //     .then(this.GetInternList())
+  //   this.toggleIntern()
+  //   this.addNotification("successAdd")
+  //   window.location.reload();
+  // }
 
   GetListCourse() {
     fetch('http://localhost:8080/courses')
@@ -300,7 +289,7 @@ class InternPageForMentor extends React.Component {
 
   columnsIntern = [
     {
-      name: "STT",
+      name: "#",
       options: {
         filter: false,
         sort: true,
@@ -479,6 +468,7 @@ class InternPageForMentor extends React.Component {
         this.setState({ name: value })
         if (value.trim().length === 0) {
           this.setState({
+            btnMode: 'off',
             name: " ",
             errorName: "Name can not be blank"
           })
@@ -498,6 +488,7 @@ class InternPageForMentor extends React.Component {
         const regexPhone = /^[0-9\b]+$/
         if (value.trim().length === 0) {
           this.setState({
+            btnMode: 'off',
             phone: " ",
             errorPhone: "Phone can not be blank"
           })
@@ -517,6 +508,7 @@ class InternPageForMentor extends React.Component {
         const regexEmail = /^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i;
         if (value.trim().length === 0) {
           this.setState({
+            btnMode: 'off',
             email: " ",
             errorEmail: "Email can not be blank"
           })
@@ -533,21 +525,53 @@ class InternPageForMentor extends React.Component {
         break;
       case "gender":
         this.setState({ gender: value })
+        if (value.trim().length > 0) {
+          this.setState({
+            doneGender: true,            
+          })
+        }
         break;
       case "course":
         this.setState({ courseID: value })
+        if (value.trim().length > 0) {
+          this.setState({
+            doneCourse: true,            
+          })
+          e.target.className += " valid"
+        }
         break;
       case "dob":
         this.setState({ dob: value })
+        if (value.trim().length > 0) {
+          this.setState({
+            doneDOB: true,            
+          })
+        }
         break;
       case "intern":
         this.setState({ intern: value })
+        if (value.trim().length > 0) {
+          this.setState({
+            doneIntern: true,            
+          })
+          e.target.className += " valid"
+        }
         break;
       case "University":
         this.setState({ University: value })
+        if (value.trim().length > 0) {
+          this.setState({
+            doneUniversity: true,            
+          })
+        }
         break;
       case "Faculty":
         this.setState({ Faculty: value })
+        if (value.trim().length > 0) {
+          this.setState({
+            doneFaculty: true,            
+          })
+        }
         break;
       default:
         break;
@@ -664,4 +688,4 @@ class InternPageForMentor extends React.Component {
     )
   }
 }
-export default withStyles(styles)(InternPageForMentor);
+export default withStyles(styles)(InternPage);
