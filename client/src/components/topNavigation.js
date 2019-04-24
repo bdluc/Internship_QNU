@@ -63,13 +63,28 @@ class TopNavigation extends Component {
     }
 
     handleClick(){
-        if(this.state.password !== this.state.confirmPassword)
-        this.setState({
-            error: "Password is not match!",
-            showError: true,
-            showSuccess: false
-            
-        })
+        if(this.state.password === ""){
+            this.setState({
+                error: "New password is Empty",
+                showError: true,
+                showSuccess: false
+                
+            })
+        }
+        else if( this.state.confirmPassword === "")
+            this.setState({
+                error: "Confirm password is Empty",
+                showError: true,
+                showSuccess: false
+                
+            })
+        else if(this.state.password !== this.state.confirmPassword)
+            this.setState({
+                error: "Password is not match!",
+                showError: true,
+                showSuccess: false
+                
+            })
         else{
             fetch('http://localhost:8080/login',
                 {

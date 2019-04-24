@@ -8,6 +8,7 @@ class DailyRow extends React.Component {
         this.state = {
             name: this.props.rowData.Name,
             course: this.props.rowData.Course,
+            InternID: this.props.rowData.Id,
             id: "tr" + this.props.rowNum,
             attendances: this.props.rowData.Attendances,
             attendance: this.getAttendace(this.props.rowData.Attendances),
@@ -39,7 +40,7 @@ class DailyRow extends React.Component {
             case "PP":
                 return "fa fa-check custom-icon-green";
             case  "P":
-                return "fa fa-check custom-icon-yellow";
+                return "fa fa-check custom-icon-blue";
             case "PA":
                 return "fa fa-check custom-icon-red";
             case "A":
@@ -63,10 +64,22 @@ class DailyRow extends React.Component {
     }
 
     onSelectChange(event){
-        this.setState({
-            iconClass: this.getIconClass(event.target.value),
-            selectCurrentValue : event.target.value
-        });
+        if(event.target.value == "AR")
+            if(this.state.selectDefaultValue === "PA")
+                this.setState({
+                    iconClass: this.getIconClass("P"),
+                    selectCurrentValue: "P"
+                });
+            else
+                    this.setState({
+                        iconClass: this.getIconClass("AR"),
+                        selectCurrentValue: "AR"
+                });
+        else 
+            this.setState({
+                iconClass: this.getIconClass(event.target.value),
+                selectCurrentValue : event.target.value
+            });
     }
 
     onEditHover() {
@@ -78,6 +91,16 @@ class DailyRow extends React.Component {
     }
 
     onEditClick() {
+            if(this.state.selectDefaultValue === "PA")
+            this.setState({
+                iconClass: this.getIconClass("P"),
+                selectCurrentValue: "P"
+            });
+            else
+                this.setState({
+                    iconClass: this.getIconClass("AR"),
+                    selectCurrentValue: "AR"
+            });
         this.setState({showModal: true});
     }
 
@@ -91,18 +114,22 @@ class DailyRow extends React.Component {
     }
 
     onUpdateClick() {
+        var object = {
+            ID: "now",
+            Date: "",
+            InternID: this.state.InternID,
+            Status: this.state.selectCurrentValue,
+            IsDeleted: false
+        };
         if(this.state.attendances.length !== 0){
-            var object = {
-                ID: this.state.attendances[0].ID,
-                Date: this.state.attendances[0].Date,
-                InternID: this.state.attendances[0].InternID,
-                Status: this.state.selectCurrentValue,
-                IsDeleted: false
-            };
-            if (this.state.selectCurrentValue !== this.state.selectDefaultValue) {
-                this.props.onCellChange(object);
-                this.setState({showModal: false, showEdit: false});   
-            }
+            object.ID = this.state.attendances[0].ID;
+            object.Date = this.state.attendances[0].Date;
+        }
+        console.log(object)
+        if (this.state.selectCurrentValue !== this.state.selectDefaultValue) {
+            var isChange = this.props.onCellChange(object);
+            if(isChange)
+                this.setState({showModal: false, showEdit: false, selectDefaultValue: this.state.selectCurrentValue});  
         }
     }
 

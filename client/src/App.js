@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Routes from '../src/components/Routes';
+import { Redirect } from 'react-router-dom'
 import TopNavigation from './components/topNavigation';
 import SideNavigation from './components/sideNavigation';
 import Login from './components/pages/LoginPage'
@@ -50,6 +51,7 @@ class App extends Component {
     if (this.state.user === null) {
       return (
       <div className="flexible-content">
+      <Redirect to='/' />
       <main id="content" className="p-5">
       <Login onLogin = {this.onLogin.bind(this)}></Login>
       </main>
