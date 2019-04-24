@@ -201,81 +201,7 @@ class MentorPageForMentor extends React.Component {
 
 
 
-  handlerAddMentor = () => {
 
-    var moment = require('moment');
-    const date = moment.utc(this.state.dob).format();
-    const data = {
-      "Name": this.state.name,
-      "PhoneNumber": this.state.phone,
-      "Email": this.state.email,
-      "Gender": this.state.gender === "Male" ? true : false,
-      "Dob": date,
-      "Department": this.state.department,
-      "SupervisorID": "5c1a11b49ef458a033e70628",
-      "IsDeleted": false
-    }
-    fetch("http://localhost:8080/mentor",
-      {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      })
-      .then(this.GetMentorList())
-    this.toggleMentor()
-
-
-  }
-
-
-  handlerDeleteMentor = () => {
-    fetch("http://localhost:8080/mentor/" + this.state.id, {
-      method: 'DELETE',
-      mode: 'cors'
-    })
-      .then(this.GetMentorList())
-    this.toggleMentor()
-
-
-  }
-
-  handlerEditMentor = () => {
-    var moment = require('moment');
-    const date = moment.utc(this.state.dob).format();
-    console.log("dt" + date);
-    const data = {
-      "Name": this.state.name,
-      "PhoneNumber": this.state.phone,
-      "Email": this.state.email,
-      "Gender": this.state.gender === "Male" ? true : false,
-      "Dob": date,
-      "Department": this.state.department,
-      "SupervisorID": "5c1a11b49ef458a033e70628",
-      "IsDeleted": false
-    }
-    fetch("http://localhost:8080/mentoru/" + this.state.id, {
-      method: 'PUT',
-      mode: 'cors',
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-    })
-      .then(this.setState({ open: true }))
-      .then(this.GetMentorList())
-
-    this.toggleMentor()
-    // console.log(this.state.id)
-
-    // window.location.reload();
-
-    // this.setState({
-
-    // })
-  }
   handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -397,24 +323,8 @@ class MentorPageForMentor extends React.Component {
       }
     },
     onRowClick: (rowData) => {
-      let std = this.convertDate(rowData[6])
-      this.setState({
-        id: rowData[1],
-        name: rowData[2],
-        phone: rowData[3],
-        email: rowData[4],
-        gender: rowData[5],
-        dob: std,
-        department: rowData[7],
-        icon: "edit",
-        isUpdate: true,
-        // checkValidate: true,
-        btnMode: 'off',
-        
+      console.log(this.state.mentorList)
 
-      });
-      // console.log("day" + this.state.dob);
-      this.toggleMentor()
     }
 
 
