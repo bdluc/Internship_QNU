@@ -173,3 +173,14 @@ func GetInternByCourse(c *gin.Context) {
 
 	c.JSON(http.StatusOK, internDb)
 }
+
+//list
+func GetInternA(c *gin.Context) {
+	database := c.MustGet("db").(*mgo.Database)
+	id := bson.ObjectIdHex(c.Param("internID"))
+	attendance := models.Attendance{}
+
+	err := database.C(models.CollectionAttendance).Find(bson.M{"InternID": id, "Status": "A"}).One(&attendance)
+	common.CheckError(c, err)
+	c.JSON(http.StatusOK, attendance)
+}

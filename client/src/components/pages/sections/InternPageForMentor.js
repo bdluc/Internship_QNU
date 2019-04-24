@@ -195,35 +195,53 @@ class InternPage extends React.Component {
       "CourseID": this.state.courseID,
       "IsDeleted": false
     }
-    fetch("http://localhost:8080/intern",
-      {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      })
-      .then(this.GetInternList())
-    this.toggleIntern()
-
+    var checkAdd = false
+    $.ajax({
+      url: "http://localhost:8080/checkemail/" + data['Email'],
+      type: "GET",
+      async: false,
+      success: function (response) {
+        if (response['message'] == "Success") {
+          $.ajax({
+            url: "http://localhost:8080/intern",
+            type: "POST",
+            async: false,
+            dataType: "json",
+            data: JSON.stringify(data),
+            success: function (response) {
+              if (response.ID === undefined) {
+                checkAdd = false
+              } else {
+                checkAdd = true
+              }
+            }
+          });
+        }
+      }
+    });
+    console.log(checkAdd)
+    if (checkAdd == true) {
+      this.toggleIntern()
+      this.addNotification("successAdd")
+    }
+    else {
+      this.addNotification("errorAdd")
+    }
 
   }
 
-  //   fetch("http://localhost:8080/intern",
-  //     {
-  //       method: "POST",
-  //       mode: "no-cors",
-  //       headers: {
-  //         "Content-Type": "application/json"
-  //       },
-  //       body: JSON.stringify(data)
-  //     })
-  //     .then(this.GetInternList())
-  //   this.toggleIntern()
-  //   this.addNotification("successAdd")
-  //   window.location.reload();
-  // }
+  // fetch("http://localhost:8080/intern",
+  //   {
+  //     method: "POST",
+  //     mode: "no-cors",
+  //     headers: {
+  //       "Content-Type": "application/json"
+  //     },
+  //     body: JSON.stringify(data)
+  //   })
+  //   .then(this.GetInternList())
+  // this.toggleIntern()
+  // this.addNotification("successAdd")
 
   GetListCourse() {
     fetch('http://localhost:8080/courses')
@@ -241,7 +259,7 @@ class InternPage extends React.Component {
   }
 
   handlerDeleteIntern = () => {
-    if (confirm("b?n ch?c ch?n mu?n xóa ?")) { //eslint-disable-line
+    if (confirm("bạn chắc chắn muốn xóa ?")) { //eslint-disable-line
       fetch("http://localhost:8080/intern/" + this.state.id, {
         method: 'DELETE',
         mode: 'cors',
@@ -284,7 +302,7 @@ class InternPage extends React.Component {
       .then(this.GetInternList())
     this.toggleIntern()
     this.addNotification("successUpdate")
-    // window.location.reload();
+    window.location.reload();
   }
 
   columnsIntern = [
@@ -366,7 +384,7 @@ class InternPage extends React.Component {
     filterType: "dropdown",
     responsive: "scroll",
     rowsPerPage: 4,
-    rowsPerPageOptions: [5, 5, 5],
+    rowsPerPageOptions: [10, 50, 100],
     download: false,
     print: false,
     selectableRows: false,
@@ -493,9 +511,9 @@ class InternPage extends React.Component {
             errorPhone: "Phone can not be blank"
           })
           e.target.className += " invalid"
-        } else if (!regexPhone.test(value.trim())) {
+        } else if (value.trim().length < 10) {
           this.setState({
-            errorPhone: "Phone contains only numeric characters"
+            errorName: "Name contains more than 3 characters"
           })
           e.target.className += " invalid"
         } else {
@@ -527,7 +545,7 @@ class InternPage extends React.Component {
         this.setState({ gender: value })
         if (value.trim().length > 0) {
           this.setState({
-            doneGender: true,            
+            doneGender: true,
           })
         }
         break;
@@ -535,7 +553,7 @@ class InternPage extends React.Component {
         this.setState({ courseID: value })
         if (value.trim().length > 0) {
           this.setState({
-            doneCourse: true,            
+            doneCourse: true,
           })
           e.target.className += " valid"
         }
@@ -544,24 +562,24 @@ class InternPage extends React.Component {
         this.setState({ dob: value })
         if (value.trim().length > 0) {
           this.setState({
-            doneDOB: true,            
+            doneDOB: true,
           })
         }
         break;
-      case "intern":
-        this.setState({ intern: value })
-        if (value.trim().length > 0) {
-          this.setState({
-            doneIntern: true,            
-          })
-          e.target.className += " valid"
-        }
-        break;
+      // case "intern":
+      //   this.setState({ intern: value })
+      //   if (value.trim().length > 0) {
+      //     this.setState({
+      //       doneIntern: true,
+      //     })
+      //     e.target.className += " valid"
+      //   }
+      //   break;
       case "University":
         this.setState({ University: value })
         if (value.trim().length > 0) {
           this.setState({
-            doneUniversity: true,            
+            doneUniversity: true,
           })
         }
         break;
@@ -569,13 +587,24 @@ class InternPage extends React.Component {
         this.setState({ Faculty: value })
         if (value.trim().length > 0) {
           this.setState({
-            doneFaculty: true,            
+            doneFaculty: true,
           })
         }
         break;
       default:
         break;
     }
+    if (this.state.doneName === true &&
+      this.state.donePhone === true &&
+      this.state.doneGender === true &&
+      this.state.doneEmail === true &&
+      this.state.doneFaculty === true &&
+      this.state.doneUniversity === true &&
+      this.state.doneDOB === true) {
+      this.setState({
+          btnMode: "on"
+      })
+  }
   }
 
   handleChanges() {
@@ -602,7 +631,7 @@ class InternPage extends React.Component {
 
                 <hr></hr>
                 <MUIDataTable
-                  title={"List Intern"}
+                  title={"Intern List"}
                   data={this.state.internList}
                   columns={this.columnsIntern}
                   options={this.optionsIntern} />

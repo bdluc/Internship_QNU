@@ -321,8 +321,8 @@ handlerEditIntern = () => {
     optionsIntern = {
         filterType: "dropdown",
         responsive: "scroll",
-        rowsPerPage: 4,
-        rowsPerPageOptions: [5, 5, 5],
+        rowsPerPage: 5,
+        rowsPerPageOptions: [10, 50, 100],
         download: false,
         print: false,
         selectableRows: false,
@@ -361,8 +361,6 @@ handlerEditIntern = () => {
         },
         onRowClick: (rowData, rowState) => {
             let std = this.convertDate(rowData[6])
-            // let courseid = (rowData[9])
-            console.log(rowState.dataIndex, rowState.rowIndex)
             this.setState({
 
                 id: rowData[1],
@@ -517,7 +515,7 @@ handlerEditIntern = () => {
                                 </div>
                                 <hr></hr>
                                 <MUIDataTable
-                                    title={"List Intern"}
+                                    title={"Intern List"}
                                     data={this.state.internList}
                                     columns={this.columnsIntern}
                                     options={this.optionsIntern} />
