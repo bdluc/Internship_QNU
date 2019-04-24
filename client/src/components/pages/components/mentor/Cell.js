@@ -62,10 +62,22 @@ class Cell extends React.Component {
     }
 
     onSelectChange(event){
-        this.setState({
-            iconClass: this.getIconClass(event.target.value),
-            selectCurrentValue : event.target.value
-        });
+        if(this.state.date == this.state.now.getDate() && event.target.value == "AR")
+            if(this.state.selectDefaultValue === "PA")
+                this.setState({
+                    iconClass: this.getIconClass("P"),
+                    selectCurrentValue: "P"
+                });
+            else
+                    this.setState({
+                        iconClass: this.getIconClass("AR"),
+                        selectCurrentValue: "AR"
+                });
+        else 
+            this.setState({
+                iconClass: this.getIconClass(event.target.value),
+                selectCurrentValue : event.target.value
+            });
     }
 
     onEditHover() {
@@ -77,11 +89,17 @@ class Cell extends React.Component {
     }
 
     onEditClick() {
-        if(this.props.cellData.id === "now")
-            this.setState({
-                iconClass: this.getIconClass("AR"),
-                selectCurrentValue: "AR"
-            });
+        if(this.state.date == this.state.now.getDate())
+            if(this.state.selectDefaultValue === "PA")
+                this.setState({
+                    iconClass: this.getIconClass("P"),
+                    selectCurrentValue: "P"
+                });
+            else
+                    this.setState({
+                        iconClass: this.getIconClass("AR"),
+                        selectCurrentValue: "AR"
+                });
         this.setState({
             showModal: true
         })

@@ -344,10 +344,6 @@ func updateAttendance(c *gin.Context, database *mgo.Database, atten models.Atten
 	check := models.Attendance{}
 	err := database.C(models.CollectionAttendance).Find(bson.M{"$not": bson.M{"_id": atten.ID}, "InternID": atten.ID, "Date": atten.Date}).One(&check)
 	if err == nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			common.Status:  "error",
-			common.Message: "attendance is exit",
-		})
 		return false
 	}
 
@@ -373,17 +369,20 @@ func UpdateAttendance(c *gin.Context) {
 			if atten.Status == "PP" {
 				atten.Date = time.Date(atten.Date.Year(), atten.Date.Month(), atten.Date.Day(), 2, 0, 0, 0, time.Local)
 			}
+
+			check := models.Attendance{}
+			err = database.C(models.CollectionAttendance).FindId(atten.ID).One(&check)
+			if (check.Status == "PA" && atten.Status == "AR") || (check.Status == "AR" && atten.Status == "PA") {
+				atten.Status = "P"
+			}
 			if updateAttendance(c, database, atten) {
 				c.JSON(http.StatusCreated, gin.H{
 					"status":  "updated",
 					"message": "Update attendance successfully",
 				})
 			}
-
 		}
-
 	}
-
 }
 
 func DeleteAttendance(c *gin.Context) {

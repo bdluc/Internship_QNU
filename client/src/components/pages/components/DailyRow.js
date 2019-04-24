@@ -64,10 +64,22 @@ class DailyRow extends React.Component {
     }
 
     onSelectChange(event){
-        this.setState({
-            iconClass: this.getIconClass(event.target.value),
-            selectCurrentValue : event.target.value
-        });
+        if(event.target.value == "AR")
+            if(this.state.selectDefaultValue === "PA")
+                this.setState({
+                    iconClass: this.getIconClass("P"),
+                    selectCurrentValue: "P"
+                });
+            else
+                    this.setState({
+                        iconClass: this.getIconClass("AR"),
+                        selectCurrentValue: "AR"
+                });
+        else 
+            this.setState({
+                iconClass: this.getIconClass(event.target.value),
+                selectCurrentValue : event.target.value
+            });
     }
 
     onEditHover() {
@@ -79,10 +91,15 @@ class DailyRow extends React.Component {
     }
 
     onEditClick() {
-        if(this.state.attendances.length === 0)
+            if(this.state.selectDefaultValue === "PA")
             this.setState({
-                iconClass: this.getIconClass("AR"),
-                selectCurrentValue: "AR"
+                iconClass: this.getIconClass("P"),
+                selectCurrentValue: "P"
+            });
+            else
+                this.setState({
+                    iconClass: this.getIconClass("AR"),
+                    selectCurrentValue: "AR"
             });
         this.setState({showModal: true});
     }
