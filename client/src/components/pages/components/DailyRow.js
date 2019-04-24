@@ -16,7 +16,8 @@ class DailyRow extends React.Component {
             showModal: false,
             selectDefaultValue: this.getAttendace(this.props.rowData.Attendances),
             selectCurrentValue: this.getAttendace(this.props.rowData.Attendances),
-            editClass: "fa fa-edit custom-edit"
+            editClass: "fa fa-edit custom-edit",
+            now: new Date()
         }
         console.log(this.state.name)
     }
@@ -37,12 +38,16 @@ class DailyRow extends React.Component {
         switch(attendance){
             case "PP":
                 return "fa fa-check custom-icon-green";
-            case "P":
+            case  "P":
                 return "fa fa-check custom-icon-yellow";
+            case "PA":
+                return "fa fa-check custom-icon-red";
             case "A":
                 return "fa fa-remove custom-icon-red";
             case "AR":
-                return "fa fa-remove custom-icon-blue";
+                return "fa fa-remove custom-icon-blue"
+            case "ARR":
+                return "fa fa-remove custom-icon-green";
             default:
                 return "";
         }
@@ -123,12 +128,11 @@ class DailyRow extends React.Component {
                         <ModalHeader>Edit</ModalHeader>
                         <ModalBody>
                             <select className="browser-default custom-select td-dropdown" value={this.state.selectCurrentValue} onChange={this.onSelectChange.bind(this)}>
-                            <option value="PP" className="custom-icon-green custom-bold">PP</option>
-                                <option value="P" className="custom-icon-yellow custom-bold">P</option>
-                                <option value="A" className="custom-icon-red custom-bold">A</option>
                                 <option value="AR" className="custom-icon-blue custom-bold">AR</option>
+                                <option value="ARR" className="custom-icon-green custom-bold">ARR</option>
+                                <option value="A" className="custom-icon-red custom-bold">A</option>
                             </select>
-                        </ModalBody>
+                    </ModalBody>
                         <ModalFooter>
                             <Button color="secondary" onClick={this.onCloseClick.bind(this)}>Close</Button>
                             <Button color="primary" onClick={this.onUpdateClick.bind(this)}>Update</Button>

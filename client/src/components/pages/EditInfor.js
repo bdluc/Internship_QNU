@@ -1,7 +1,7 @@
 import React from 'react';
 import MentorPageForSup from './sections/MentorPageForSup';
 import EditInforForMentor from './sections/EditInforForMentor';
-import MentorPageForIntern from './sections/MentorPageForIntern';
+import EditInforForIntern from './sections/EditInternInfor';
 
 
 // import SupervisorAttendance from './sections/SupervisorAttendance';
@@ -29,7 +29,7 @@ class MentorPage extends React.Component {
         );
     else{
         return (
-            <MentorPageForIntern></MentorPageForIntern>
+            <EditInforForIntern></EditInforForIntern>
         );
     }
   }
