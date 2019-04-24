@@ -5,12 +5,15 @@
   "author": "MDBootstrap <support@mdbootstrap.com>",
   "license": "MIT",
   "dependencies": {
+    "@date-io/date-fns": "^1.2.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.17",
     "@fortawesome/free-solid-svg-icons": "^5.8.1",
     "@fortawesome/react-fontawesome": "^0.1.4",
     "@material-ui/core": "^3.9.3",
     "@material-ui/icons": "^3.0.2",
     "@material-ui/styles": "^4.0.0-alpha.8",
+    "@types/date-fns": "^2.6.0",
+    "date-fns": "^2.0.0-alpha.27",
     "font-awesome": "^4.7.0",
     "google-map-react": "^1.0.6",
     "history": "^4.9.0",
@@ -29,7 +32,8 @@
     "react-notifications-component": "^1.1.1",
     "react-number-format": "^4.0.7",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "^2.1.8"
+    "react-scripts": "^2.1.8",
+    "recharts": "^1.5.0"
   },
   "scripts": {
     "start": "react-scripts start",
