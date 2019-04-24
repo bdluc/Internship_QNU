@@ -3,6 +3,9 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
+	"strings"
+	"time"
 
 	"../common"
 	"../models"
@@ -127,6 +130,30 @@ func getMentorByID(c *gin.Context, id string) (error, *models.Mentor) {
 	if err != nil {
 		return err, nil
 	}
-
 	return nil, &mentor
+}
+
+//Get intern attendance by day
+func GetInternStatusByDay(c *gin.Context) {
+	database := c.MustGet("db").(*mgo.Database)
+	id := bson.ObjectIdHex(c.Param("internID"))
+	attendance := models.Attendance{}
+	// fmt.Printf("%s\n", oID)
+	date := c.Param("date")
+	s := strings.Split(date, "-")
+	y, m, d := s[0], s[1], s[2]
+	yi, err := strconv.Atoi(y)
+	mi, err := strconv.Atoi(m)
+	di, err := strconv.Atoi(d)
+
+	date1 := time.Date(yi, time.Month(mi), di, 1, 0, 0, 0, time.Local)
+	date2 := time.Date(yi, time.Month(mi), di, 2, 0, 0, 0, time.Local)
+
+	// err := database.C(models.CollectionAttendance).FindId(bson.M{"InternID": oID} && bson.M{"Date": date})
+	// err := database.C(models.CollectionAttendance).Find(bson.M{"InternID": id, "Date": date}).One(&attendance)
+	err = database.C(models.CollectionAttendance).Find(bson.M{"InternID": id, "$or": []bson.M{{"Date": date1}, {"Date": date2}}}).One(&attendance)
+	if err != nil {
+		c.JSON(http.StatusOK, attendance.IsDeleted)
+	}
+	c.JSON(http.StatusOK, attendance.Status)
 }
