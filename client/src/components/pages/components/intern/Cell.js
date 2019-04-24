@@ -27,7 +27,7 @@ class Cell extends React.Component {
             case "PP":
                 return "fa fa-check custom-icon-green";
             case  "P":
-                return "fa fa-check custom-icon-yellow";
+                return "fa fa-check custom-icon-blue";
             case "PA":
                 return "fa fa-check custom-icon-red";
             case "A":

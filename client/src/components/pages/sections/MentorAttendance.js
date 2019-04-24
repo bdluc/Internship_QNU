@@ -132,14 +132,14 @@ class MentorAttendance extends React.Component {
             if(traineeData[i].Course === course){
                 students.push({id: traineeData[i].Id, name: traineeData[i].Name});
             }
-            
         }
     return students;
   }
 
  handleCellChange(object){
       var check = false;
-      if(object.ID === "now"){
+      if(object.ID === "now" ){
+          console.log(object)
          $.ajax({url:'http://localhost:8080/attendance',
             type: "POST",
             async: false,
