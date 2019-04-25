@@ -177,10 +177,51 @@ func GetInternByCourse(c *gin.Context) {
 //list
 func GetInternA(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
-	id := bson.ObjectIdHex(c.Param("internID"))
-	attendance := models.Attendance{}
 
-	err := database.C(models.CollectionAttendance).Find(bson.M{"InternID": id, "Status": "A"}).One(&attendance)
+	query := []bson.M{
+
+		// {
+		// 	"$unwind": "$MentorID",
+		// },
+		{
+			"$lookup": bson.M{
+				"from":         "intern",
+				"localField":   "InternID",
+				"foreignField": "_id",
+				"as":           "Intern",
+			}},
+		{
+			"$unwind": "$Intern",
+		},
+		{
+			"$match": bson.M{
+				"IsDeleted": false,
+				"Status":    "A",
+			}},
+		{
+			"$project": bson.M{
+				"Email":      1,
+				"Status":     1,
+				"Date":       1,
+				"InternName": "$Intern.Name",
+			}},
+	}
+
+	pipe := database.C(models.CollectionAttendance).Pipe(query)
+	resp := []bson.M{}
+	err := pipe.All(&resp)
+
 	common.CheckError(c, err)
-	c.JSON(http.StatusOK, attendance)
+	c.JSON(http.StatusOK, resp)
+}
+
+//list all internName in Attendance
+func GetAttendanceByIntern(c *gin.Context) {
+	database := c.MustGet("db").(*mgo.Database)
+
+	attendanceDb := models.Attendance{}
+	errAttendance := database.C(models.CollectionAttendance).Find(bson.M{"InternID": c.Param("id")}).All(&attendanceDb)
+	common.CheckError(c, errAttendance)
+
+	c.JSON(http.StatusOK, attendanceDb)
 }

@@ -309,74 +309,74 @@ class InternPage extends React.Component {
     {
       name: "#",
       options: {
-        filter: false,
-        sort: true,
+          filter: false,
+          sort: true,
       }
-    },
-    {
+  },
+  {
       name: "ID",
       options: {
-        filter: false,
-        sort: true,
-        display: "excluded"
+          filter: false,
+          sort: true,
+          display: "excluded"
       }
-    },
-    {
-      name: "Name",
+  },
+  {
+      name: "NAME",
       options: {
-        filter: true,
-        sort: false,
+          filter: true,
+          sort: false,
       }
-    },
-    {
-      name: "Phone",
+  },
+  {
+      name: "PHONE",
       options: {
-        filter: false,
-        sort: false,
+          filter: false,
+          sort: false,
       }
-    },
-    {
-      name: "Email",
+  },
+  {
+      name: "EMAIL",
       options: {
-        filter: false,
-        sort: false,
+          filter: false,
+          sort: false,
       }
-    },
-    {
-      name: "Gender",
+  },
+  {
+      name: "GENDER",
       options: {
-        filter: false,
-        sort: false,
+          filter: false,
+          sort: false,
       }
-    },
-    {
+  },
+  {
       name: "DOB",
       options: {
-        filter: false,
-        sort: false,
+          filter: false,
+          sort: false,
       }
-    },
-    {
-      name: "University",
+  },
+  {
+      name: "UNIVERSITY",
       options: {
-        filter: true,
-        sort: false,
+          filter: true,
+          sort: false,
       }
-    },
-    {
-      name: "Faculty",
+  },
+  {
+      name: "FACULTY",
       options: {
-        filter: true,
-        sort: false,
+          filter: true,
+          sort: false,
       }
-    },
-    {
-      name: "Course",
+  },
+  {
+      name: "COURSE",
       options: {
-        filter: true,
-        sort: false,
+          filter: true,
+          sort: false,
       }
-    },
+  },
   ]
 
 

@@ -260,28 +260,28 @@ handlerEditIntern = () => {
             }
         },
         {
-            name: "Name",
+            name: "NAME",
             options: {
                 filter: true,
                 sort: false,
             }
         },
         {
-            name: "Phone",
+            name: "PHONE",
             options: {
                 filter: false,
                 sort: false,
             }
         },
         {
-            name: "Email",
+            name: "EMAIL",
             options: {
                 filter: false,
                 sort: false,
             }
         },
         {
-            name: "Gender",
+            name: "GENDER",
             options: {
                 filter: false,
                 sort: false,
@@ -295,21 +295,21 @@ handlerEditIntern = () => {
             }
         },
         {
-            name: "University",
+            name: "UNIVERSITY",
             options: {
                 filter: true,
                 sort: false,
             }
         },
         {
-            name: "Faculty",
+            name: "FACULTY",
             options: {
                 filter: true,
                 sort: false,
             }
         },
         {
-            name: "Course",
+            name: "COURSE",
             options: {
                 filter: true,
                 sort: false,
