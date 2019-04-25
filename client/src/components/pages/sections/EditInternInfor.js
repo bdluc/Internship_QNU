@@ -369,16 +369,17 @@ class EditInternInfor extends React.Component {
             default:
                 break;
         }
-        // if (this.state.doneName === true &&
-        //     this.state.donePhone === true &&
-        //     this.state.doneGender === true &&
-        //     this.state.doneEmail === true &&
-        //     this.state.doneDepartment === true &&
-        //     this.state.doneDOB === true) {
-        //     this.setState({
-        //         btnMode: "on"
-        //     })
-        // }
+        if (this.state.doneName === true &&
+            this.state.donePhone === true &&
+            this.state.doneGender === true &&
+            this.state.doneEmail === true &&
+            this.state.doneFaculty === true &&
+            this.state.doneUniversity === true &&
+            this.state.doneDOB === true) {
+            this.setState({
+                btnMode: "on"
+            })
+        }
     }
 
 
