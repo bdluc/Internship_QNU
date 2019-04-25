@@ -154,12 +154,12 @@ func GetAttendancesBySupervisor(c *gin.Context) {
 	if common.IsError(c, err, "Could not get mentors") {
 		return
 	}
-	resp := []AttendanceSupervisor{}
+	resp := []Attendance{}
 	for _, mentor := range mentors {
-		temp := AttendanceSupervisor{}
-		temp.AttendancesByMentor = getAttendancesByMentorId(c, mentor.ID)
-		temp.Name = mentor.Name
-		resp = append(resp, temp)
+		// temp := AttendanceSupervisor{}
+		temp := getAttendancesByMentorId(c, mentor.ID)
+		// temp.Name = mentor.Name
+		resp = append(resp, temp...)
 	}
 	c.JSON(http.StatusOK, resp)
 }

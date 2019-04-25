@@ -1,0 +1,1 @@
+{"_id":{"$oid":"5cc17575e9feea1c4844e3e7"},"Name":"Admin","PhoneNumber":" 0342231323","Email":" admin@gmail.com","Gender":true,"DayofBirth":{"$date":{"$numberLong":"696988800000"}},"Department":"DC22","Position":"Trùm","IsDeleted":false}
