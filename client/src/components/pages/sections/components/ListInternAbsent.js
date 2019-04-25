@@ -218,7 +218,7 @@ class ListInternAbsent extends React.Component {
                                     <ReactNotification ref={this.notificationDOMRef} />
                                 </div>
                                 <hr></hr>
-                                <marquee direction="right"><h2><b><i>Đặng Minh Hòa XL</i></b></h2></marquee>
+                                <marquee direction="right"><h2><b><i></i></b></h2></marquee>
                                 <MUIDataTable
                                     title={<b><i>Intern List Absent</i></b>}
                                     data={this.state.internList}
