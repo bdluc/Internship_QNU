@@ -244,12 +244,10 @@ func GetDailyAttendanceBySupervisor(c *gin.Context) {
 		return
 	}
 
-	resp := []AttendanceSupervisor{}
+	resp := []Attendance{}
 	for _, mentor := range mentors {
-		temp := AttendanceSupervisor{}
-		temp.AttendancesByMentor = getDailyAttendancesByMentorId(c, mentor.ID, date1, date2)
-		temp.Name = mentor.Name
-		resp = append(resp, temp)
+		temp := getDailyAttendancesByMentorId(c, mentor.ID, date1, date2)
+		resp = append(resp, temp...)
 	}
 	c.JSON(http.StatusOK, resp)
 }
