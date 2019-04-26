@@ -16,27 +16,26 @@ class TopNavigation extends Component {
                 <ListGroup className="list-group-flush">
                     <NavLink exact={true} to="/mentor" activeClassName="activeClass">
                         <ListGroupItem>
-                            <Fa icon="user" className="mr-3"/>
-                            Mentor
+                            <Fa icon="user" className="mr-3"/>Mentor
                         </ListGroupItem>
                     </NavLink>
                     <NavLink to="/internship" activeClassName="activeClass">
                         <ListGroupItem>
-                            <Fa icon="users" className="mr-3"/>
-                            Internship
+                            <Fa icon="users" className="mr-3"/>Internship
                         </ListGroupItem>
                     </NavLink>
                    
                     <NavLink to="/courses" activeClassName="activeClass">
                         <ListGroupItem>
-                            <Fa icon="book" className="mr-3"/>
-                            Course
+                            <Fa icon="book" className="mr-3"/>Course
                         </ListGroupItem>
                     </NavLink>
                     <NavLink to="/attendance" activeClassName="activeClass">
                         <ListGroupItem>
-                            <Fa icon="calendar" className="mr-3"/>
-                            Attendance
+
+                            <Fa icon="calendar" className="mr-3"/>Attendence
+
+
                         </ListGroupItem>
                     </NavLink>
                 </ListGroup>
