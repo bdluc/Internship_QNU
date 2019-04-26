@@ -32,7 +32,10 @@ class TopNavigation extends Component {
                     </NavLink>
                     <NavLink to="/attendance" activeClassName="activeClass">
                         <ListGroupItem>
+
                             <Fa icon="calendar" className="mr-3"/>Attendence
+
+
                         </ListGroupItem>
                     </NavLink>
                 </ListGroup>

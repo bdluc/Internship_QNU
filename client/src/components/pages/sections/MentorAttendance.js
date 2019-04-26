@@ -6,6 +6,7 @@ import BarChart from '../components/BarChart'
 import ReactNotification from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
 import $ from 'jquery';
+import {SERVER_NAME} from "../../../Constants"
 
 
 class MentorAttendance extends React.Component {
@@ -72,7 +73,7 @@ class MentorAttendance extends React.Component {
 
   getStudents() {
     $.ajax({
-        url: "http://localhost:8080/attendance/" + this.state.mentorId +"/" + this.state.position,
+        url: SERVER_NAME + "attendance/" + this.state.mentorId +"/" + this.state.position,
         type: "GET",
         success: function (response) {
             if(response.length === 0){
@@ -132,15 +133,15 @@ class MentorAttendance extends React.Component {
             if(traineeData[i].Course === course){
                 students.push({id: traineeData[i].Id, name: traineeData[i].Name});
             }
-            
         }
     return students;
   }
 
  handleCellChange(object){
       var check = false;
-      if(object.ID === "now"){
-         $.ajax({url:'http://localhost:8080/attendance',
+      if(object.ID === "now" ){
+          console.log(object)
+         $.ajax({url:SERVER_NAME + 'attendance',
             type: "POST",
             async: false,
             data: JSON.stringify({"InternID": object.InternID, "Status": object.Status}),
@@ -172,7 +173,7 @@ class MentorAttendance extends React.Component {
     });
     }else{
         $.ajax({
-            url: "http://localhost:8080/attendance",
+            url: SERVER_NAME + "attendance",
             type: "PUT",
             async: false,
             data: JSON.stringify(object),
@@ -381,7 +382,7 @@ class MentorAttendance extends React.Component {
 
   loadDailyData(){
     $.ajax({
-        url: "http://localhost:8080/attendance/"+this.state.mentorId+"/"+this.state.position+"/daily",
+        url: SERVER_NAME + "attendance/"+this.state.mentorId+"/"+this.state.position+"/daily",
         type: "GET",
         success: function (response) {
             this.setState({

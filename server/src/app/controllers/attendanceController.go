@@ -154,12 +154,12 @@ func GetAttendancesBySupervisor(c *gin.Context) {
 	if common.IsError(c, err, "Could not get mentors") {
 		return
 	}
-	resp := []AttendanceSupervisor{}
+	resp := []Attendance{}
 	for _, mentor := range mentors {
-		temp := AttendanceSupervisor{}
-		temp.AttendancesByMentor = getAttendancesByMentorId(c, mentor.ID)
-		temp.Name = mentor.Name
-		resp = append(resp, temp)
+		// temp := AttendanceSupervisor{}
+		temp := getAttendancesByMentorId(c, mentor.ID)
+		// temp.Name = mentor.Name
+		resp = append(resp, temp...)
 	}
 	c.JSON(http.StatusOK, resp)
 }
@@ -244,12 +244,10 @@ func GetDailyAttendanceBySupervisor(c *gin.Context) {
 		return
 	}
 
-	resp := []AttendanceSupervisor{}
+	resp := []Attendance{}
 	for _, mentor := range mentors {
-		temp := AttendanceSupervisor{}
-		temp.AttendancesByMentor = getDailyAttendancesByMentorId(c, mentor.ID, date1, date2)
-		temp.Name = mentor.Name
-		resp = append(resp, temp)
+		temp := getDailyAttendancesByMentorId(c, mentor.ID, date1, date2)
+		resp = append(resp, temp...)
 	}
 	c.JSON(http.StatusOK, resp)
 }
@@ -299,7 +297,7 @@ func CreateAttendance(c *gin.Context) {
 			})
 			return
 		} else {
-			if err == nil && currentTime.Hour() > 13 && (check.Status == "PA" || check.Status == "AR") {
+			if err == nil && (check.Status == "PA" || check.Status == "AR") {
 				atten.ID = check.ID
 				if check.Status == "PA" && atten.Status == "PA" {
 					atten.Status = "PP"
@@ -344,10 +342,6 @@ func updateAttendance(c *gin.Context, database *mgo.Database, atten models.Atten
 	check := models.Attendance{}
 	err := database.C(models.CollectionAttendance).Find(bson.M{"$not": bson.M{"_id": atten.ID}, "InternID": atten.ID, "Date": atten.Date}).One(&check)
 	if err == nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			common.Status:  "error",
-			common.Message: "attendance is exit",
-		})
 		return false
 	}
 
@@ -373,17 +367,20 @@ func UpdateAttendance(c *gin.Context) {
 			if atten.Status == "PP" {
 				atten.Date = time.Date(atten.Date.Year(), atten.Date.Month(), atten.Date.Day(), 2, 0, 0, 0, time.Local)
 			}
+
+			check := models.Attendance{}
+			err = database.C(models.CollectionAttendance).FindId(atten.ID).One(&check)
+			if (check.Status == "PA" && atten.Status == "AR") || (check.Status == "AR" && atten.Status == "PA") {
+				atten.Status = "P"
+			}
 			if updateAttendance(c, database, atten) {
 				c.JSON(http.StatusCreated, gin.H{
 					"status":  "updated",
 					"message": "Update attendance successfully",
 				})
 			}
-
 		}
-
 	}
-
 }
 
 func DeleteAttendance(c *gin.Context) {

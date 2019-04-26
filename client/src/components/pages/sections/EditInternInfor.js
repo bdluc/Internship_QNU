@@ -2,16 +2,29 @@ import React from 'react'
 import {
     MDBRow, MDBCol, Card, CardBody, MDBIcon, MDBModalBody, MDBInput, MDBBtn, MDBModal,
 } from 'mdbreact';
+import MUIDataTable from "mui-datatables";
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import Typography from '@material-ui/core/Typography';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import green from '@material-ui/core/colors/green';
+import amber from '@material-ui/core/colors/amber';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import ErrorIcon from '@material-ui/icons/Error';
+import InfoIcon from '@material-ui/icons/Info';
+import CloseIcon from '@material-ui/icons/Close';
+import WarningIcon from '@material-ui/icons/Warning';
+import classNames from 'classnames';
+import IconButton from '@material-ui/core/IconButton';
 import ReactNotification from "react-notifications-component";
 import { unstable_Box as Box } from '@material-ui/core/Box';
-
-
-
+import Grid from '@material-ui/core/Grid';
+import $ from 'jquery';
 
 
 const styles = theme => ({
@@ -36,7 +49,7 @@ const styles = theme => ({
 
 
 
-class EditInternfor extends React.Component {
+class EditInternInfor extends React.Component {
 
     constructor() {
         super();
@@ -48,12 +61,15 @@ class EditInternfor extends React.Component {
             data: [],
             value: 0,
             intern: [],
-            CourseName: '',
             isUpdate: false,
+            // checkValidate: true,
             btnMode: 'on'
         };
     }
 
+    // componentWillMount(){
+    //     this.GetIntern()
+    // }
     componentDidMount() {
         this.GetIntern()
     }
@@ -104,10 +120,14 @@ class EditInternfor extends React.Component {
                     intern: intern
                 })
             }).catch(
+                // Log the rejection reason
                 function (reason) {
                     console.log('Handle rejected promise (' + reason + ') here.');
                 });
     }
+
+
+
 
     convertDate(rowData) {
         var moment = require('moment')
@@ -169,19 +189,20 @@ class EditInternfor extends React.Component {
         }
     }
 
+
     handlerEditIntern = () => {
         var moment = require('moment');
         const date = moment.utc(this.state.intern.DoB).format();
-        console.log("dt" + date);
+        console.log(this.state.intern.course);
         const data = {
             "Name": this.state.intern.Name,
             "PhoneNumber": this.state.intern.PhoneNumber,
             "Email": this.state.intern.Email,
             "Gender": this.state.intern.Gender === "Male" ? true : false,
             "Dob": date,
-            "University": this.state.University,
-            "Faculty": this.state.Faculty,
-            "CourseID": this.state.course,
+            "University": this.state.intern.University,
+            "Faculty": this.state.intern.Faculty,
+            "CourseID": this.state.intern.CourseID,
             "IsDeleted": false
         }
         fetch("http://localhost:8080/internu/" + this.state.id, {
@@ -222,6 +243,7 @@ class EditInternfor extends React.Component {
 
     handleChangeValue(e) {
         const { name, value } = e.target;
+        //  this.state.intern.DoB = this.convertDate(this.state.intern.DoB);
         e.target.className = "form-control"
         switch (name) {
             case "name":
@@ -245,6 +267,7 @@ class EditInternfor extends React.Component {
                     })
                     e.target.className += " valid"
                 }
+                console.log(this.state.intern)
 
                 break;
             case "phone":
@@ -295,6 +318,7 @@ class EditInternfor extends React.Component {
                     e.target.className += " valid"
                     // this.handlerCheckEmailExits()
                 }
+                // console.log(this.state.dob)
 
                 break;
             case "gender":
@@ -304,6 +328,7 @@ class EditInternfor extends React.Component {
                         doneGender: true,
                     })
                 }
+                // console.log(this.state.dob)
 
                 break;
             case "dob":
@@ -323,7 +348,7 @@ class EditInternfor extends React.Component {
             //         e.target.className += " valid"
             //     }
             //     break;
-            case "university":
+            case "University":
                 this.state.intern.University = value
                 if (value.trim().length > 0) {
                     this.setState({
@@ -332,28 +357,29 @@ class EditInternfor extends React.Component {
                     e.target.className += " valid"
                 }
                 break;
-            case "faculty":
+            case "Faculty":
                 this.state.intern.Faculty = value
                 if (value.trim().length > 0) {
                     this.setState({
                         doneFaculty: true,
                     })
+                    e.target.className += " valid"
                 }
                 break;
             default:
                 break;
         }
-        // if (this.state.doneName === true &&
-        //     this.state.donePhone === true &&
-        //     this.state.doneGender === true &&
-        //     this.state.doneEmail === true &&
-        //     this.state.doneUniversity === true &&
-        //     this.state.doneDOB === true) &&
-        //     this.state.doneFaculty === true {
-        //     this.setState({
-        //         btnMode: "on"
-        //     })
-        // }
+        if (this.state.doneName === true &&
+            this.state.donePhone === true &&
+            this.state.doneGender === true &&
+            this.state.doneEmail === true &&
+            this.state.doneFaculty === true &&
+            this.state.doneUniversity === true &&
+            this.state.doneDOB === true) {
+            this.setState({
+                btnMode: "on"
+            })
+        }
     }
 
 
@@ -408,13 +434,16 @@ class EditInternfor extends React.Component {
                                 <MDBInput label="University" name="University" value={this.state.intern.University} onChange={this.handleChangeValue.bind(this)} />
                                 <MDBInput label="Faculty" name="Faculty" value={this.state.intern.Faculty} onChange={this.handleChangeValue.bind(this)} />
                                 <div className="text-center mt-1-half">
+
                                     <MDBBtn
                                         className="mb-2 blue darken-2"
                                         onClick={this.handlerEditIntern}
+                                    // disabled="true"
                                     >
                                         Change
                   <MDBIcon icon="send" className="ml-1" />
                                     </MDBBtn>
+
                                 </div>
                             </form>
                         </MDBCol>
@@ -426,7 +455,7 @@ class EditInternfor extends React.Component {
     };
 }
 
-EditInternfor.propTypes = {
+EditInternInfor.propTypes = {
     classes: PropTypes.object.isRequired,
 };
-export default withStyles(styles)(EditInternfor);
+export default withStyles(styles)(EditInternInfor);
