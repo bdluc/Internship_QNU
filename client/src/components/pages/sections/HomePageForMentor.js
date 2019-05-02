@@ -1,5 +1,6 @@
 import React from 'react';
-import AttendanceDashboard from './components/AttendanceDashboard'
+// import AttendanceDashboard from './components/AttendanceDashboard'
+import ListInternAbsent from './components/ListInternAbsent'
 
 
 class HomePageForMentor extends React.Component {
@@ -8,7 +9,7 @@ class HomePageForMentor extends React.Component {
     return (
         
 
-    <AttendanceDashboard></AttendanceDashboard>
+    <ListInternAbsent></ListInternAbsent>
     );
   }
 }

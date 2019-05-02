@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Navbar, NavbarBrand, NavbarNav, NavbarToggler, Collapse, MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem } from 'mdbreact';
 import { MDBIcon, MDBModalBody, MDBInput, MDBBtn, MDBModal} from 'mdbreact';
 import { Link } from 'react-router-dom'
-
+import {SERVER_NAME} from "../Constants"
 // import Fab from '@material-ui/core/Fab';
 
 
@@ -63,15 +63,30 @@ class TopNavigation extends Component {
     }
 
     handleClick(){
-        if(this.state.password !== this.state.confirmPassword)
-        this.setState({
-            error: "Password is not match!",
-            showError: true,
-            showSuccess: false
-            
-        })
+        if(this.state.password === ""){
+            this.setState({
+                error: "New password is Empty",
+                showError: true,
+                showSuccess: false
+                
+            })
+        }
+        else if( this.state.confirmPassword === "")
+            this.setState({
+                error: "Confirm password is Empty",
+                showError: true,
+                showSuccess: false
+                
+            })
+        else if(this.state.password !== this.state.confirmPassword)
+            this.setState({
+                error: "Password is not match!",
+                showError: true,
+                showSuccess: false
+                
+            })
         else{
-            fetch('http://localhost:8080/login',
+            fetch(SERVER_NAME + 'login',
                 {
                     method: "PUT",
                     headers:{
@@ -92,7 +107,7 @@ class TopNavigation extends Component {
                     }
                     else {
                         data.Password = this.state.password;
-                        fetch('http://localhost:8080/user',
+                        fetch(SERVER_NAME + 'user',
                         {
                             method: "PUT",
                             headers:{
@@ -182,7 +197,7 @@ class TopNavigation extends Component {
                         onChange = {this.handlePasswordChange.bind(this)}
                         />
                         <MDBInput
-                        label="Comfirm password"
+                        label="Confirm password"
                         icon="lock"
                         group
                         type="password"

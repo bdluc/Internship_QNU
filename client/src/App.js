@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import Routes from '../src/components/Routes';
+import { Redirect } from 'react-router-dom'
 import TopNavigation from './components/topNavigation';
 import SideNavigation from './components/sideNavigation';
 import Login from './components/pages/LoginPage'
 import Footer from './components/Footer';
+import {SERVER_NAME} from "./Constants"
 import './index.css';
 
 class App extends Component {
@@ -26,7 +28,7 @@ class App extends Component {
       });
       var user = this.state.user;
       if (user.Role === 1){
-        fetch('http://localhost:8080/attendance',
+        fetch(SERVER_NAME + 'attendance',
             {
                 method: "POST",
                 headers:{
@@ -50,6 +52,7 @@ class App extends Component {
     if (this.state.user === null) {
       return (
       <div className="flexible-content">
+      <Redirect to='/' />
       <main id="content" className="p-5">
       <Login onLogin = {this.onLogin.bind(this)}></Login>
       </main>

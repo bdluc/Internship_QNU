@@ -41,7 +41,7 @@ const styles = theme => ({
 });
 
 
-class InternPageForMentor extends React.Component {
+class InternPage extends React.Component {
 
   constructor() {
     super();
@@ -137,7 +137,6 @@ class InternPageForMentor extends React.Component {
         this.setState({
           internList: NewData
         })
-        // console.log(data)
       });
   }
 
@@ -167,15 +166,22 @@ class InternPageForMentor extends React.Component {
       Faculty: "",
       icon: "plus",
       isUpdate: false,
-      checkValidate: false
+      // checkValidate: false
+      btnMode: 'off',
+      doneName: false,
+      donePhone: false,
+      doneEmail: false,
+      doneGender: false,
+      doneCourse: false,
+      doneDOB: false,
+      doneUniversity: false,
+      doneFaculty: false,
     });
     this.toggleIntern()
   }
 
   handlerAddIntern = () => {
-    // if (confirm("You definitely want to add intern?")) { //eslint-disable-line
 
-    // }
     var moment = require('moment');
     const date = moment.utc(this.state.dob).format();
     const data = {
@@ -186,7 +192,7 @@ class InternPageForMentor extends React.Component {
       "DoB": date,
       "University": this.state.University,
       "Faculty": this.state.Faculty,
-      "CourseID": this.state.course,
+      "CourseID": this.state.courseID,
       "IsDeleted": false
     }
     var checkAdd = false
@@ -195,7 +201,7 @@ class InternPageForMentor extends React.Component {
       type: "GET",
       async: false,
       success: function (response) {
-        if(response['message'] == "Success"){
+        if (response['message'] == "Success") {
           $.ajax({
             url: "http://localhost:8080/intern",
             type: "POST",
@@ -203,9 +209,9 @@ class InternPageForMentor extends React.Component {
             dataType: "json",
             data: JSON.stringify(data),
             success: function (response) {
-              if(response.ID === undefined){
+              if (response.ID === undefined) {
                 checkAdd = false
-              }else{
+              } else {
                 checkAdd = true
               }
             }
@@ -214,27 +220,28 @@ class InternPageForMentor extends React.Component {
       }
     });
     console.log(checkAdd)
-    if(checkAdd == true){
+    if (checkAdd == true) {
       this.toggleIntern()
       this.addNotification("successAdd")
     }
-    else{
+    else {
       this.addNotification("errorAdd")
     }
-    // fetch("http://localhost:8080/intern",
-    //   {
-    //     method: "POST",
-    //     mode: "no-cors",
-    //     headers: {
-    //       "Content-Type": "application/json"
-    //     },
-    //     body: JSON.stringify(data)d
-    //   })
-    //   .then(this.GetInternList())
-    // this.toggleIntern()
-    // this.addNotification("successAdd")
-    // window.location.reload();
+
   }
+
+  // fetch("http://localhost:8080/intern",
+  //   {
+  //     method: "POST",
+  //     mode: "no-cors",
+  //     headers: {
+  //       "Content-Type": "application/json"
+  //     },
+  //     body: JSON.stringify(data)
+  //   })
+  //   .then(this.GetInternList())
+  // this.toggleIntern()
+  // this.addNotification("successAdd")
 
   GetListCourse() {
     fetch('http://localhost:8080/courses')
@@ -252,7 +259,7 @@ class InternPageForMentor extends React.Component {
   }
 
   handlerDeleteIntern = () => {
-    if (confirm("b?n ch?c ch?n mu?n xóa ?")) { //eslint-disable-line
+    if (confirm("bạn chắc chắn muốn xóa ?")) { //eslint-disable-line
       fetch("http://localhost:8080/intern/" + this.state.id, {
         method: 'DELETE',
         mode: 'cors',
@@ -295,81 +302,81 @@ class InternPageForMentor extends React.Component {
       .then(this.GetInternList())
     this.toggleIntern()
     this.addNotification("successUpdate")
-    // window.location.reload();
+    window.location.reload();
   }
 
   columnsIntern = [
     {
-      name: "STT",
+      name: "#",
       options: {
-        filter: false,
-        sort: true,
+          filter: false,
+          sort: true,
       }
-    },
-    {
+  },
+  {
       name: "ID",
       options: {
-        filter: false,
-        sort: true,
-        display: "excluded"
+          filter: false,
+          sort: true,
+          display: "excluded"
       }
-    },
-    {
-      name: "Name",
+  },
+  {
+      name: "NAME",
       options: {
-        filter: true,
-        sort: false,
+          filter: true,
+          sort: false,
       }
-    },
-    {
-      name: "Phone",
+  },
+  {
+      name: "PHONE",
       options: {
-        filter: false,
-        sort: false,
+          filter: false,
+          sort: false,
       }
-    },
-    {
-      name: "Email",
+  },
+  {
+      name: "EMAIL",
       options: {
-        filter: false,
-        sort: false,
+          filter: false,
+          sort: false,
       }
-    },
-    {
-      name: "Gender",
+  },
+  {
+      name: "GENDER",
       options: {
-        filter: false,
-        sort: false,
+          filter: false,
+          sort: false,
       }
-    },
-    {
+  },
+  {
       name: "DOB",
       options: {
-        filter: false,
-        sort: false,
+          filter: false,
+          sort: false,
       }
-    },
-    {
-      name: "University",
+  },
+  {
+      name: "UNIVERSITY",
       options: {
-        filter: true,
-        sort: false,
+          filter: true,
+          sort: false,
       }
-    },
-    {
-      name: "Faculty",
+  },
+  {
+      name: "FACULTY",
       options: {
-        filter: true,
-        sort: false,
+          filter: true,
+          sort: false,
       }
-    },
-    {
-      name: "Course",
+  },
+  {
+      name: "COURSE",
       options: {
-        filter: true,
-        sort: false,
+          filter: true,
+          sort: false,
       }
-    },
+  },
   ]
 
 
@@ -377,7 +384,7 @@ class InternPageForMentor extends React.Component {
     filterType: "dropdown",
     responsive: "scroll",
     rowsPerPage: 4,
-    rowsPerPageOptions: [5, 5, 5],
+    rowsPerPageOptions: [10, 50, 100],
     download: false,
     print: false,
     selectableRows: false,
@@ -479,6 +486,7 @@ class InternPageForMentor extends React.Component {
         this.setState({ name: value })
         if (value.trim().length === 0) {
           this.setState({
+            btnMode: 'off',
             name: " ",
             errorName: "Name can not be blank"
           })
@@ -498,13 +506,14 @@ class InternPageForMentor extends React.Component {
         const regexPhone = /^[0-9\b]+$/
         if (value.trim().length === 0) {
           this.setState({
+            btnMode: 'off',
             phone: " ",
             errorPhone: "Phone can not be blank"
           })
           e.target.className += " invalid"
-        } else if (!regexPhone.test(value.trim())) {
+        } else if (value.trim().length < 10) {
           this.setState({
-            errorPhone: "Phone contains only numeric characters"
+            errorName: "Name contains more than 3 characters"
           })
           e.target.className += " invalid"
         } else {
@@ -517,6 +526,7 @@ class InternPageForMentor extends React.Component {
         const regexEmail = /^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i;
         if (value.trim().length === 0) {
           this.setState({
+            btnMode: 'off',
             email: " ",
             errorEmail: "Email can not be blank"
           })
@@ -533,25 +543,68 @@ class InternPageForMentor extends React.Component {
         break;
       case "gender":
         this.setState({ gender: value })
+        if (value.trim().length > 0) {
+          this.setState({
+            doneGender: true,
+          })
+        }
         break;
       case "course":
         this.setState({ courseID: value })
+        if (value.trim().length > 0) {
+          this.setState({
+            doneCourse: true,
+          })
+          e.target.className += " valid"
+        }
         break;
       case "dob":
         this.setState({ dob: value })
+        if (value.trim().length > 0) {
+          this.setState({
+            doneDOB: true,
+          })
+        }
         break;
-      case "intern":
-        this.setState({ intern: value })
-        break;
+      // case "intern":
+      //   this.setState({ intern: value })
+      //   if (value.trim().length > 0) {
+      //     this.setState({
+      //       doneIntern: true,
+      //     })
+      //     e.target.className += " valid"
+      //   }
+      //   break;
       case "University":
         this.setState({ University: value })
+        if (value.trim().length > 0) {
+          this.setState({
+            doneUniversity: true,
+          })
+        }
         break;
       case "Faculty":
         this.setState({ Faculty: value })
+        if (value.trim().length > 0) {
+          this.setState({
+            doneFaculty: true,
+          })
+        }
         break;
       default:
         break;
     }
+    if (this.state.doneName === true &&
+      this.state.donePhone === true &&
+      this.state.doneGender === true &&
+      this.state.doneEmail === true &&
+      this.state.doneFaculty === true &&
+      this.state.doneUniversity === true &&
+      this.state.doneDOB === true) {
+      this.setState({
+          btnMode: "on"
+      })
+  }
   }
 
   handleChanges() {
@@ -578,7 +631,7 @@ class InternPageForMentor extends React.Component {
 
                 <hr></hr>
                 <MUIDataTable
-                  title={"List Intern"}
+                  title={"Intern List"}
                   data={this.state.internList}
                   columns={this.columnsIntern}
                   options={this.optionsIntern} />
@@ -664,4 +717,4 @@ class InternPageForMentor extends React.Component {
     )
   }
 }
-export default withStyles(styles)(InternPageForMentor);
+export default withStyles(styles)(InternPage);

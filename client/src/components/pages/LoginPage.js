@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {SERVER_NAME} from "../../Constants"
 import {
   MDBContainer,
   MDBRow,
@@ -31,7 +32,7 @@ class Login extends Component {
 
   handleClick(event) {
     event.preventDefault();
-    fetch('http://localhost:8080/login',
+    fetch(SERVER_NAME + 'login',
             {
                 method: "PUT",
                 headers:{
