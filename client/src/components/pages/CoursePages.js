@@ -213,7 +213,7 @@ class CoursePages extends React.Component {
     this.setState({
       mentorList: mentorList,
       numberofCheck: count
-    })
+    },this.valiedateForm)
   }
 
   toggleCourse = () => {
@@ -538,7 +538,7 @@ class CoursePages extends React.Component {
           }
         }
         if (this.state.endDate === "") {
-          endDateValid = 0 // end date undefine
+          endDateValid = 2 // end date undefine
           courseNameValid = this.state.courseNameValid;
         } else {
           var edNumber2 = new Date(new Date(this.state.endDate).toLocaleString()).getTime();
@@ -569,19 +569,35 @@ class CoursePages extends React.Component {
         }
         break;
       case "courseName":
-        if (value === "")
+        if (value === ""){
           courseNameValid = 1;
+          startDateValid = this.state.startDateValid;
+          endDateValid = this.state.endDateValid;
+        }
         else {
-          if (value.length <= 5)
+          if (value.length <= 5){
+            startDateValid = this.state.startDateValid;
+            endDateValid = this.state.endDateValid;
             courseNameValid = 2;
-          else
+          }
+            
+          else{
+            startDateValid = this.state.startDateValid;
+            endDateValid = this.state.endDateValid;
             courseNameValid = 0;
+          }
+            
         }
     }
     this.setState({
       startDateValid: startDateValid,
       endDateValid: endDateValid,
       courseNameValid: courseNameValid
+    },this.valiedateForm)
+  }
+  valiedateForm(){
+    this.setState({
+      formValid : this.state.startDateValid === 0 && this.state.endDateValid === 0 && this.state.courseNameValid ===0 && this.state.numberofCheck !== 0 
     })
   }
   handleChangeValue(e) {
@@ -656,7 +672,6 @@ class CoursePages extends React.Component {
               toggle={this.toggleCourse}
               size="md"
               cascading>
-
               <MDBModalBody>
                 <input type="hidden" name="id" value={this.state.id} />
                 <MDBInput fullwidth="true" size="" label="Course name" name="courseName" value={this.state.courseName} onChange={this.onChangeDate.bind(this)} />
@@ -705,6 +720,7 @@ class CoursePages extends React.Component {
                     <MDBBtn
                       className="mb-2 blue darken-2"
                       onClick={this.handlerAddCourse}
+                      disabled={!this.state.formValid}
                     >
                       Create
                   <MDBIcon icon="send" className="ml-1" />
@@ -716,7 +732,8 @@ class CoursePages extends React.Component {
 
                     <MDBBtn
                       className="mb-2 blue darken-2"
-                      onClick={this.handlerUpdateCourse}>
+                      onClick={this.handlerUpdateCourse}
+                      >
                       Update
                   <MDBIcon icon="edit" className="ml-1" />
                     </MDBBtn>

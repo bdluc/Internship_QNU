@@ -3,13 +3,17 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"path/filepath"
+	"time"
 
 	"../common"
 	"../models"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
-	"gopkg.in/mgo.v2"
+	gomail "gopkg.in/gomail.v2"
+	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -224,4 +228,202 @@ func GetAttendanceByIntern(c *gin.Context) {
 	common.CheckError(c, errAttendance)
 
 	c.JSON(http.StatusOK, attendanceDb)
+}
+func SendReport(c *gin.Context) {
+	//Read data from request
+	body, errReading := ioutil.ReadAll(c.Request.Body)
+	if errReading != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			common.Status:  common.Error,
+			common.Message: common.ErrReadingRequestData,
+		})
+		return
+	}
+
+	//Parse json data to struct
+	report := &models.Report{}
+	errParsing := json.Unmarshal(body, report)
+	if errParsing != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			common.Status:  common.Error,
+			common.Message: common.ErrReadingRequestData,
+		})
+		return
+	}
+
+	//Get mentor's emails
+	err, trainee := getInternByID(c, c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			common.Status:  common.NotFound,
+			common.Message: common.TraineeNotFound,
+		})
+		return
+	}
+	fmt.Println("running")
+	course := getCourseByID(c, string(trainee.CourseID.Hex()))
+	for _, v := range course.MentorID {
+		err, mentor := getMentorByID(c, string(v.Hex()))
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				common.Status:  common.NotFound,
+				common.Message: common.MentorNotFound,
+			})
+			return
+		}
+		//Send email to mentor
+		email := &models.Email{
+			From:     common.User,
+			To:       mentor.Email,
+			Subject:  report.Subject,
+			Body:     report.Body,
+			Username: common.User,
+			Password: common.Password}
+		errSending := models.SendEMail(*email)
+		if errSending != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				common.Status:  common.Failed,
+				common.Message: common.ErrSendMail,
+			})
+			return
+		}
+	}
+	reportDetail := models.ReportDetail{
+		Subject:   report.Subject,
+		Body:      report.Body,
+		Date:      time.Now(),
+		InternID:  trainee.ID,
+		Type:      1,
+		IsDeleted: false}
+	database := c.MustGet("db").(*mgo.Database)
+	errr := database.C(models.CollectionReport).Insert(reportDetail)
+	if errr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			common.Status:  common.Failed,
+			common.Message: common.ErrSendMail,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		common.Status:  common.Success,
+		common.Message: common.SendMailSuccess,
+	})
+}
+
+func SendReportWeek(c *gin.Context) {
+	//Read file from request
+	file, errfile := c.FormFile("file")
+	if errfile != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("get form err: %s", errfile.Error()))
+		return
+	}
+	//Get mentor's emailss
+	err, trainee := getInternByID(c, c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			common.Status:  common.NotFound,
+			common.Message: common.TraineeNotFound,
+		})
+		return
+	}
+	fmt.Println("running")
+	course := getCourseByID(c, string(trainee.CourseID.Hex()))
+	for _, v := range course.MentorID {
+		err, mentor := getMentorByID(c, string(v.Hex()))
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				common.Status:  common.NotFound,
+				common.Message: common.MentorNotFound,
+			})
+			return
+		}
+		//Send email to mentor
+		email := &models.Email{
+			From:     common.User,
+			To:       mentor.Email,
+			Subject:  trainee.Name,
+			Body:     "Report per week",
+			Username: common.User,
+			Password: common.Password}
+		m := gomail.NewMessage()
+		m.SetHeader("From", email.From)
+		m.SetHeader("To", email.To)
+		m.SetHeader("Subject", email.Subject)
+		m.SetBody("text/html", email.Body)
+		filename := filepath.Base(file.Filename)
+		if err := c.SaveUploadedFile(file, filename); err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+			return
+		}
+		m.Attach(filename) // attach your file's name
+		d := gomail.NewDialer("smtp.gmail.com", 587, email.Username, email.Password)
+		errSend := d.DialAndSend(m)
+		if errSend != nil {
+			return
+		}
+	}
+	reportDetail := models.ReportDetail{
+		Subject:   trainee.Name,
+		Body:      file.Filename,
+		Date:      time.Now(),
+		InternID:  trainee.ID,
+		Type:      2,
+		IsDeleted: false}
+	database := c.MustGet("db").(*mgo.Database)
+	errr := database.C(models.CollectionReport).Insert(reportDetail)
+	if errr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			common.Status:  common.Failed,
+			common.Message: common.ErrSendMail,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		common.Status:  common.Success,
+		common.Message: common.SendMailSuccess,
+	})
+}
+
+func GetHistoryAbsentByInternID(c *gin.Context) {
+	database := c.MustGet("db").(*mgo.Database)
+
+	query := []bson.M{
+
+		// {
+		// 	"$unwind": "$MentorID",
+		// },
+		{
+			"$lookup": bson.M{
+				"from":         "intern",
+				"localField":   "InternID",
+				"foreignField": "_id",
+				"as":           "Intern",
+			}},
+		{
+			"$unwind": "$Intern",
+		},
+		{
+			"$match": bson.M{
+				"IsDeleted": false,
+				// "$or": [bson.M{ "Status": 'A' }, bson.M{ "Status": 'AR' }],
+				"Status": bson.M{
+					"$ne": "PP",
+				},
+				"InternID": bson.ObjectIdHex(c.Param("id")),
+			}},
+		{
+			"$project": bson.M{
+				"Status":     1,
+				"Date":       1,
+				"Email":      1,
+				"InternName": "$Intern.Name",
+			}},
+	}
+
+	pipe := database.C(models.CollectionAttendance).Pipe(query)
+	resp := []bson.M{}
+	err := pipe.All(&resp)
+
+	common.CheckError(c, err)
+	c.JSON(http.StatusOK, resp)
 }
