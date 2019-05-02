@@ -528,13 +528,24 @@ class MentorPageForSup extends React.Component {
           this.setState({
             btnMode: 'off',
             name: " ",
-            errorName: "Name can not be blank"
+            errorName: "Name can not be blank",
+            doneName: false
           })
           e.target.className += " invalid"
-        } else if (value.trim().length < 6) {
+        } else if(value.length > 50){
+          this.setState({
+            name: this.state.name,
+            btnMode: 'off',
+            errorName: "Name may be very long",
+            doneName: false
+          })
+          e.target.className += " invalid"
+        }
+        else if (value.trim().length < 6) {
           this.setState({
             btnMode: 'off',
-            errorName: "Name contains more than 5 characters"
+            errorName: "Name contains more than 5 characters",
+            doneName: false
           })
           e.target.className += " invalid"
         } else {
@@ -552,13 +563,15 @@ class MentorPageForSup extends React.Component {
           this.setState({
             btnMode: 'off',
             phone: " ",
-            errorPhone: "Phone can not be blank"
+            errorPhone: "Phone can not be blank",
+            donePhone: false
           })
           e.target.className += " invalid"
         } else if (!regexPhone.test(value.trim())) {
           this.setState({
             btnMode: 'off',
-            errorPhone: "Phone contains only numeric characters"
+            errorPhone: "Phone contains only numeric characters",
+            donePhone: false
           })
           e.target.className += " invalid"
         } else {
@@ -576,13 +589,23 @@ class MentorPageForSup extends React.Component {
           this.setState({
             btnMode: 'off',
             email: " ",
-            errorEmail: "Email can not be blank"
+            errorEmail: "Email can not be blank",
+            doneEmail: false
           })
           e.target.className += " invalid"
         } else if (!regexEmail.test(value.trim())) {
           this.setState({
             btnMode: 'off',
-            errorEmail: "Not a valid email address"
+            errorEmail: "Not a valid email address",
+            doneEmail: false
+          })
+          e.target.className += " invalid"
+        }else if(value.length > 50){
+          this.setState({
+            email: this.state.email,
+            btnMode: 'off',
+            errorName: "Email may be very long",
+            doneEmail: false
           })
           e.target.className += " invalid"
         } else {
@@ -599,6 +622,10 @@ class MentorPageForSup extends React.Component {
         if (value.trim().length > 0) {
           this.setState({
             doneGender: true,            
+          })
+        }else{
+          this.setState({
+            doneGender: false,            
           })
         }
         // console.log(this.state.dob)
@@ -635,6 +662,10 @@ class MentorPageForSup extends React.Component {
             doneMentor: true,            
           })
           e.target.className += " valid"
+        }else{
+          this.setState({
+            doneMentor: false,            
+          })
         }
         break;
       case "department":
@@ -644,6 +675,10 @@ class MentorPageForSup extends React.Component {
             doneDepartment: true,            
           })
           e.target.className += " valid"
+        }else{
+          this.setState({
+            doneDepartment: false,            
+          })
         }
         break;
       default:
@@ -741,7 +776,7 @@ class MentorPageForSup extends React.Component {
 
               <MDBInput
 
-                label="Dob"
+                label="DOB"
                 name="dob"
                 id="date"
                 type="date"
