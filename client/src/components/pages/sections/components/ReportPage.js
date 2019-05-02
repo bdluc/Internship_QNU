@@ -5,9 +5,7 @@ import './report.css';
 import $ from 'jquery';
 import MUIDataTable from "mui-datatables";
 import {
-  createBrowserHistory,
-  createHashHistory,
-  createMemoryHistory
+  createBrowserHistory
 } from 'history';
 
 class ReportPage extends React.Component {
@@ -45,7 +43,9 @@ class ReportPage extends React.Component {
     onFileChange(event){
         this.setState({fileUpload: event.target.files[0]})
     }
-
+    onDateChange(event){
+        this.setState({dateAbsent: event.target.value})
+    }
     handleSubmit(event) {     
         this.resetAlerts();
         if(this.state.textSubject === "" || this.state.textBody === ""){
@@ -78,6 +78,39 @@ class ReportPage extends React.Component {
 
         }
         event.preventDefault();
+    }
+    handleAbsent(event){
+        event.preventDefault();
+        var moment = require('moment');
+        let dateAbsent = moment.utc(document.getElementById("date").value).format();
+        if(this.state.textSubject === "" || !this.state.dateAbsent){
+            this.setState({showWarning: true});
+        } else {
+            var data = {
+                "Message" : document.getElementById("subject").value,
+                "Date" : dateAbsent,
+                "InternID" : this.state.traineeId.ID,
+                "Status" : 1,
+                "IsDeleted" : false
+            };
+            this.setState({disableButton: true});
+            fetch("http://localhost:8080/absent",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(data),
+            })
+            .then(response => {
+                 if (response.status === 201) {
+                    this.setState({showSuccess: true});
+                } else {
+                    this.setState({showError: true});
+                }
+                this.setState({disableButton: false});
+            });
+        }
     }
     handleSendFile(event){
         event.preventDefault();
@@ -154,7 +187,6 @@ class ReportPage extends React.Component {
                     historyList: NewData,
                 })
                 });
-                console.log(this.state.historyList)
             }
         })
     }
@@ -287,7 +319,25 @@ class ReportPage extends React.Component {
                             <input type="submit" id="submit" className="btn btn-primary" value="Send report" disabled={this.state.disableButton}/>
                         </form>
                         </TabPanel>
-                        <TabPanel></TabPanel>
+                        <TabPanel>
+                        <form onSubmit={this.handleAbsent.bind(this)}>
+                            <div className="form-group">
+                                <label htmlFor="subject"><b>Reason</b></label>
+                                <input type="text" id="subject" name="subject" className="form-control" value={this.state.textSubject} placeholder="Your reason"
+                                 onChange={this.onSubjectChange.bind(this)}
+                                 onBlur={this.onSubjectBlur.bind(this)}/>
+                            </div>
+                            <hr/>
+                            <div className="form-group">
+                                <label htmlFor="date"><b>Date absent</b></label>
+                                <input type="date" id="date" name="date" className="form-control" value={this.state.dateAbsent}
+                                 onChange={this.onDateChange.bind(this)}
+                                />
+                            </div>
+                            <hr/>
+                            <input type="submit" id="submit" className="btn btn-primary" value="Submit" disabled={this.state.disableButton}/>
+                        </form>
+                        </TabPanel>
                         <TabPanel>
                             
                         <MUIDataTable

@@ -98,6 +98,12 @@ func setupRouter() *gin.Engine {
 	r.DELETE("/course/:id", controllers.DeleteCourse)
 	r.DELETE("/coursedetailindex/:id/:idDetail", controllers.DeleteElementDetailCourseByID)
 
+	//absent
+	r.GET("/absents", controllers.GetReason)
+	r.POST("/absent", controllers.CreateReason)
+	r.PUT("/absent", controllers.UpdateReason)
+	r.DELETE("/absent/:id", controllers.DeleteReason)
+
 	return r
 }
 
