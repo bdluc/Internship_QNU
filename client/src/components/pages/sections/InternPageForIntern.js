@@ -550,7 +550,7 @@ handlerEditIntern = () => {
                             </FormControl>
 
                             <MDBInput
-                                label="Dob" name="dob" id="date" type="date"
+                                label="DOB" name="dob" id="date" type="date"
                                 value={this.state.dob}
                                 onChange={this.handleChangeValue.bind(this)}
                                 InputLabelProps={{

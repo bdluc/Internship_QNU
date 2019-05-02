@@ -590,7 +590,7 @@ class MentorPageForSup extends React.Component {
           e.target.className += " invalid"
         }else if(value.length > 50){
           this.setState({
-            name: this.state.name,
+            email: this.state.email,
             btnMode: 'off',
             errorName: "Email may be very long",
             doneEmail: false
@@ -752,7 +752,7 @@ class MentorPageForSup extends React.Component {
 
               <MDBInput
 
-                label="Dob"
+                label="DOB"
                 name="dob"
                 id="date"
                 type="date"
