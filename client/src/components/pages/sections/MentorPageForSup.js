@@ -179,7 +179,19 @@ class MentorPageForSup extends React.Component {
                 dismissable: { click: true }
             });
             break;
-
+        case "successDelete":
+            this.notificationDOMRef.current.addNotification({
+                title: "Success",
+                message: "Delete mentor info successfully !",
+                type: "success", //success, danger, default, info, warning or custom
+                insert: "top",
+                container: "top-right",
+                animationIn: ["animated", "fadeIn"],
+                animationOut: ["animated", "fadeOut"],
+                dismiss: { duration: 2000 },
+                dismissable: { click: true }
+            });
+            break;
     }
 }
 
@@ -286,7 +298,7 @@ class MentorPageForSup extends React.Component {
       method: 'DELETE',
       mode: 'cors'
     })
-    .then(this.addNotification("successAdd"))
+    .then(this.addNotification("successDelete"))
       .then(this.GetMentorList())
     this.toggleMentor()
 
@@ -593,11 +605,27 @@ class MentorPageForSup extends React.Component {
 
         break;
       case "dob":
+        var standard = new Date('1988/1/1').getTime();
+        var currentDate = new Date().getTime();
+        var valueofUser = new Date(value).getTime();
         this.setState({ dob: value })
         if (value.trim().length > 0) {
+          if((currentDate - valueofUser) < standard){
+            this.setState({
+              doneDOB: false,            
+            })
+            e.target.className += " invalid"
+          }else {
+            this.setState({
+              doneDOB: true,            
+            })
+            e.target.className += " valid"
+          }
+        }else {
           this.setState({
-            doneDOB: true,            
+            doneDOB: false,            
           })
+          e.target.className += " invalid"
         }
         break;
       case "mentor":
