@@ -17,14 +17,14 @@ import (
 )
 
 type data struct {
-	category string
-	value    string
+	category string `json:"category"`
+	value    int    `json:"value"`
 }
 
 type attendanceDash struct {
 	// ID       bson.ObjectId `bson:"_id,omitempty"` //id of Intern, Mentor, Sup
-	Name string
-	data []data
+	Name string `json:"Name"`
+	data []data `json:"data"`
 }
 
 // Add an mentor
@@ -270,37 +270,49 @@ func GetDataForDashBoard(c *gin.Context) {
 	// fmt.Print(m)
 	//
 	nattendanceDashList := []attendanceDash{}
-	dataList := []data{}
 
 	// ndata := data{}
 	// nattendanceDash := attendanceDash{}
 	for _, v := range intern {
 		name := v.Name
+		dataList := []data{}
 		sid := v.ID.Hex()
 		nday := date
 		for i := 0; i < viewi; i++ {
 			// fmt.Print(i, viewi)
 			// day := nday
 			sta := getInternTimeByStatusByDay(c, sid, nday)
-			fmt.Print(sta)
+			// fmt.Print(sta)
 
 			if sta != 0 {
-				t := strconv.Itoa(sta)
-				ndata := data{category: nday, value: t}
+				// t := strconv.Itoa(sta)
+				ndata := data{category: nday, value: sta}
 				dataList = append(dataList, ndata)
+				// c.JSON(http.StatusOK, dataList)
 
 			}
 
 			nday = dayUp(nday)
-			// fmt.Print(nday)
+			// fmt.Print(nday, "\n")
 
 		}
-		nattendanceDash := attendanceDash{Name: name, data: dataList}
-		nattendanceDashList = append(nattendanceDashList, nattendanceDash)
-		// fmt.Print(nattendanceDashList)
+		// pagesJsondataList, _ := json.Marshal(dataList)
 
+		// c.JSON(http.StatusOK, pagesJsondataList)
+		// fmt.Print("\n", dataList)
+
+		// _ = json.Unmarshal([]byte(dataList), &arr)
+
+		// fmt.Print(name, "\n", dataList, "\n")
+
+		nattendanceDash := attendanceDash{Name: name, data: dataList}
+		fmt.Print(dataList)
+		c.JSON(http.StatusOK, dataList)
+
+		nattendanceDashList = append(nattendanceDashList, nattendanceDash)
 	}
-	c.JSON(http.StatusOK, nattendanceDashList)
+	// fmt.Print("\n", nattendanceDashList)
+	// c.JSON(http.StatusOK, nattendanceDashList)
 
 }
 
