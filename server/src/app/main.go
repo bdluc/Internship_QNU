@@ -63,7 +63,7 @@ func setupRouter() *gin.Engine {
 	r.GET("/intern/:id/course", controllers.GetInternByCourse)
 	r.GET("/getintern/:id", controllers.ListInternByID)
 	r.GET("/internshowattend", controllers.GetInternA)
-	r.GET("/attendancebyintern/:id/intern", controllers.GetAttendanceByIntern)
+	r.GET("/internabsent", controllers.GetCurrentDayAbsent)
 
 	//attendance
 	r.GET("/attendance/:id", controllers.GetAttendance)
