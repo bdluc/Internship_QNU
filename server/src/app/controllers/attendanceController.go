@@ -154,12 +154,16 @@ func GetAttendancesBySupervisor(c *gin.Context) {
 	if common.IsError(c, err, "Could not get mentors") {
 		return
 	}
-	resp := []AttendanceSupervisor{}
+	resp := []Attendance{}
 	for _, mentor := range mentors {
-		temp := AttendanceSupervisor{}
-		temp.AttendancesByMentor = getAttendancesByMentorId(c, mentor.ID)
-		temp.Name = mentor.Name
-		resp = append(resp, temp)
+		// temp := AttendanceSupervisor{}
+		temp := getAttendancesByMentorId(c, mentor.ID)
+		// temp.Name = mentor.Name
+		for _, v := range temp {
+			if !contains(resp, v) {
+				resp = append(resp, v)
+			}
+		}
 	}
 	c.JSON(http.StatusOK, resp)
 }
@@ -230,6 +234,15 @@ func GetDailyAttendanceByMentor(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
+func contains(attendances []Attendance, atten Attendance) bool {
+	for _, attendance := range attendances {
+		if attendance.Id == atten.Id {
+			return true
+		}
+	}
+	return false
+}
+
 func GetDailyAttendanceBySupervisor(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
 	currentTime := time.Now()
@@ -244,12 +257,14 @@ func GetDailyAttendanceBySupervisor(c *gin.Context) {
 		return
 	}
 
-	resp := []AttendanceSupervisor{}
+	resp := []Attendance{}
 	for _, mentor := range mentors {
-		temp := AttendanceSupervisor{}
-		temp.AttendancesByMentor = getDailyAttendancesByMentorId(c, mentor.ID, date1, date2)
-		temp.Name = mentor.Name
-		resp = append(resp, temp)
+		temp := getDailyAttendancesByMentorId(c, mentor.ID, date1, date2)
+		for _, v := range temp {
+			if !contains(resp, v) {
+				resp = append(resp, v)
+			}
+		}
 	}
 	c.JSON(http.StatusOK, resp)
 }

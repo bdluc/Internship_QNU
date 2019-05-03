@@ -1,0 +1,15 @@
+.col-example{
+    padding: 1rem;
+    background-color: #4285f4;
+    color: #fff;
+    text-align: left;
+}
+
+.custom-margin{
+    margin-left: 5px;
+}
+
+.custom-border{
+    border-color: #ffde79ff;
+}
+

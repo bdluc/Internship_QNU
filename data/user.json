@@ -1,0 +1,21 @@
+{"_id":{"$oid":"5cb57b7436f93829b40f2ac1"},"UserName":"luc123@gmail.com","Password":"$2a$10$ajzkL74cGWoCZHGEfZtEwOOprAU2yv0ObV9YPg09.ZvxW4UMY.IRi","Role":{"$numberInt":"2"},"IsDeleted":false}
+{"_id":{"$oid":"5cb57b9636f93829b40f2ac2"},"UserName":"anhab@gmail.com","Password":"$2a$10$h.CGdN0QHFrrkB6N9Jzy4unaYlZof1PzZ/rXXBi2Hw39omesa//xS","Role":{"$numberInt":"2"},"IsDeleted":false}
+{"_id":{"$oid":"5cb57bb536f93829b40f2ac3"},"UserName":"nva@gmail.clom","Password":"$2a$10$/SJVxySqxM8DhXTOEE0nj.KJXEJFEHb.4W6QWVqDfwS99uC9CVhAa","Role":{"$numberInt":"2"},"IsDeleted":false}
+{"_id":{"$oid":"5cb57bd236f93829b40f2ac4"},"UserName":"nvb@gmail.com","Password":"$2a$10$ZFjcvjptDdV7gqzHEt.6BeqwYdAwhofgzI0BOsTs0MicaJLPNpS7q","Role":{"$numberInt":"2"},"IsDeleted":false}
+{"_id":{"$oid":"5cb57c3036f93829b40f2ac5"},"UserName":" ngvc@gmail.com","Password":"$2a$10$PURJVc4YpUpTtKQVIfFs2eYgA1nHDVQqgP4UVPbUXD/J3B/aV4kQG","Role":{"$numberInt":"2"},"IsDeleted":false}
+{"_id":{"$oid":"5cb57c5736f93829b40f2ac6"},"UserName":" vanaha@gmail.com","Password":"$2a$10$GfNwOeIMEa01gVWPqMHZuOjGwC6FD8nbPbRQhAlgLTrBpA9.mYtpe","Role":{"$numberInt":"2"},"IsDeleted":false}
+{"_id":{"$oid":"5cb57c9c36f93829b40f2ac7"},"UserName":"komso@gmail.com","Password":"$2a$10$wxgVooh4P9xxWJoNPnSQ.eUFyBJ/FkFHZp2sVadkEtJWie/Aciv4a","Role":{"$numberInt":"2"},"IsDeleted":false}
+{"_id":{"$oid":"5cb57cec36f93829b40f2ac8"},"UserName":"mothai123@yahoo.com","Password":"$2a$10$93hrOlH3MBZnK9Dli0aYm.QBOTu1ILhSsKqflYxtIqqw13AVJdgXm","Role":{"$numberInt":"2"},"IsDeleted":false}
+{"_id":{"$oid":"5cb57d0936f93829b40f2ac9"},"UserName":"xuanko@gmail.com","Password":"$2a$10$/dF6DtbF2wrSByNkyRVwpuX9FOeChI3WKLqd/mO5nZIjvFr8IVQCm","Role":{"$numberInt":"2"},"IsDeleted":false}
+{"_id":{"$oid":"5cb57d2636f93829b40f2aca"},"UserName":"chien123@gmail.com","Password":"$2a$10$Ei4iRiohLCb05L8GB1JHpOMsVokQ.1YgYCFw.jU/un7FF.9GR6R.q","Role":{"$numberInt":"2"},"IsDeleted":false}
+{"_id":{"$oid":"5cb59165da51e33a8c1a3af4"},"UserName":"TMA@gmail.com","Password":"$2a$10$9zAtGUogMMUH4H6izhORlujFZzpv0elSxlEZpWJ5PyysxcYgXfUyS","Role":{"$numberInt":"1"},"IsDeleted":false}
+{"_id":{"$oid":"5cb591dada51e33a8c1a3af5"},"UserName":"FPT@gmail.com","Password":"$2a$10$03j45ZrzCDSPPLIH6.e7U.diruewWLdsqah5prJrdCVhmZ.IX3a2S","Role":{"$numberInt":"1"},"IsDeleted":false}
+{"_id":{"$oid":"5cb59216da51e33a8c1a3af6"},"UserName":"bachoc@gmail.com","Password":"$2a$10$ghOnBfTPyP5jBwjbnXMJceBS/1FynEb61bj8hg89GI5EXPPoQLkqa","Role":{"$numberInt":"1"},"IsDeleted":false}
+{"_id":{"$oid":"5cb5925ada51e33a8c1a3af7"},"UserName":"quan@gmail.com","Password":"$2a$10$vC/.sR3i57Gb3fMqeGldWO9sqFlqEkRspK63/lx5X4kOBBFrRZF9m","Role":{"$numberInt":"1"},"IsDeleted":false}
+{"_id":{"$oid":"5cb592acda51e33a8c1a3af8"},"UserName":" hoadang@gail.com","Password":"$2a$10$HpGZoB.DGBN8YibJcxWoIuxViXzGJJ87hiTqIkLeAtg8GXIKiwcnS","Role":{"$numberInt":"1"},"IsDeleted":false}
+{"_id":{"$oid":"5cb592ffda51e33a8c1a3af9"},"UserName":"luctma@gmail.com","Password":"$2a$10$i3/H/SJPPuI1aYLJT0LwDO5jPAeYcZGH/GZFol8nxF6HwP4P/W6ze","Role":{"$numberInt":"1"},"IsDeleted":false}
+{"_id":{"$oid":"5cb59374da51e33a8c1a3afa"},"UserName":"tan2k@gmail.com","Password":"$2a$10$iLDV1eIYZtAncWnMfl028eJgscj4jrl5qSlIX2cz2uPz9kBlH3lBW","Role":{"$numberInt":"1"},"IsDeleted":false}
+{"_id":{"$oid":"5cb593efda51e33a8c1a3afb"},"UserName":"phon123@gmail.com","Password":"$2a$10$ACN/XsTR6qIDAdOPK2ySRuFYtCDe3fWZjHbxG6d9uZ41sWD/QhHgu","Role":{"$numberInt":"1"},"IsDeleted":false}
+{"_id":{"$oid":"5cb59440da51e33a8c1a3afc"},"UserName":"tuong@gmail.com","Password":"$2a$10$TZq5.755VaPCsK0OMOi9Fug0m8hibZZO5UkSJKAc4AJSocNot6FVO","Role":{"$numberInt":"1"},"IsDeleted":false}
+{"_id":{"$oid":"5cb594d5da51e33a8c1a3afd"},"UserName":"tongcuc@gmail.com","Password":"$2a$10$2QzonbNiKkeU7GFzCoDOhe7qagS2bOs2j1SbqNHc.ez1L9d5Hp15C","Role":{"$numberInt":"1"},"IsDeleted":false}
+{"_id":{"$oid":"5cc17575e9feea1c4844e3e7"},"UserName":"admin@gmail.com","Password":"$2a$10$Ei4iRiohLCb05L8GB1JHpOMsVokQ.1YgYCFw.jU/un7FF.9GR6R.q","Role":{"$numberInt":"3"},"IsDeleted":false}

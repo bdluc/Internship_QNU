@@ -116,6 +116,19 @@ class CoursePages extends React.Component {
           dismissable: { click: true }
         });
         break;
+      default :
+      this.notificationDOMRef.current.addNotification({
+        title: "Failed",
+        message: "Action is failed !",
+        type: "danger", //success, danger, default, info, warning or custom
+        insert: "top",
+        container: "top-right",
+        animationIn: ["animated", "fadeIn"],
+        animationOut: ["animated", "fadeOut"],
+        dismiss: { duration: 2000 },
+        dismissable: { click: true }
+      });
+      break;
     }
 
   }
@@ -213,7 +226,7 @@ class CoursePages extends React.Component {
     this.setState({
       mentorList: mentorList,
       numberofCheck: count
-    })
+    },this.valiedateForm)
   }
 
   toggleCourse = () => {
@@ -360,7 +373,7 @@ class CoursePages extends React.Component {
       }
     },
     {
-      name: "COURSE NAME",
+      name: "NAME",
       options: {
         filter: true,
         sort: false,
@@ -392,6 +405,12 @@ class CoursePages extends React.Component {
       options: {
         filter: false,
         sort: false,
+        customBodyRender: value => value.map((v , i) => {
+          if(i === value.length-1){
+            return v
+          }else 
+          return v+', '
+        })
       }
     },
     {
@@ -399,7 +418,7 @@ class CoursePages extends React.Component {
       options: {
         filter: false,
         sort: false,
-        display: "excluded"
+        display: "false"
       }
     },
   ]
@@ -450,8 +469,8 @@ class CoursePages extends React.Component {
       let lm = this.state.mentorList;
       let count = 0;
       lm.map((value, i) => {
-        rowData[5].map((value2 , i2)=> {
-          if(value.Name === value2){
+        rowData[6].map((value2 , i2)=> {
+          if(value.ID === value2){
             value.isChecked = true
             count += 1
           }
@@ -538,7 +557,7 @@ class CoursePages extends React.Component {
           }
         }
         if (this.state.endDate === "") {
-          endDateValid = 0 // end date undefine
+          endDateValid = 2 // end date undefine
           courseNameValid = this.state.courseNameValid;
         } else {
           var edNumber2 = new Date(new Date(this.state.endDate).toLocaleString()).getTime();
@@ -569,19 +588,35 @@ class CoursePages extends React.Component {
         }
         break;
       case "courseName":
-        if (value === "")
+        if (value === ""){
           courseNameValid = 1;
+          startDateValid = this.state.startDateValid;
+          endDateValid = this.state.endDateValid;
+        }
         else {
-          if (value.length <= 5)
+          if (value.length <= 5){
+            startDateValid = this.state.startDateValid;
+            endDateValid = this.state.endDateValid;
             courseNameValid = 2;
-          else
+          }
+            
+          else{
+            startDateValid = this.state.startDateValid;
+            endDateValid = this.state.endDateValid;
             courseNameValid = 0;
+          }
+            
         }
     }
     this.setState({
       startDateValid: startDateValid,
       endDateValid: endDateValid,
       courseNameValid: courseNameValid
+    },this.valiedateForm)
+  }
+  valiedateForm(){
+    this.setState({
+      formValid : this.state.startDateValid === 0 && this.state.endDateValid === 0 && this.state.courseNameValid ===0 && this.state.numberofCheck !== 0 
     })
   }
   handleChangeValue(e) {
@@ -656,10 +691,9 @@ class CoursePages extends React.Component {
               toggle={this.toggleCourse}
               size="md"
               cascading>
-
               <MDBModalBody>
                 <input type="hidden" name="id" value={this.state.id} />
-                <MDBInput fullwidth="true" size="" label="Course name" name="courseName" value={this.state.courseName} onChange={this.onChangeDate.bind(this)} />
+                <MDBInput fullwidth="true" size="" label="Course Name" name="courseName" value={this.state.courseName} onChange={this.onChangeDate.bind(this)} />
                 {
                   this.state.courseNameValid === 1 &&
                   <div className="alert alert-danger custom-top"> Course name must be not blank</div>
@@ -697,7 +731,7 @@ class CoursePages extends React.Component {
                 }
                 {
                   this.state.numberofCheck === 0 &&
-                  <div className="alert alert-danger custom-top">Please ! Choose mentor Lực or some one</div>
+                  <div className="alert alert-danger custom-top">Please ! Choose mentor</div>
                 }
                 <div className="text-center mt-1-half">
                   {
@@ -705,6 +739,7 @@ class CoursePages extends React.Component {
                     <MDBBtn
                       className="mb-2 blue darken-2"
                       onClick={this.handlerAddCourse}
+                      disabled={!this.state.formValid}
                     >
                       Create
                   <MDBIcon icon="send" className="ml-1" />
@@ -716,7 +751,8 @@ class CoursePages extends React.Component {
 
                     <MDBBtn
                       className="mb-2 blue darken-2"
-                      onClick={this.handlerUpdateCourse}>
+                      onClick={this.handlerUpdateCourse}
+                      >
                       Update
                   <MDBIcon icon="edit" className="ml-1" />
                     </MDBBtn>

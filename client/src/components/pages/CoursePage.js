@@ -7,8 +7,6 @@ import {
 import MUIDataTable from "mui-datatables";
 import {
   createBrowserHistory,
-  createHashHistory,
-  createMemoryHistory
 } from 'history';
 
 class CoursePage extends React.Component {
@@ -167,7 +165,7 @@ class CoursePage extends React.Component {
         })
         break;
       case "endDate":
-        var etdvalid = 0;
+        etdvalid = 0;
         const eCourse = new Date(new Date(this.state.endDateCourse).toLocaleString()).getTime();
         const vle = new Date(new Date(value).toLocaleString()).getTime();
         var std = new Date(new Date(this.state.startDate).toLocaleString()).getTime();

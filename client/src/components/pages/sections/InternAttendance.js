@@ -3,7 +3,7 @@ import '../attendance.css';
 import Table from '../components/intern/Table'
 import BarChart from '../components/BarChart'
 import $ from 'jquery';
-
+import {SERVER_NAME} from "../../../Constants"
 
 class MentorAttendance extends React.Component {
 
@@ -32,7 +32,7 @@ class MentorAttendance extends React.Component {
 
   getStudent() {
     $.ajax({
-        url: "http://localhost:8080/attendance/" + this.state.internId +"/intern",
+        url: SERVER_NAME + "attendance/" + this.state.internId +"/intern",
         type: "GET",
         success: function (response) {
             if(response.length === 0){
