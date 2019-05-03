@@ -7,10 +7,12 @@ class HomePageForMentor extends React.Component {
 
   render() {
     return (
+
       <div>
         <AttendanceDashboard></AttendanceDashboard>
         <ListInternAbsent></ListInternAbsent>
       </div>
+
     );
   }
 }
