@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -17,14 +16,14 @@ import (
 )
 
 type data struct {
-	category string `json:"category"`
-	value    int    `json:"value"`
+	Category string `json:"category"`
+	Value    int    `json:"value"`
 }
 
 type attendanceDash struct {
 	// ID       bson.ObjectId `bson:"_id,omitempty"` //id of Intern, Mentor, Sup
-	Name string `json:"Name"`
-	data []data `json:"data"`
+	Name string `json:"name"`
+	Data []data `json:"data"`
 }
 
 // Add an mentor
@@ -260,17 +259,7 @@ func GetDataForDashBoard(c *gin.Context) {
 	view := c.Param("view")
 	viewi, _ := strconv.Atoi(view)
 	intern := getInternByMentorID(c, mentorID)
-
-	//test
-	// rw := getInternTimeByStatusByDay(c, "5cb59165da51e33a8c1a3af4", date)
-	// fmt.Print(date)
-	// x := dayUp(date)
-	// fmt.Print(x)
-	// m := dayUp("2019-11-30")
-	// fmt.Print(m)
-	//
 	nattendanceDashList := []attendanceDash{}
-
 	// ndata := data{}
 	// nattendanceDash := attendanceDash{}
 	for _, v := range intern {
@@ -286,33 +275,22 @@ func GetDataForDashBoard(c *gin.Context) {
 
 			if sta != 0 {
 				// t := strconv.Itoa(sta)
-				ndata := data{category: nday, value: sta}
+				ndata := data{Category: nday, Value: sta}
+				// fmt.Print(ndata, "\n")
+				// c.JSON(http.StatusOK, ndata)
 				dataList = append(dataList, ndata)
-				// c.JSON(http.StatusOK, dataList)
-
 			}
-
 			nday = dayUp(nday)
-			// fmt.Print(nday, "\n")
-
 		}
-		// pagesJsondataList, _ := json.Marshal(dataList)
-
-		// c.JSON(http.StatusOK, pagesJsondataList)
-		// fmt.Print("\n", dataList)
-
-		// _ = json.Unmarshal([]byte(dataList), &arr)
-
-		// fmt.Print(name, "\n", dataList, "\n")
-
-		nattendanceDash := attendanceDash{Name: name, data: dataList}
-		fmt.Print(dataList)
-		c.JSON(http.StatusOK, dataList)
-
+		nattendanceDash := attendanceDash{Name: name, Data: dataList}
 		nattendanceDashList = append(nattendanceDashList, nattendanceDash)
+
 	}
-	// fmt.Print("\n", nattendanceDashList)
-	// c.JSON(http.StatusOK, nattendanceDashList)
+
+	// hardList := "dd"
+	// c.JSON(http.StatusOK, hardList)
+	// fmt.Print(dataList)
+	c.JSON(http.StatusOK, nattendanceDashList)
 
 }
 

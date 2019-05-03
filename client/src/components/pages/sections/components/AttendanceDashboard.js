@@ -58,39 +58,67 @@ const styles = theme => ({
 
 
 
-// GetInternAttendancebyDay(day){
-//     if
-// }
 
-const series = [
-    {
 
-        name: 'Nguyen Van A',
-        data: [
-            { category: '01/03/2019', value: 8 },
-            { category: '02/03/2019', value: 4 },
-            { category: '03/03/2019', value: 4 },
-        ],
-    },
 
-];
+//     this.state.dseries = [
+//     {
+
+//         name: 'Nguyen Van A',
+//         data: [
+//             { category: '01/03/2019', value: 8 },
+//             { category: '02/03/2019', value: 4 },
+//             { category: '03/03/2019', value: 4 },
+//         ],
+//     },
+
+// ];
 
 
 
 class AttendanceDashboard extends React.Component {
-    state = {
-        startDay: '',
-        view: '',
+    constructor() {
+    super();
+    this.state = {
+        date: '2019-04-15',
+        view: '31',
         labelWidth: 0,
-    };
-    static jsfiddleUrl = 'https://jsfiddle.net/alidingling/ewcqxbwo/';
-    //   componentDidMount() {
-    //     this.setState({
-    //       labelWidth: ReactDOM.findDOMNode(this.InputLabelRef).offsetWidth,
-    //     });
-    //   }
+        dataDash : [
+            // {
+        
+            //     name: 'Nguyen Van A',
+            //     data: [
+            //         { category: '01/03/2019', value: 8 },
+            //         { category: '02/03/2019', value: 4 },
+            //         { category: '03/03/2019', value: 4 },
+            //     ],
+            // },
+        ],
+        mentorID: JSON.parse(sessionStorage.getItem('user')).ID,
 
-    handleChangeValue(e) {
+    };
+    }
+    GetDashBoard() {
+       
+        try {
+            fetch('http://localhost:8080/mentorDash/' + this.state.mentorID + '/'+ this.state.date+'/'+this.state.view)
+            .then(response => response.json())
+            .then(data => {
+            
+              this.setState({
+                  dataDash: data
+              })
+            });
+          //   const series = this.state.series
+          } catch (error) {
+            console.log(error)
+          }
+    }
+    
+    componentDidMount() {
+        this.GetDashBoard()
+      }
+    handleChangeValue = (e) => {
         const { name, value } = e.target;
         e.target.className = "form-control"
         switch (name) {
@@ -100,11 +128,19 @@ class AttendanceDashboard extends React.Component {
 
             case "date":
                 this.setState({ date: value })
-                console.log(this.state.view)
                 break;
 
 
         }
+        // console.log(this.state.date)
+        this.handleShowMentorDash()
+        // console.log(this.state.mentorID)
+
+    }
+
+    handleShowMentorDash = () => {
+        this.GetDashBoard()
+        console.log(this.state.dataDash)
     }
 
 
@@ -119,7 +155,7 @@ class AttendanceDashboard extends React.Component {
     // }
     render() {
         const { classes } = this.props;
-
+        // const data = this.state.series;
         return (
 
             <Grid
@@ -157,9 +193,9 @@ class AttendanceDashboard extends React.Component {
                                         shrink: true,
                                     }}
                                 />
-                            <Button variant="outlined" color="primary" className={classes.button}>
+                            {/* <Button variant="outlined" color="primary" onClick={this.handleShowMentorDash} className={classes.button}>
                                 View
-                            </Button>
+                            </Button> */}
                         </Grid>
                     </FormControl>
                 </div>
@@ -170,7 +206,7 @@ class AttendanceDashboard extends React.Component {
                         <YAxis dataKey="value" />
                         <Tooltip />
                         <Legend />
-                        {series.map(s => (
+                        {this.state.dataDash.map(s => (
                             <Line dataKey="value" data={s.data} name={s.name} key={s.name} />
                         ))}
                     </LineChart>
