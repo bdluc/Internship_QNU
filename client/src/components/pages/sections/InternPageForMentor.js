@@ -147,10 +147,9 @@ class InternPage extends React.Component {
     this.GetListCourse()
   }
 
-
   toggleIntern = () => {
     this.setState({
-      modalIntern: !this.state.modalIntern,/*false*/
+      modalIntern: !this.state.modalIntern,
     });
   };
 
@@ -161,7 +160,7 @@ class InternPage extends React.Component {
       email: "",
       gender: "",
       CourseName: "",
-      dob: "",
+      DoB: "",
       University: "",
       Faculty: "",
       icon: "plus",
@@ -189,7 +188,7 @@ class InternPage extends React.Component {
       "PhoneNumber": this.state.phone,
       "Email": this.state.email,
       "Gender": this.state.gender === "Male" ? true : false,
-      "DoB": date,
+      "DOB": date,
       "University": this.state.University,
       "Faculty": this.state.Faculty,
       "CourseID": this.state.courseID,
@@ -309,74 +308,74 @@ class InternPage extends React.Component {
     {
       name: "#",
       options: {
-          filter: false,
-          sort: true,
+        filter: false,
+        sort: true,
       }
-  },
-  {
+    },
+    {
       name: "ID",
       options: {
-          filter: false,
-          sort: true,
-          display: "excluded"
+        filter: false,
+        sort: true,
+        display: "excluded"
       }
-  },
-  {
+    },
+    {
       name: "NAME",
       options: {
-          filter: true,
-          sort: false,
+        filter: true,
+        sort: false,
       }
-  },
-  {
+    },
+    {
       name: "PHONE",
       options: {
-          filter: false,
-          sort: false,
+        filter: false,
+        sort: false,
       }
-  },
-  {
+    },
+    {
       name: "EMAIL",
       options: {
-          filter: false,
-          sort: false,
+        filter: false,
+        sort: false,
       }
-  },
-  {
+    },
+    {
       name: "GENDER",
       options: {
-          filter: false,
-          sort: false,
+        filter: false,
+        sort: false,
       }
-  },
-  {
+    },
+    {
       name: "DOB",
       options: {
-          filter: false,
-          sort: false,
+        filter: false,
+        sort: false,
       }
-  },
-  {
+    },
+    {
       name: "UNIVERSITY",
       options: {
-          filter: true,
-          sort: false,
+        filter: false,
+        sort: false,
       }
-  },
-  {
+    },
+    {
       name: "FACULTY",
       options: {
-          filter: true,
-          sort: false,
+        filter: false,
+        sort: false,
       }
-  },
-  {
+    },
+    {
       name: "COURSE",
       options: {
-          filter: true,
-          sort: false,
+        filter: false,
+        sort: false,
       }
-  },
+    },
   ]
 
 
@@ -488,15 +487,30 @@ class InternPage extends React.Component {
           this.setState({
             btnMode: 'off',
             name: " ",
-            errorName: "Name can not be blank"
+            errorName: "Name can not be blank",
+            doneName: false
           })
           e.target.className += " invalid"
         } else if (value.trim().length < 3) {
           this.setState({
-            errorName: "Name contains more than 3 characters"
+            btnMode: 'off',
+            errorName: "Name contains more than 5 characters",
+            doneName: false
           })
           e.target.className += " invalid"
-        } else {
+        } else if (value.length > 50) {
+          this.setState({
+            name: this.state.name,
+            btnMode: 'off',
+            errorName: "Name may be very long",
+            doneName: false
+          })
+          e.target.className += " invalid"
+        }
+        else {
+          this.setState({
+            doneName: true,
+          })
           e.target.className += " valid"
         }
         break;
@@ -508,15 +522,21 @@ class InternPage extends React.Component {
           this.setState({
             btnMode: 'off',
             phone: " ",
-            errorPhone: "Phone can not be blank"
+            errorPhone: "Phone can not be blank",
+            donePhone: false
           })
           e.target.className += " invalid"
-        } else if (value.trim().length < 10) {
+        } else if (!regexPhone.test(value.trim())) {
           this.setState({
-            errorName: "Name contains more than 3 characters"
+            btnMode: 'off',
+            errorPhone: "Phone contains only numeric characters",
+            donePhone: false
           })
           e.target.className += " invalid"
         } else {
+          this.setState({
+            donePhone: true,
+          })
           e.target.className += " valid"
         }
         break;
@@ -528,24 +548,41 @@ class InternPage extends React.Component {
           this.setState({
             btnMode: 'off',
             email: " ",
-            errorEmail: "Email can not be blank"
+            errorEmail: "Email can not be blank",
+            doneEmail: false
           })
           e.target.className += " invalid"
         } else if (!regexEmail.test(value.trim())) {
           this.setState({
-            errorEmail: "Not a valid email address"
+            btnMode: 'off',
+            errorEmail: "Not a valid email address",
+            doneEmail: false
           })
           e.target.className += " invalid"
-        } else {
+        } else if(value.length > 50){
+          this.setState({
+            email: this.state.email,
+            btnMode: 'off',
+            errorName: "Email may be very long",
+            doneEmail: false
+          })
+          e.target.className += " invalid"
+        }else {
+          this.setState({
+            doneEmail: true,
+          })
           e.target.className += " valid"
         }
-
         break;
       case "gender":
         this.setState({ gender: value })
         if (value.trim().length > 0) {
           this.setState({
             doneGender: true,
+          })
+        }else{
+          this.setState({
+            doneGender: false,
           })
         }
         break;
@@ -555,7 +592,10 @@ class InternPage extends React.Component {
           this.setState({
             doneCourse: true,
           })
-          e.target.className += " valid"
+        }else{
+          this.setState({
+            doneCourse: false,
+          })
         }
         break;
       case "dob":
@@ -564,22 +604,35 @@ class InternPage extends React.Component {
           this.setState({
             doneDOB: true,
           })
+        }else{
+          this.setState({
+            doneDOB: false,
+          })
         }
         break;
-      // case "intern":
-      //   this.setState({ intern: value })
-      //   if (value.trim().length > 0) {
-      //     this.setState({
-      //       doneIntern: true,
-      //     })
-      //     e.target.className += " valid"
-      //   }
-      //   break;
+      case "intern":
+        this.setState({ Intern: value })
+        if (value.trim().length > 0) {
+          this.setState({
+            doneIntern: true,
+          })
+          e.target.className += " valid"
+        }else{
+          this.setState({
+            doneIntern: false,
+          })
+        }
+        break;
       case "University":
         this.setState({ University: value })
         if (value.trim().length > 0) {
           this.setState({
             doneUniversity: true,
+          })
+          e.target.className += " valid"
+        }else{
+          this.setState({
+            doneUniversity: false,
           })
         }
         break;
@@ -589,22 +642,36 @@ class InternPage extends React.Component {
           this.setState({
             doneFaculty: true,
           })
+          e.target.className += " valid"
+        }else{
+          this.setState({
+            doneFaculty: false,
+          })
         }
         break;
       default:
         break;
     }
+    /*
+    doneName
+    donePhone
+    doneEmail
+    doneGender
+    doneDOB
+    doneUniversity
+    doneFaculty
+    */
     if (this.state.doneName === true &&
       this.state.donePhone === true &&
-      this.state.doneGender === true &&
       this.state.doneEmail === true &&
-      this.state.doneFaculty === true &&
+      this.state.doneGender === true &&
+      this.state.doneDOB === true &&
       this.state.doneUniversity === true &&
-      this.state.doneDOB === true) {
+      this.state.doneFaculty === true) {
       this.setState({
-          btnMode: "on"
+        btnMode: "on"
       })
-  }
+    }
   }
 
   handleChanges() {
@@ -676,15 +743,29 @@ class InternPage extends React.Component {
                   shrink: true,
                 }}
               />
-              <TextField fullWidth label="University" name="text" name="University" value={this.state.University} onChange={this.handleChangeValue.bind(this)} />
+              <TextField fullWidth="true" label="University" name="text" name="University" value={this.state.University} onChange={this.handleChangeValue.bind(this)} />
               <div className="text-center mt-1-half">
                 <TextField fullWidth label="Faculty" name="text" name="Faculty" value={this.state.Faculty} onChange={this.handleChangeValue.bind(this)} />
                 <div className="text-center mt-1-half">
+
                   {
-                    this.state.isUpdate === false &&
+                    (this.state.isUpdate === false) &&
+                    this.state.btnMode === 'on' &&
                     <MDBBtn
                       className="mb-2 blue darken-2"
                       onClick={this.handlerAddIntern}
+                    >
+                      Create
+                  <MDBIcon icon="send" className="ml-1" />
+                    </MDBBtn>
+                  }
+                  {
+                    (this.state.isUpdate === false) &&
+                    this.state.btnMode === 'off' &&
+                    <MDBBtn
+                      className="mb-2 blue darken-2"
+                      onClick={this.handlerAddIntern}
+                      disabled="true"
                     >
                       Create
                   <MDBIcon icon="send" className="ml-1" />

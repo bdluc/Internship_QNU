@@ -5,16 +5,10 @@ import {
 } from 'mdbreact';
 import ReactNotification from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
-import TextField from '@material-ui/core/TextField';
 import MUIDataTable from "mui-datatables";
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import $ from 'jquery';
 /* Import MUIDataTable using command "npm install mui-datatables --save" */
 
 function TabContainer(props) {
@@ -50,6 +44,7 @@ class ListInternAbsent extends React.Component {
             data: [],
             value: 0,
             internList: [],
+            internName: [],
             checkValidate: true
         };
     }
@@ -59,17 +54,37 @@ class ListInternAbsent extends React.Component {
         fetch('http://localhost:8080/internshowattend')
             .then(response => response.json())
             .then(data => {
-                console.log(data)
                 let NewData = []
                 let stt = 1
                 data.map(row => {
-                    NewData.push([stt, row._id, (new Date(row.Date)).toLocaleDateString('en-US', options), row.InternName, row.Status, row.Email,
+                    NewData.push([stt, row._id, (new Date(row.Date)).toLocaleDateString('en-US', options), row.InternName, row.Email, row.Status,
                     ])
                     stt++
                     return NewData
                 })
                 this.setState({
-                    internList: NewData
+                    internList: NewData,
+                })
+            });
+    }
+
+    GetInternListName() {
+        const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+        fetch('http://localhost:8080/internabsent')
+            .then(response => response.json())
+            .then(data => {
+                let NewData = []
+                let stt = 1
+                data.map(row => {
+                    NewData.push({
+                        STT: stt, ID: row._id, Date: (new Date(row.Date)).toLocaleDateString('en-US', options), Name: row.InternName, Email: row.Email, Status: row.Status,
+                    })
+                    stt++
+                    return NewData
+                })
+                this.setState({
+                    internName: NewData,
+
                 })
             });
     }
@@ -77,38 +92,7 @@ class ListInternAbsent extends React.Component {
     componentDidMount() {
 
         this.GetInternListAbsent()
-        this.GetListCourse()
-    }
-
-    GetListCourse() {
-        fetch('http://localhost:8080/courses')
-            .then(response => response.json())
-            .then(data => {
-                let NewData = []
-                data.map(row => {
-                    NewData.push({ ID: row._id, Name: row.CourseName })
-                    return NewData
-                })
-                this.setState({
-                    courseList: NewData,
-                })
-            });
-    }
-
-    handlerIntern = () => {
-        var moment = require('moment');
-        const date = moment.utc(this.state.dob).format();
-        const data = {
-          "Name": this.state.name,
-          "PhoneNumber": this.state.phone,
-          "Email": this.state.email,
-          "Gender": this.state.gender === "Male" ? true : false,
-          "DoB": date,
-          "University": this.state.University,
-          "Faculty": this.state.Faculty,
-          "CourseID": this.state.course,
-          "IsDeleted": false
-        }
+        this.GetInternListName()
     }
 
     columnsIntern = [
@@ -124,7 +108,7 @@ class ListInternAbsent extends React.Component {
             options: {
                 filter: true,
                 sort: false,
-                display:'export',
+                display: 'export',
             }
         },
         {
@@ -132,11 +116,18 @@ class ListInternAbsent extends React.Component {
             options: {
                 filter: false,
                 sort: false,
-                // display:'export'
+                display:'export'
             }
         },
         {
-            name: "INTERN NAME",
+            name: "NAME",
+            options: {
+                filter: true,
+                sort: false,
+            }
+        },
+        {
+            name: "EMAIL",
             options: {
                 filter: true,
                 sort: false,
@@ -149,13 +140,6 @@ class ListInternAbsent extends React.Component {
                 sort: false,
             }
         },
-        // {
-        //     name: "Email",
-        //     options: {
-        //         filter: true,
-        //         sort: false,
-        //     }
-        // },
     ]
 
 
@@ -198,11 +182,10 @@ class ListInternAbsent extends React.Component {
                 deleteAria: "Delete Selected Rows",
             },
         },
-      
+
     }
 
     checkValidate() {
-
         return false;
     }
 
@@ -217,8 +200,15 @@ class ListInternAbsent extends React.Component {
                                 <div className="app-content">
                                     <ReactNotification ref={this.notificationDOMRef} />
                                 </div>
-                                <hr></hr>
-                                <marquee direction="right"><h2><b><i></i></b></h2></marquee>
+                                <label>
+                                    {/* <marquee > */}
+                                    <i>Intern Absent:</i>
+                                    {this.state.internName.map((value, k) => {
+                                        return (<span> <b> {value.Name},   </b></span>)
+                                    })
+                                    }
+                                    {/* </marquee> */}
+                                </label>
                                 <MUIDataTable
                                     title={<b><i>Intern List Absent</i></b>}
                                     data={this.state.internList}
@@ -233,42 +223,6 @@ class ListInternAbsent extends React.Component {
                         toggle={this.toggleIntern}
                         size="md"
                         cascading>
-
-                        <MDBModalBody >
-                            <MDBInput fullwidth="true" size="" label="Name" name="name" value={this.state.name} />
-                            <MDBInput fullwidth="true" label="Phone" name="phone" value={this.state.phone} />
-                            <MDBInput fullwidth="true" label="Email" iconClass="dark-grey" name="email" value={this.state.email}  />
-                            <FormControl fullWidth>
-                                <InputLabel htmlFor="select-multiple">Gender</InputLabel>
-                                <Select fullWidth label="Gender" name="gender" value={this.state.gender} >
-                                    <MenuItem value="Male">Male</MenuItem>
-                                    <MenuItem value="Female">Female</MenuItem>
-                                </Select>
-                            </FormControl ><br />
-                            <FormControl fullWidth>
-                                <InputLabel htmlFor="select-multiple">Course</InputLabel>
-                                <FormControl fullWidth>
-
-                                    <MDBInput label="Course" name="course" htmlFor="select-multiple" value={this.state.course} display='false' />
-
-                                </FormControl>
-                            </FormControl>
-
-                            <MDBInput
-                                label="Dob" name="dob" id="date" type="date"
-                                value={this.state.dob}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                            />
-                            <TextField fullWidth label="University" name="text" name="University" value={this.state.University} />
-                            <div className="text-center mt-1-half">
-                                <TextField fullWidth label="Faculty" name="text" name="Faculty" value={this.state.Faculty} />
-                                <div className="text-center mt-1-half">
-
-                                </div>
-                            </div>
-                        </MDBModalBody>
                     </MDBModal>
                 </Row>
             </React.Fragment>
