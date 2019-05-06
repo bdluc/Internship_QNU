@@ -13,3 +13,7 @@
     border-color: #ffde79ff;
 }
 
+.hidescroll{
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
