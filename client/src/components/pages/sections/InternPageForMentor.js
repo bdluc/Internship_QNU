@@ -15,6 +15,8 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import { Button, Modal, ModalBody, ModalHeader, ModalFooter } from 'mdbreact';
+
 /* Import MUIDataTable using command "npm install mui-datatables --save" */
 
 function TabContainer(props) {
@@ -54,6 +56,7 @@ class InternPage extends React.Component {
       internList: [],
       courseList: [],
       isUpdate: false,
+      isClose: false,
       checkValidate: true,
       CourseName: ''
     };
@@ -88,6 +91,19 @@ class InternPage extends React.Component {
           dismissable: { click: true }
         });
         break;
+        // case "errorCREATE":
+        // this.notificationDOMRef.current.addNotification({
+        //   title: "Error",
+        //   message: "Name can't blank ",
+        //   type: "danger",
+        //   insert: "top",
+        //   container: "top-right",
+        //   animationIn: ["animated", "fadeIn"],
+        //   animationOut: ["animated", "fadeOut"],
+        //   dismiss: { duration: 2000 },
+        //   dismissable: { click: true }
+        // });
+        // break;
       case "successUpdate":
         this.notificationDOMRef.current.addNotification({
           title: "Success",
@@ -229,19 +245,6 @@ class InternPage extends React.Component {
 
   }
 
-  // fetch("http://localhost:8080/intern",
-  //   {
-  //     method: "POST",
-  //     mode: "no-cors",
-  //     headers: {
-  //       "Content-Type": "application/json"
-  //     },
-  //     body: JSON.stringify(data)
-  //   })
-  //   .then(this.GetInternList())
-  // this.toggleIntern()
-  // this.addNotification("successAdd")
-
   GetListCourse() {
     fetch('http://localhost:8080/courses')
       .then(response => response.json())
@@ -306,7 +309,7 @@ class InternPage extends React.Component {
 
   columnsIntern = [
     {
-      name: "#",
+      name: "NO",
       options: {
         filter: false,
         sort: true,
@@ -337,14 +340,14 @@ class InternPage extends React.Component {
     {
       name: "EMAIL",
       options: {
-        filter: false,
+        filter: true,
         sort: false,
       }
     },
     {
       name: "GENDER",
       options: {
-        filter: false,
+        filter: true,
         sort: false,
       }
     },
@@ -358,21 +361,21 @@ class InternPage extends React.Component {
     {
       name: "UNIVERSITY",
       options: {
-        filter: false,
+        filter: true,
         sort: false,
       }
     },
     {
       name: "FACULTY",
       options: {
-        filter: false,
+        filter: true,
         sort: false,
       }
     },
     {
       name: "COURSE",
       options: {
-        filter: false,
+        filter: true,
         sort: false,
       }
     },
@@ -382,7 +385,7 @@ class InternPage extends React.Component {
   optionsIntern = {
     filterType: "dropdown",
     responsive: "scroll",
-    rowsPerPage: 4,
+    rowsPerPage: 5,
     rowsPerPageOptions: [10, 50, 100],
     download: false,
     print: false,
@@ -422,7 +425,6 @@ class InternPage extends React.Component {
     },
     onRowClick: (rowData, rowState) => {
       let std = this.convertDate(rowData[6])
-      // let courseid = (rowData[9])
       console.log(rowState.dataIndex, rowState.rowIndex)
       this.setState({
 
@@ -521,7 +523,7 @@ class InternPage extends React.Component {
         if (value.trim().length === 0) {
           this.setState({
             btnMode: 'off',
-            phone: " ",
+            // phone: " ",
             errorPhone: "Phone can not be blank",
             donePhone: false
           })
@@ -533,6 +535,22 @@ class InternPage extends React.Component {
             donePhone: false
           })
           e.target.className += " invalid"
+        }
+          else if (value.trim().length < 10) {
+            this.setState({
+              btnMode: 'off',
+              errorName: "Phone contains more than 10 number",
+              doneName: false
+            })
+            e.target.className += " invalid"
+          } else if (value.length > 11) {
+            this.setState({
+              name: this.state.name,
+              btnMode: 'off',
+              errorPhone: "Phone contains more than 10 number",
+              donePhone: false
+            })
+            e.target.className += " invalid"
         } else {
           this.setState({
             donePhone: true,
@@ -543,7 +561,7 @@ class InternPage extends React.Component {
       case "email":
         this.setState({ email: value })
         e.target.className = "form-control"
-        const regexEmail = /^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i;
+        const regexEmail = (/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test($('#email').val()));
         if (value.trim().length === 0) {
           this.setState({
             btnMode: 'off',
@@ -552,14 +570,14 @@ class InternPage extends React.Component {
             doneEmail: false
           })
           e.target.className += " invalid"
-        } else if (!regexEmail.test(value.trim())) {
-          this.setState({
-            btnMode: 'off',
-            errorEmail: "Not a valid email address",
-            doneEmail: false
-          })
-          e.target.className += " invalid"
-        } else if(value.length > 50){
+        // } else if (!regexEmail.test(value.trim())) {
+        //   this.setState({
+        //     btnMode: 'off',
+        //     errorEmail: "Not a valid email address",
+        //     doneEmail: false
+        //   })
+        //   e.target.className += " invalid"
+        } else if (value.length > 50) {
           this.setState({
             email: this.state.email,
             btnMode: 'off',
@@ -567,7 +585,7 @@ class InternPage extends React.Component {
             doneEmail: false
           })
           e.target.className += " invalid"
-        }else {
+        } else {
           this.setState({
             doneEmail: true,
           })
@@ -580,7 +598,7 @@ class InternPage extends React.Component {
           this.setState({
             doneGender: true,
           })
-        }else{
+        } else {
           this.setState({
             doneGender: false,
           })
@@ -592,22 +610,34 @@ class InternPage extends React.Component {
           this.setState({
             doneCourse: true,
           })
-        }else{
+        } else {
           this.setState({
             doneCourse: false,
           })
         }
         break;
       case "dob":
+        var standard = new Date('1988/1/1').getTime();
+        var currentDate = new Date().getTime();
+        var valueofUser = new Date(value).getTime();
         this.setState({ dob: value })
         if (value.trim().length > 0) {
-          this.setState({
-            doneDOB: true,
-          })
-        }else{
+          if ((currentDate - valueofUser) < standard) {
+            this.setState({
+              doneDOB: false,
+            })
+            e.target.className += " invalid"
+          } else {
+            this.setState({
+              doneDOB: true,
+            })
+            e.target.className += " valid"
+          }
+        } else {
           this.setState({
             doneDOB: false,
           })
+          e.target.className += " invalid"
         }
         break;
       case "intern":
@@ -617,7 +647,7 @@ class InternPage extends React.Component {
             doneIntern: true,
           })
           e.target.className += " valid"
-        }else{
+        } else {
           this.setState({
             doneIntern: false,
           })
@@ -630,7 +660,7 @@ class InternPage extends React.Component {
             doneUniversity: true,
           })
           e.target.className += " valid"
-        }else{
+        } else {
           this.setState({
             doneUniversity: false,
           })
@@ -643,7 +673,7 @@ class InternPage extends React.Component {
             doneFaculty: true,
           })
           e.target.className += " valid"
-        }else{
+        } else {
           this.setState({
             doneFaculty: false,
           })
@@ -759,18 +789,43 @@ class InternPage extends React.Component {
                   <MDBIcon icon="send" className="ml-1" />
                     </MDBBtn>
                   }
+
                   {
                     (this.state.isUpdate === false) &&
                     this.state.btnMode === 'off' &&
                     <MDBBtn
                       className="mb-2 blue darken-2"
                       onClick={this.handlerAddIntern}
-                      disabled="true"
+                    // disabled="true"
                     >
                       Create
                   <MDBIcon icon="send" className="ml-1" />
                     </MDBBtn>
                   }
+                  {/* {
+                    (this.state.isUpdate === false) &&
+                    this.state.btnMode === 'on' &&
+                    <MDBBtn
+                      className="mb-2 blue darken-2"
+                      onClick="#"
+                    >
+                      Close
+                  <MDBIcon icon="#" className="ml-1" />
+                    </MDBBtn>
+                  }
+
+                  {
+                    (this.state.isUpdate === false) &&
+                    this.state.btnMode === 'off' &&
+                    <MDBBtn
+                      className="mb-2 blue darken-2"
+                      onClick="#"
+                    // disabled="true"
+                    >
+                      Close
+                  <MDBIcon icon="#" className="ml-1" />
+                    </MDBBtn>
+                  } */}
                   {
                     this.state.isUpdate &&
                     <MDBBtn

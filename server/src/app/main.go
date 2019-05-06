@@ -55,7 +55,9 @@ func setupRouter() *gin.Engine {
 	// r.GET("/mentorshowattend/:internID/:date", controllers.GetInternStatusByDay)
 	r.GET("/mentorDash/:mentorID/:date/:view", controllers.GetDataForDashBoard)
 	///:date/:view
+
 	//intern
+
 	r.POST("/intern", controllers.CreateIntern)
 	r.PUT("/internu/:id", controllers.UpdateIntern)
 	r.DELETE("/intern/:id", controllers.DeleteIntern)
