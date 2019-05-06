@@ -14,20 +14,20 @@ class HomePage extends React.Component {
   }
 
   render() {
-    // if(this.state.role === 3)
-    //     return (
-    //         <HomePageForSup></HomePageForSup>
-            
-    //     );
-    // else if(this.state.role === 2)
+    if(this.state.role === 2)
         return (
-            <HomePageForMentor></HomePageForMentor>
+          <HomePageForMentor></HomePageForMentor>
+            
         );
-    // else{
-    //     return (
-    //         <HomePageForIntern></HomePageForIntern>
-    //     );
-    // }
+    else if(this.state.role === 3)
+        return (
+          null
+        );
+    else{
+        return (
+          null
+        );
+    }
   }
 }
 
