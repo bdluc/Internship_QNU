@@ -10,13 +10,13 @@ class TopNavigation extends Component {
     render() {
         return (
             <div className="sidebar-fixed position-fixed">
-                <a href="#!" className="logo-wrapper waves-effect">
+                <a href="/" className="logo-wrapper waves-effect">
                     <img alt="MDB React Logo" className="img-fluid" src={logo}/>
                 </a>
                 <ListGroup className="list-group-flush">
                     <NavLink exact={true} to="/mentor" activeClassName="activeClass">
                         <ListGroupItem>
-                            <Fa icon="user" className="mr-3"/>Mentor
+                            <Fa icon="user" className="mr-3"/> Mentor
                         </ListGroupItem>
                     </NavLink>
                     <NavLink to="/internship" activeClassName="activeClass">

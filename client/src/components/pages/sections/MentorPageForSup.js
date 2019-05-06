@@ -179,7 +179,19 @@ class MentorPageForSup extends React.Component {
                 dismissable: { click: true }
             });
             break;
-
+        case "successDelete":
+            this.notificationDOMRef.current.addNotification({
+                title: "Success",
+                message: "Delete mentor info successfully !",
+                type: "success", //success, danger, default, info, warning or custom
+                insert: "top",
+                container: "top-right",
+                animationIn: ["animated", "fadeIn"],
+                animationOut: ["animated", "fadeOut"],
+                dismiss: { duration: 2000 },
+                dismissable: { click: true }
+            });
+            break;
     }
 }
 
@@ -286,7 +298,7 @@ class MentorPageForSup extends React.Component {
       method: 'DELETE',
       mode: 'cors'
     })
-    .then(this.addNotification("successAdd"))
+    .then(this.addNotification("successDelete"))
       .then(this.GetMentorList())
     this.toggleMentor()
 
@@ -516,13 +528,24 @@ class MentorPageForSup extends React.Component {
           this.setState({
             btnMode: 'off',
             name: " ",
-            errorName: "Name can not be blank"
+            errorName: "Name can not be blank",
+            doneName: false
           })
           e.target.className += " invalid"
-        } else if (value.trim().length < 6) {
+        } else if(value.length > 50){
+          this.setState({
+            name: this.state.name,
+            btnMode: 'off',
+            errorName: "Name may be very long",
+            doneName: false
+          })
+          e.target.className += " invalid"
+        }
+        else if (value.trim().length < 6) {
           this.setState({
             btnMode: 'off',
-            errorName: "Name contains more than 5 characters"
+            errorName: "Name contains more than 5 characters",
+            doneName: false
           })
           e.target.className += " invalid"
         } else {
@@ -540,13 +563,15 @@ class MentorPageForSup extends React.Component {
           this.setState({
             btnMode: 'off',
             phone: " ",
-            errorPhone: "Phone can not be blank"
+            errorPhone: "Phone can not be blank",
+            donePhone: false
           })
           e.target.className += " invalid"
         } else if (!regexPhone.test(value.trim())) {
           this.setState({
             btnMode: 'off',
-            errorPhone: "Phone contains only numeric characters"
+            errorPhone: "Phone contains only numeric characters",
+            donePhone: false
           })
           e.target.className += " invalid"
         } else {
@@ -564,13 +589,23 @@ class MentorPageForSup extends React.Component {
           this.setState({
             btnMode: 'off',
             email: " ",
-            errorEmail: "Email can not be blank"
+            errorEmail: "Email can not be blank",
+            doneEmail: false
           })
           e.target.className += " invalid"
         } else if (!regexEmail.test(value.trim())) {
           this.setState({
             btnMode: 'off',
-            errorEmail: "Not a valid email address"
+            errorEmail: "Not a valid email address",
+            doneEmail: false
+          })
+          e.target.className += " invalid"
+        }else if(value.length > 50){
+          this.setState({
+            email: this.state.email,
+            btnMode: 'off',
+            errorName: "Email may be very long",
+            doneEmail: false
           })
           e.target.className += " invalid"
         } else {
@@ -588,16 +623,36 @@ class MentorPageForSup extends React.Component {
           this.setState({
             doneGender: true,            
           })
+        }else{
+          this.setState({
+            doneGender: false,            
+          })
         }
         // console.log(this.state.dob)
 
         break;
       case "dob":
+        var standard = new Date('1988/1/1').getTime();
+        var currentDate = new Date().getTime();
+        var valueofUser = new Date(value).getTime();
         this.setState({ dob: value })
         if (value.trim().length > 0) {
+          if((currentDate - valueofUser) < standard){
+            this.setState({
+              doneDOB: false,            
+            })
+            e.target.className += " invalid"
+          }else {
+            this.setState({
+              doneDOB: true,            
+            })
+            e.target.className += " valid"
+          }
+        }else {
           this.setState({
-            doneDOB: true,            
+            doneDOB: false,            
           })
+          e.target.className += " invalid"
         }
         break;
       case "mentor":
@@ -607,6 +662,10 @@ class MentorPageForSup extends React.Component {
             doneMentor: true,            
           })
           e.target.className += " valid"
+        }else{
+          this.setState({
+            doneMentor: false,            
+          })
         }
         break;
       case "department":
@@ -616,6 +675,10 @@ class MentorPageForSup extends React.Component {
             doneDepartment: true,            
           })
           e.target.className += " valid"
+        }else{
+          this.setState({
+            doneDepartment: false,            
+          })
         }
         break;
       default:
@@ -713,7 +776,7 @@ class MentorPageForSup extends React.Component {
 
               <MDBInput
 
-                label="Dob"
+                label="DOB"
                 name="dob"
                 id="date"
                 type="date"

@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -17,14 +16,14 @@ import (
 )
 
 type data struct {
-	category string
-	value    string
+	Category string `json:"category"`
+	Value    int    `json:"value"`
 }
 
 type attendanceDash struct {
 	// ID       bson.ObjectId `bson:"_id,omitempty"` //id of Intern, Mentor, Sup
-	Name string
-	data []data
+	Name string `json:"name"`
+	Data []data `json:"data"`
 }
 
 // Add an mentor
@@ -260,46 +259,37 @@ func GetDataForDashBoard(c *gin.Context) {
 	view := c.Param("view")
 	viewi, _ := strconv.Atoi(view)
 	intern := getInternByMentorID(c, mentorID)
-
-	//test
-	// rw := getInternTimeByStatusByDay(c, "5cb59165da51e33a8c1a3af4", date)
-	// fmt.Print(date)
-	// x := dayUp(date)
-	// fmt.Print(x)
-	// m := dayUp("2019-11-30")
-	// fmt.Print(m)
-	//
 	nattendanceDashList := []attendanceDash{}
-	dataList := []data{}
-
 	// ndata := data{}
 	// nattendanceDash := attendanceDash{}
 	for _, v := range intern {
 		name := v.Name
+		dataList := []data{}
 		sid := v.ID.Hex()
 		nday := date
 		for i := 0; i < viewi; i++ {
 			// fmt.Print(i, viewi)
 			// day := nday
 			sta := getInternTimeByStatusByDay(c, sid, nday)
-			fmt.Print(sta)
+			// fmt.Print(sta)
 
 			if sta != 0 {
-				t := strconv.Itoa(sta)
-				ndata := data{category: nday, value: t}
+				// t := strconv.Itoa(sta)
+				ndata := data{Category: nday, Value: sta}
+				// fmt.Print(ndata, "\n")
+				// c.JSON(http.StatusOK, ndata)
 				dataList = append(dataList, ndata)
-
 			}
-
 			nday = dayUp(nday)
-			// fmt.Print(nday)
-
 		}
-		nattendanceDash := attendanceDash{Name: name, data: dataList}
+		nattendanceDash := attendanceDash{Name: name, Data: dataList}
 		nattendanceDashList = append(nattendanceDashList, nattendanceDash)
-		// fmt.Print(nattendanceDashList)
 
 	}
+
+	// hardList := "dd"
+	// c.JSON(http.StatusOK, hardList)
+	// fmt.Print(dataList)
 	c.JSON(http.StatusOK, nattendanceDashList)
 
 }

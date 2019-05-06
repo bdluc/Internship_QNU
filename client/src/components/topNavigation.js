@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import { Navbar, NavbarBrand, NavbarNav, NavbarToggler, Collapse, MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem } from 'mdbreact';
 import { MDBIcon, MDBModalBody, MDBInput, MDBBtn, MDBModal} from 'mdbreact';
 import { Link } from 'react-router-dom'
+import PropTypes from 'prop-types';
 import {SERVER_NAME} from "../Constants"
 // import Fab from '@material-ui/core/Fab';
+import { withRouter } from 'react-router'
 
 
 
@@ -21,7 +23,9 @@ class TopNavigation extends Component {
             error: "",
             success: "",
             showSuccess: false,
+            history: PropTypes.object.isRequired,
             user : JSON.parse(sessionStorage.getItem('user'))
+            
         };
     this.onClick = this.onClick.bind(this);
     this.toggle = this.toggle.bind(this);
@@ -136,8 +140,15 @@ class TopNavigation extends Component {
                 });     
         }   
     }
-    
+    handleonLoginClick (){
+        // const link = ;
+        this.props.history.push("/editinfor");
+        // return <Redirect to='/editinfor' />
+
+    }
     render() {
+        const { classes } = this.props;
+       
         return (
             <Navbar className="flexible-navbar" light expand="md" scrolling>
                 <NavbarBrand href="/">
@@ -161,15 +172,15 @@ class TopNavigation extends Component {
                         </ListGroupItem>
                     </NavLink> */}
                     <MDBDropdown>
-                        <MDBDropdownToggle caret color="info">
+                    <MDBDropdownToggle caret color="info">
                             {this.props.name}
                         </MDBDropdownToggle>
-                        <MDBDropdownMenu color="info" basic>
-                            <MDBDropdownItem href="/editinfor">Infor</MDBDropdownItem>
-                            <MDBDropdownItem onClick = {this.toggleChangePassword.bind(this)}>Change password</MDBDropdownItem>
-                            <MDBDropdownItem>About</MDBDropdownItem>
+                        <MDBDropdownMenu basic>
+                           <MDBDropdownItem href="/editinfor" >Infor</MDBDropdownItem>
+                            <MDBDropdownItem href="#" onClick = {this.toggleChangePassword.bind(this)}>Change password</MDBDropdownItem>
+                            <MDBDropdownItem href="#" >About</MDBDropdownItem>
                             <MDBDropdownItem divider />
-                            <MDBDropdownItem onClick = {this.logOut.bind(this)}>Logout</MDBDropdownItem>
+                            <MDBDropdownItem href="#" onClick = {this.logOut.bind(this)}>Logout</MDBDropdownItem>
                         </MDBDropdownMenu>
                     </MDBDropdown>
                     </NavbarNav>
@@ -228,5 +239,5 @@ class TopNavigation extends Component {
         );
     }
 }
-
+TopNavigation = withRouter(TopNavigation);
 export default TopNavigation;

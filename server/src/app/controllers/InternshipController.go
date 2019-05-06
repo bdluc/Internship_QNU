@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"path/filepath"
 	"time"
-
 	"../common"
 	"../models"
 	"github.com/gin-gonic/gin"
@@ -204,7 +203,7 @@ func GetInternA(c *gin.Context) {
 			}},
 		{
 			"$project": bson.M{
-				"Email":      1,
+				"Email":      "$Intern.Email",
 				"Status":     1,
 				"Date":       1,
 				"InternName": "$Intern.Name",
@@ -219,15 +218,51 @@ func GetInternA(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
-//list all internName in Attendance
-func GetAttendanceByIntern(c *gin.Context) {
+//list Current Day
+func GetCurrentDayAbsent(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
+	date := time.Now()
+	dateafter := time.Now().AddDate(0, 0, -1)
+	fmt.Print(date)
+	query := []bson.M{
 
-	attendanceDb := models.Attendance{}
-	errAttendance := database.C(models.CollectionAttendance).Find(bson.M{"InternID": c.Param("id")}).All(&attendanceDb)
-	common.CheckError(c, errAttendance)
+		// {
+		// 	"$unwind": "$MentorID",
+		// },
+		{
+			"$lookup": bson.M{
+				"from":         "intern",
+				"localField":   "InternID",
+				"foreignField": "_id",
+				"as":           "Intern",
+			}},
+		{
+			"$unwind": "$Intern",
+		},
+		{
+			"$match": bson.M{
+				"IsDeleted": false,
+				"Status":    "A",
+				"Date": bson.M{
+					"$gt": dateafter,
+					"$lt": date,
+				},
+			}},
+		{
+			"$project": bson.M{
+				"Email":      "$Intern.Email",
+				"Status":     1,
+				"Date":       1,
+				"InternName": "$Intern.Name",
+			}},
+	}
 
-	c.JSON(http.StatusOK, attendanceDb)
+	pipe := database.C(models.CollectionAttendance).Pipe(query)
+	resp := []bson.M{}
+	err := pipe.All(&resp)
+
+	common.CheckError(c, err)
+	c.JSON(http.StatusOK, resp)
 }
 func SendReport(c *gin.Context) {
 	//Read data from request
