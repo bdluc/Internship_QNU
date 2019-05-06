@@ -21,6 +21,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import WarningIcon from '@material-ui/icons/Warning';
 import classNames from 'classnames';
 import IconButton from '@material-ui/core/IconButton';
+import './components/report.css';
 
 // /* Import MUIDataTable using command "npm install mui-datatables --save" */
 
@@ -211,7 +212,7 @@ class MentorPageForMentor extends React.Component {
   };
   columnsMentor = [
     {
-      name: "#",
+      name: "No",
       options: {
         filter: false,
         sort: false,
@@ -374,7 +375,7 @@ class MentorPageForMentor extends React.Component {
       return (<option key={key} value={value[1]}>{value[1]}</option>)
     })
     return (
-      <React.Fragment>
+      <React.Fragment className="hidescroll">
         <Row>
           <Col md="12">
             <Card>
