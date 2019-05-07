@@ -57,6 +57,7 @@ func setupRouter() *gin.Engine {
 	//intern
 
 	r.POST("/intern", controllers.CreateIntern)
+	// intern update
 	r.PUT("/internu/:id", controllers.UpdateIntern)
 	r.DELETE("/intern/:id", controllers.DeleteIntern)
 	r.GET("/intern", controllers.ListIntern)

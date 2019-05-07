@@ -116,6 +116,10 @@ class ListInternAbsent extends React.Component {
             options: {
                 filter: true,
                 sort: false,
+<<<<<<< HEAD
+                // display:'export'
+=======
+>>>>>>> 8182104716a49157d99906c8710bb5f89436a4b1
             }
         },
         {
@@ -203,7 +207,7 @@ class ListInternAbsent extends React.Component {
                                 </div>
                                 <label>
                                     {/* <marquee > */}
-                                    <i>Intern Absent:</i>
+                                    <i>Intern Absent To Day:</i>
                                     {this.state.internName.map((value, k) => {
                                         return (<span> <b> {value.Name},   </b></span>)
                                     })
