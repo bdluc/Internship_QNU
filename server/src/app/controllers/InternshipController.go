@@ -361,10 +361,12 @@ func SendReport(c *gin.Context) {
 			return
 		}
 	}
+	currentTime := time.Now()
+
 	reportDetail := models.ReportDetail{
 		Subject:   report.Subject,
 		Body:      report.Body,
-		Date:      time.Now(),
+		Date:      time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 0, 0, 0, 0, time.Local),
 		InternID:  trainee.ID,
 		Type:      1,
 		IsDeleted: false}
@@ -435,10 +437,11 @@ func SendReportWeek(c *gin.Context) {
 			return
 		}
 	}
+	currentTime := time.Now()
 	reportDetail := models.ReportDetail{
 		Subject:   trainee.Name,
 		Body:      file.Filename,
-		Date:      time.Now(),
+		Date:      time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 0, 0, 0, 0, time.Local),
 		InternID:  trainee.ID,
 		Type:      2,
 		IsDeleted: false}

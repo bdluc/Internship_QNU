@@ -53,7 +53,6 @@ func setupRouter() *gin.Engine {
 	r.GET("/getmentor/:id", controllers.ListMentorByID)
 	r.GET("/mentorDash/:mentorID/:date/:view", controllers.GetDataForDashBoard)
 
-
 	//intern
 
 	r.POST("/intern", controllers.CreateIntern)
@@ -101,6 +100,10 @@ func setupRouter() *gin.Engine {
 	r.POST("/absent", controllers.CreateReason)
 	r.PUT("/absent", controllers.UpdateReason)
 	r.DELETE("/absent/:id", controllers.DeleteReason)
+
+	//Report
+	r.GET("/report/today/:id", controllers.GetTodayReportByMentor)
+	r.GET("/report/week/:id/:startday", controllers.GetWeekReportByMentor)
 
 	return r
 }
