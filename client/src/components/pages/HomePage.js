@@ -2,7 +2,7 @@ import React from 'react';
 // import HomePageForSup from './sections/HomePageForSup';
 import HomePageForMentor from './sections/HomePageForMentor';
 // import HomePageForIntern from './sections/HomePageForIntern';
-
+import HomePageForIntern from './sections/HomePageForIntern';
 
 class HomePage extends React.Component {
 
@@ -21,7 +21,7 @@ class HomePage extends React.Component {
         );
     if(this.state.role === 3)
         return (
-          null
+          <HomePageForIntern></HomePageForIntern>
         );
     if(this.state.role === 1)
         return (
@@ -29,6 +29,6 @@ class HomePage extends React.Component {
         );
     }
   }
-}
+
 
 export default HomePage
