@@ -168,10 +168,10 @@ func GetAttendancesBySupervisor(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
-func getDailyAttendancesByInternID(c *gin.Context, idTrainee bson.ObjectId, date1 time.Time, date2 time.Time) []models.Attendance {
+func getDailyAttendancesByInternID(c *gin.Context, idTrainee bson.ObjectId, date time.Time) []models.Attendance {
 	database := c.MustGet("db").(*mgo.Database)
 	atten := []models.Attendance{}
-	err := database.C(models.CollectionAttendance).Find(bson.M{"InternID": idTrainee, "IsDeleted": false, "$or": []bson.M{{"Date": date1}, {"Date": date2}}}).All(&atten)
+	err := database.C(models.CollectionAttendance).Find(bson.M{"InternID": idTrainee, "IsDeleted": false, "Date": date}).All(&atten)
 	if err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusNotFound, gin.H{
@@ -183,9 +183,8 @@ func getDailyAttendancesByInternID(c *gin.Context, idTrainee bson.ObjectId, date
 	return atten
 }
 
-func getDailyAttendancesByMentorId(c *gin.Context, idMentor bson.ObjectId, date1 time.Time, date2 time.Time) []Attendance {
+func getDailyAttendancesByMentorId(c *gin.Context, idMentor bson.ObjectId, date time.Time) []Attendance {
 	database := c.MustGet("db").(*mgo.Database)
-
 	courses := []models.Course{}
 	err := database.C(models.CollectionCourse).Find(bson.M{"MentorID": idMentor, "IsDeleted": false}).All(&courses)
 	if common.IsError(c, err, "Could not get courses") {
@@ -212,25 +211,21 @@ func getDailyAttendancesByMentorId(c *gin.Context, idMentor bson.ObjectId, date1
 
 	}
 	for i, trainee := range resp {
-		attens := getDailyAttendancesByInternID(c, bson.ObjectIdHex(trainee.Id), date1, date2)
+		attens := getDailyAttendancesByInternID(c, bson.ObjectIdHex(trainee.Id), date)
 		resp[i].Attendances = attens
 	}
 	return resp
 }
 
-func getCurentDate(currentTime time.Time, date1 *time.Time, date2 *time.Time) {
-	*date1 = time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 1, 0, 0, 0, time.Local)
-	*date2 = time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 2, 0, 0, 0, time.Local)
+func getCurentDate() time.Time {
+	currentTime := time.Now()
+	return time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 0, 0, 0, 0, time.Local)
 }
 
 func GetDailyAttendanceByMentor(c *gin.Context) {
-	currentTime := time.Now()
-	date1 := time.Time{}
-	date2 := time.Time{}
-	getCurentDate(currentTime, &date1, &date2)
-	fmt.Print(date1)
+	date := getCurentDate()
 	idMentor := bson.ObjectIdHex(c.Param("id"))
-	resp := getDailyAttendancesByMentorId(c, idMentor, date1, date2)
+	resp := getDailyAttendancesByMentorId(c, idMentor, date)
 	c.JSON(http.StatusOK, resp)
 }
 
@@ -245,10 +240,7 @@ func contains(attendances []Attendance, atten Attendance) bool {
 
 func GetDailyAttendanceBySupervisor(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
-	currentTime := time.Now()
-	date1 := time.Time{}
-	date2 := time.Time{}
-	getCurentDate(currentTime, &date1, &date2)
+	date := getCurentDate()
 
 	idSupervisor := bson.ObjectIdHex(c.Param("id"))
 	mentors := []models.Mentor{}
@@ -259,7 +251,7 @@ func GetDailyAttendanceBySupervisor(c *gin.Context) {
 
 	resp := []Attendance{}
 	for _, mentor := range mentors {
-		temp := getDailyAttendancesByMentorId(c, mentor.ID, date1, date2)
+		temp := getDailyAttendancesByMentorId(c, mentor.ID, date)
 		for _, v := range temp {
 			if !contains(resp, v) {
 				resp = append(resp, v)
@@ -281,81 +273,54 @@ func CreateAttendance(c *gin.Context) {
 	if common.IsError(c, err, "Could not create attendance") {
 		return
 	}
-
-	atten.ID = bson.NewObjectId()
 	currentTime := time.Now()
 	course := models.Course{}
 	intern := models.Intern{}
 	err = database.C(models.CollectionIntern).FindId(atten.InternID).One(&intern)
 	err = database.C(models.CollectionCourse).FindId(intern.CourseID).One(&course)
-	if currentTime.Before(course.StartDate) || currentTime.After(course.EndDate) {
+
+	// if error of current time without start date and end date of course, dont create attendance
+	if err != nil || currentTime.Before(course.StartDate) || currentTime.After(course.EndDate) {
 		c.JSON(http.StatusNotFound, gin.H{
 			common.Status:  "error",
 			common.Message: "Could not create attendance",
 		})
 		return
 	} else {
-		date1 := time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 1, 0, 0, 0, time.Local)
-		date2 := time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 2, 0, 0, 0, time.Local)
-		if currentTime.Hour() < 13 {
-			atten.Date = date1
-		} else {
-			atten.Date = date2
-		}
-
+		atten.ID = bson.NewObjectId()
 		atten.IsDeleted = false
-
+		// check attendance exits
 		check := models.Attendance{}
-		err = database.C(models.CollectionAttendance).Find(bson.M{"InternID": atten.InternID, "$or": []bson.M{{"Date": date1}, {"Date": date2}}}).One(&check)
-		if err == nil && ((check.Status == "PP") || (check.Status == "P") || (currentTime.Hour() < 13 && check.Status == "PA") || (check.Date.Hour() == 2 && check.Status == "PA")) {
-			c.JSON(http.StatusNotFound, gin.H{
-				common.Status:  "error",
-				common.Message: "attendance is exit",
-			})
-			return
-		} else {
-			if err == nil && (check.Status == "PA" || check.Status == "AR") {
-				atten.ID = check.ID
-				if check.Status == "PA" && atten.Status == "PA" {
-					atten.Status = "PP"
-				} else if (check.Status == "PA" && atten.Status == "AR") || (check.Status == "AR" && atten.Status == "PA") {
-					atten.Status = "P"
-				}
-				if !updateAttendance(c, database, atten) {
-					c.JSON(http.StatusNotFound, gin.H{
-						common.Status:  "error",
-						common.Message: "Could not create attendance",
-					})
-					return
-				}
-			} else if err == nil {
-				if !updateAttendance(c, database, atten) {
-					c.JSON(http.StatusNotFound, gin.H{
-						common.Status:  "error",
-						common.Message: "Could not create attendance",
-					})
-					return
-				}
-			} else {
-				err = database.C(models.CollectionAttendance).Insert(atten)
-				if err != nil {
-					c.JSON(http.StatusNotFound, gin.H{
-						common.Status:  "error",
-						common.Message: "Could not create attendance",
-					})
-					return
-				}
+		err = database.C(models.CollectionAttendance).Find(bson.M{"InternID": atten.InternID, "Date": atten.Date}).One(&check)
+		if err == nil {
+			atten.ID = check.ID
+			if !updateAttendance(c, database, atten) {
+				c.JSON(http.StatusNotFound, gin.H{
+					common.Status:  "error",
+					common.Message: "Could not create attendance",
+				})
+				return
 			}
-			c.JSON(http.StatusCreated, gin.H{
-				common.Status:  "created",
-				common.Message: "Created attendance",
-				"attendance":   atten,
-			})
+		} else {
+			err = database.C(models.CollectionAttendance).Insert(atten)
+			if err != nil {
+				c.JSON(http.StatusNotFound, gin.H{
+					common.Status:  "error",
+					common.Message: "Could not create attendance",
+				})
+				return
+			}
 		}
+		c.JSON(http.StatusCreated, gin.H{
+			common.Status:  "created",
+			common.Message: "Created attendance",
+			"attendance":   atten,
+		})
 	}
 }
 
 func updateAttendance(c *gin.Context, database *mgo.Database, atten models.Attendance) bool {
+
 	check := models.Attendance{}
 	err := database.C(models.CollectionAttendance).Find(bson.M{"$not": bson.M{"_id": atten.ID}, "InternID": atten.ID, "Date": atten.Date}).One(&check)
 	if err == nil {
@@ -381,20 +346,14 @@ func UpdateAttendance(c *gin.Context) {
 		if common.IsError(c, err, "Could not update attendance") {
 			return
 		} else {
-			if atten.Status == "PP" {
-				atten.Date = time.Date(atten.Date.Year(), atten.Date.Month(), atten.Date.Day(), 2, 0, 0, 0, time.Local)
-			}
-
-			check := models.Attendance{}
-			err = database.C(models.CollectionAttendance).FindId(atten.ID).One(&check)
-			if (check.Status == "PA" && atten.Status == "AR") || (check.Status == "AR" && atten.Status == "PA") {
-				atten.Status = "P"
-			}
 			if updateAttendance(c, database, atten) {
 				c.JSON(http.StatusCreated, gin.H{
-					"status":  "updated",
-					"message": "Update attendance successfully",
+					"status":     "updated",
+					"message":    "Update attendance successfully",
+					"attendance": atten,
 				})
+			} else {
+				common.IsError(c, err, "Could not update attendance")
 			}
 		}
 	}

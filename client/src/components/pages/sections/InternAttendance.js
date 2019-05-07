@@ -27,10 +27,10 @@ class MentorAttendance extends React.Component {
   }
   
   componentWillMount(){
-    this.getStudent();
+    this.getIntern();
   }
 
-  getStudent() {
+  getIntern() {
     $.ajax({
         url: SERVER_NAME + "attendance/" + this.state.internId +"/intern",
         type: "GET",
@@ -158,6 +158,7 @@ class MentorAttendance extends React.Component {
     }
   }
 
+  // load attendances with calendar
   loadTableData(month, year) {
     var days = this.getDaysInMonth(month, year);
     var tableData = [];
@@ -195,6 +196,7 @@ class MentorAttendance extends React.Component {
     return tableData;
   }
 
+  // load attendance with chart
   loadChartData( month, year) {
     var arr = [];
     var ppCount, pCount, paCount , aCount, arCount, a2rCount ,naCount;
@@ -246,6 +248,7 @@ class MentorAttendance extends React.Component {
     return arr;
   }
   
+  // craete week attendances
   createEmptyRow() {
     var rowData = [];
     for(var i = 0; i < 7; i++){
@@ -262,8 +265,8 @@ class MentorAttendance extends React.Component {
       var weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
       return weekDays[num];
   }
-  
 
+  //get attendance of date
   getAttendanceData(day, month, year) {
     var traineeData = this.state.traineeData
     if (traineeData === null) {
@@ -302,8 +305,7 @@ class MentorAttendance extends React.Component {
     }
   }
 
- 
-
+  //create day in month
   createMonthsData(startDate, endDate) {
     var startMonth, startYear, endMonth, endYear;
     startMonth = this.getMonth(startDate);
@@ -373,7 +375,6 @@ class MentorAttendance extends React.Component {
     };
   }
   componentDidMount() {
-    console.log("componentDidMount")
   }
 
   render() {

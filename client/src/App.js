@@ -5,7 +5,6 @@ import TopNavigation from './components/topNavigation';
 import SideNavigation from './components/sideNavigation';
 import Login from './components/pages/LoginPage'
 import Footer from './components/Footer';
-import {SERVER_NAME} from "./Constants"
 import './index.css';
 
 class App extends Component {
@@ -25,19 +24,7 @@ class App extends Component {
     if (value !== null) {
       this.setState({
         user : value
-      });
-      var user = this.state.user;
-      if (user.Role === 1){
-        fetch(SERVER_NAME + 'attendance',
-            {
-                method: "POST",
-                headers:{
-                  "Content-Type": "application/json"
-                },
-                body: JSON.stringify({"InternID": user.ID, "Status": "PA"})
-            })
-      }
-      
+      }); 
     } 
   }
 
@@ -64,7 +51,7 @@ class App extends Component {
           <TopNavigation onLogout = {this.onLogout.bind(this)} name = {this.state.user.UserName}/>
           <SideNavigation />
           <div>
-          <main id="content" >
+          <main id="content" className="p-5">
             <Routes></Routes>
           </main>
           <Footer />
