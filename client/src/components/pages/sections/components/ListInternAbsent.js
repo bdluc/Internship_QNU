@@ -57,7 +57,7 @@ class ListInternAbsent extends React.Component {
                 let NewData = []
                 let stt = 1
                 data.map(row => {
-                    NewData.push([stt, row._id, (new Date(row.Date)).toLocaleDateString('en-US', options), row.InternName, row.Email, row.Status,
+                    NewData.push([stt, row._id, row.InternName, row.Email, (new Date(row.Date)).toLocaleDateString('en-US', options),  row.Status,
                     ])
                     stt++
                     return NewData
@@ -77,7 +77,7 @@ class ListInternAbsent extends React.Component {
                 let stt = 1
                 data.map(row => {
                     NewData.push({
-                        STT: stt, ID: row._id, Date: (new Date(row.Date)).toLocaleDateString('en-US', options), Name: row.InternName, Email: row.Email, Status: row.Status,
+                        STT: stt, ID: row._id, Name: row.InternName, Email: row.Email, Date: (new Date(row.Date)).toLocaleDateString('en-US', options), Status: row.Status,
                     })
                     stt++
                     return NewData
@@ -97,7 +97,7 @@ class ListInternAbsent extends React.Component {
 
     columnsIntern = [
         {
-            name: "#",
+            name: "NO",
             options: {
                 filter: false,
                 sort: true,
@@ -112,18 +112,14 @@ class ListInternAbsent extends React.Component {
             }
         },
         {
-            name: "DATE",
-            options: {
-                filter: false,
-                sort: false,
-                // display:'export'
-            }
-        },
-        {
             name: "NAME",
             options: {
                 filter: true,
                 sort: false,
+<<<<<<< HEAD
+                // display:'export'
+=======
+>>>>>>> 8182104716a49157d99906c8710bb5f89436a4b1
             }
         },
         {
@@ -131,6 +127,14 @@ class ListInternAbsent extends React.Component {
             options: {
                 filter: true,
                 sort: false,
+            }
+        },
+        {
+            name: "DATE",
+            options: {
+                filter: false,
+                sort: false,
+                // display:'export'
             }
         },
         {

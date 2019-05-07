@@ -51,7 +51,11 @@ class App extends Component {
           <TopNavigation onLogout = {this.onLogout.bind(this)} name = {this.state.user.UserName}/>
           <SideNavigation />
           <div>
+<<<<<<< HEAD
           <main id="content" className="p-5">
+=======
+          <main id="content" className="p-5" >
+>>>>>>> 8182104716a49157d99906c8710bb5f89436a4b1
             <Routes></Routes>
           </main>
           <Footer />

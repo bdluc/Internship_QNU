@@ -55,7 +55,8 @@ class InternPageForIntern extends React.Component {
             courseList: [],
             isUpdate: false,
             checkValidate: true,
-            CourseName: ''
+            CourseName: '',
+            user : JSON.parse(sessionStorage.getItem('user'))
         };
     }
 
@@ -119,15 +120,15 @@ class InternPageForIntern extends React.Component {
 
     GetInternList() {
         const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
-        fetch('http://localhost:8080/intern')
+        fetch('http://localhost:8080/intern/' + this.state.user.ID + '/course')
             .then(response => response.json())
             .then(data => {
                 let NewData = []
                 let stt = 1
                 data.map(row => {
-                    NewData.push([stt, row.Intern.ID, row.Intern.Name, row.Intern.PhoneNumber, row.Intern.Email, row.Intern.Gender ? "Male" : "Female",
-                        (new Date(row.Intern.DoB)).toLocaleDateString('en-US', options),
-                        row.Intern.University, row.Intern.Faculty, row.Course, row.Intern.CourseID,
+                    NewData.push([stt, row.ID, row.Name, row.PhoneNumber, row.Email, row.Gender ? "Male" : "Female",
+                        (new Date(row.DayofBirth)).toLocaleDateString('en-US', options),
+                        row.University, row.Faculty, row.CourseName, row.CourseID,
                         // format datetime,
                     ])
                     stt++
@@ -170,56 +171,55 @@ class InternPageForIntern extends React.Component {
         var moment = require('moment');
         const date = moment.utc(this.state.dob).format();
         const data = {
-          "Name": this.state.name,
-          "PhoneNumber": this.state.phone,
-          "Email": this.state.email,
-          "Gender": this.state.gender === "Male" ? true : false,
-          "DoB": date,
-          "University": this.state.University,
-          "Faculty": this.state.Faculty,
-          "CourseID": this.state.course,
-          "IsDeleted": false
+            "Name": this.state.name,
+            "PhoneNumber": this.state.phone,
+            "Email": this.state.email,
+            "Gender": this.state.gender === "Male" ? true : false,
+            "DoB": date,
+            "University": this.state.University,
+            "Faculty": this.state.Faculty,
+            "CourseID": this.state.course,
+            "IsDeleted": false
         }
         var checkAdd = false
         $.ajax({
-          url: "http://localhost:8080/checkemail/" + data['Email'],
-          type: "GET",
-          async: false,
-          success: function (response) {
-            if(response['message'] == "Success"){
-              $.ajax({
-                url: "http://localhost:8080/intern",
-                type: "POST",
-                async: false,
-                dataType: "json",
-                data: JSON.stringify(data),
-                success: function (response) {
-                  if(response.ID === undefined){
-                    checkAdd = false
-                  }else{
-                    checkAdd = true
-                  }
+            url: "http://localhost:8080/checkemail/" + data['Email'],
+            type: "GET",
+            async: false,
+            success: function (response) {
+                if (response['message'] == "Success") {
+                    $.ajax({
+                        url: "http://localhost:8080/intern",
+                        type: "POST",
+                        async: false,
+                        dataType: "json",
+                        data: JSON.stringify(data),
+                        success: function (response) {
+                            if (response.ID === undefined) {
+                                checkAdd = false
+                            } else {
+                                checkAdd = true
+                            }
+                        }
+                    });
                 }
-              });
             }
-          }
         });
-        console.log(checkAdd)
-        if(checkAdd == true){
-          this.toggleIntern()
-          this.addNotification("successAdd")
+        if (checkAdd == true) {
+            this.toggleIntern()
+            this.addNotification("successAdd")
         }
-        else{
-          this.addNotification("errorAdd")
+        else {
+            this.addNotification("errorAdd")
         }
     }
 
-handlerEditIntern = () => {
+    handlerEditIntern = () => {
         var moment = require('moment');
         const date = moment.utc(this.state.dob).format();
         const data = {
             "Name": this.state.name,
-            "PhoneNumber": this.state.phone,    
+            "PhoneNumber": this.state.phone,
             "Email": this.state.email,
             "Gender": this.state.gender === "Male" ? true : false,
             "DoB": date,
@@ -244,7 +244,7 @@ handlerEditIntern = () => {
 
     columnsIntern = [
         {
-            name: "#",
+            name: "NO",
             options: {
                 filter: false,
                 sort: true,
@@ -549,7 +549,7 @@ handlerEditIntern = () => {
                             </FormControl>
 
                             <MDBInput
-                                label="DOB" name="dob" id="date" type="date"
+                                label="Dob" name="dob" id="date" type="date"
                                 value={this.state.dob}
                                 onChange={this.handleChangeValue.bind(this)}
                                 InputLabelProps={{

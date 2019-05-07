@@ -66,7 +66,9 @@ class EditInforForMentor extends React.Component {
             mentor: [],
             isUpdate: false,
             // checkValidate: true,
-            btnMode: 'on'
+            btnMode: 'on',
+            mess : "",
+            uname: JSON.parse(sessionStorage.getItem('user')).UserName
         };
     }
 
@@ -197,7 +199,7 @@ class EditInforForMentor extends React.Component {
     }
 
 
-    handlerEditMentor = () => {
+    handlerEditMentor() {
         var moment = require('moment');
         const date = moment.utc(this.state.mentor.DoB).format();
         console.log("dt" + date);
@@ -223,27 +225,38 @@ class EditInforForMentor extends React.Component {
             .then(this.GetMentor())
             .then(this.GetMentor())
 
+            
+
     }
 
-    // handlerCheckEmailExits() {
-    //     var checkEmail = false
-    //     $.ajax({
-    //         url: "http://localhost:8080/checkemail/" + this.state.mentor.Email,
-    //         type: "GET",
-    //         async: false,
-    //         success: function (response) {
-    //             if (!(response['message'] == "Success")) {
-    //                 this.addNotification("errEmail")
-    //             }
-    //         }
-    //     });
-    //     if (checkEmail == true) {
-    //         this.addNotification("successUpdate")
-    //     }
-    //     else {
-    //         this.addNotification("errEmail")
-    //     }
-    // }
+    handleGetEmailState(){
+        if(this.state.mentor.Email != ''){
+            fetch('http://localhost:8080/checkemail/'+this.state.mentor.Email)
+        .then(response => response.json())
+        .then(data => {
+            this.setState({
+              mess: data
+            })
+          });
+        }
+        
+          console.log(this.state.mess.message)
+
+    }
+
+    handlerCheckEmailExits = () =>{    
+
+        if(this.state.mentor.Email != this.state.uname){
+            if (this.state.mess.message == "Error") {
+                this.addNotification("errEmail")
+                }
+            else {
+                    this.handlerEditMentor()
+                }       
+         }   else {
+            this.handlerEditMentor()
+        }   
+    }
 
    
 
@@ -320,9 +333,10 @@ class EditInforForMentor extends React.Component {
                 } else {
                     this.setState({
                         doneEmail: true,
+                        errorEmail: null
                     })
+
                     e.target.className += " valid"
-                    // this.handlerCheckEmailExits()
                 }
                 // console.log(this.state.dob)
 
@@ -376,6 +390,8 @@ class EditInforForMentor extends React.Component {
         //         btnMode: "on"
         //     })
         // }
+        this.handleGetEmailState()
+
     }
 
 
@@ -433,7 +449,7 @@ class EditInforForMentor extends React.Component {
 
                                     <MDBBtn
                                         className="mb-2 blue darken-2"
-                                        onClick={this.handlerEditMentor}
+                                        onClick={this.handlerCheckEmailExits}
                                     // disabled="true"
                                     >
                                         Change
