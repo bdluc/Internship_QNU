@@ -116,10 +116,6 @@ class ListInternAbsent extends React.Component {
             options: {
                 filter: true,
                 sort: false,
-<<<<<<< HEAD
-                // display:'export'
-=======
->>>>>>> 8182104716a49157d99906c8710bb5f89436a4b1
             }
         },
         {

@@ -431,7 +431,7 @@ class EditInforForMentor extends React.Component {
 
                                 <MDBInput
 
-                                    label="Dob"
+                                    label="DOB"
                                     name="dob"
                                     id="date"
                                     type="date"
