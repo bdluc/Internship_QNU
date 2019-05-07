@@ -289,8 +289,11 @@ class MentorPageForSup extends React.Component {
         },
         body: JSON.stringify(data)
       })
-      .then(this.addNotification("successAdd"))
       .then(this.GetMentorList())
+      .then(this.GetMentorList())
+      .then(this.GetMentorList())
+      .then(this.addNotification("successAdd"))
+
     this.toggleMentor()
 
 
@@ -331,9 +334,12 @@ handlerCheckEmailExits = () =>{
       method: 'DELETE',
       mode: 'cors'
     })
+    .then(this.GetMentorList())
+    .then(this.GetMentorList())
+    .then(this.GetMentorList())
+    .then(this.GetMentorList())
     .then(this.addNotification("successDelete"))
-      .then(this.GetMentorList())
-      .then(this.GetMentorList())
+      
     this.toggleMentor()
 
 
@@ -361,9 +367,11 @@ handlerCheckEmailExits = () =>{
       },
       body: JSON.stringify(data)
     })
+      .then(this.GetMentorList())
+      .then(this.GetMentorList())
+      .then(this.GetMentorList())
       .then(this.addNotification("successUpdate"))
-      .then(this.GetMentorList())
-      .then(this.GetMentorList())
+
 
     this.toggleMentor()
     // console.log(this.state.id)
@@ -506,8 +514,14 @@ handlerCheckEmailExits = () =>{
         icon: "edit",
         isUpdate: true,
         // checkValidate: true,
-        btnMode: 'off',
-        uname: this.state.email
+        btnMode: 'on',
+        uname: this.state.email,
+        doneName: true,
+        donePhone: true,
+        doneGender: true,
+        doneEmail: true,
+        doneDepartment: true,
+        doneDOB: true
 
       });
       console.log(this.state.uname);
@@ -562,7 +576,7 @@ handlerCheckEmailExits = () =>{
         if (value.trim().length === 0) {
           this.setState({
             btnMode: 'off',
-            name: " ",
+            name: "",
             errorName: "Name can not be blank",
             doneName: false
           })
@@ -591,14 +605,14 @@ handlerCheckEmailExits = () =>{
         }
         break;
       case "phone":
-        this.setState({ phone: value })
+        this.setState({ phone: value, btnMode: 'off', donePhone: false})
         e.target.className = "form-control"
         const regexPhone = /^[0-9\b]+$/
-        if (value.trim().length === 0) {
+        if (value.trim().length != 10 ) {
           this.setState({
             btnMode: 'off',
-            phone: " ",
-            errorPhone: "Phone can not be blank",
+            // phone: "",
+            errorPhone: "Phone must have 10 number!",
             donePhone: false
           })
           e.target.className += " invalid"
@@ -611,21 +625,24 @@ handlerCheckEmailExits = () =>{
           e.target.className += " invalid"
         } else {
           this.setState({
+            errorPhone: "",
             donePhone: true,
+            btnMode: 'on',
+
             })
           e.target.className += " valid"
         }
         break;
       case "email":
-        this.setState({ email: value })
+        this.setState({ email: value, doneEmail:false })
         e.target.className = "form-control"
         const regexEmail = /^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i;
         if (value.trim().length === 0) {
           this.setState({
             btnMode: 'off',
-            email: " ",
+            doneEmail: false,
+            // email: "",
             errorEmail: "Email can not be blank",
-            doneEmail: false
           })
           e.target.className += " invalid"
         } else if (!regexEmail.test(value.trim())) {
@@ -706,13 +723,14 @@ handlerCheckEmailExits = () =>{
         break;
       case "department":
         this.setState({ department: value })
-        if (value.trim().length > 0) {
+        if (value.trim().length > 1) {
           this.setState({
             doneDepartment: true,            
           })
           e.target.className += " valid"
         }else{
           this.setState({
+            btnMode: 'off',
             doneDepartment: false,            
           })
         }
@@ -798,7 +816,8 @@ handlerCheckEmailExits = () =>{
             size="md"
             cascading>
 
-            <MDBModalBody>
+            <MDBModalBody>        <p>{this.state.errorPhone}</p>
+
               <MDBInput label="Name" name="name" value={this.state.name} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput label="Phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput label="Email" name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
@@ -839,7 +858,6 @@ handlerCheckEmailExits = () =>{
 
                 {
                   (this.state.isUpdate === false) &&
-
                   this.state.btnMode === 'off' &&
                   <MDBBtn
                     className="mb-2 blue darken-2"
@@ -854,6 +872,8 @@ handlerCheckEmailExits = () =>{
 
                 {
                   this.state.isUpdate &&
+                  this.state.btnMode === 'on' &&
+
                   <MDBBtn
                     className="mb-2 blue darken-2"
                     onClick={this.handlerCheckEmailExits}>
@@ -863,10 +883,38 @@ handlerCheckEmailExits = () =>{
                 }
                 {
                   this.state.isUpdate &&
+                  this.state.btnMode === 'on' &&
 
 
                   <MDBBtn
                     className="mb-2 blue darken-2"
+                    onClick={this.handlerDeleteMentor}>
+                    Delete
+                  <MDBIcon icon="trash" className="ml-1" />
+                  </MDBBtn>
+                }
+                                {
+                  this.state.isUpdate &&
+                  this.state.btnMode === 'off' &&
+
+                  <MDBBtn
+                    className="mb-2 blue darken-2"
+                    disabled="true"
+
+                    onClick={this.handlerCheckEmailExits}>
+                    Update
+                  <MDBIcon icon="edit" className="ml-1" />
+                  </MDBBtn>
+                }
+                {
+                  this.state.isUpdate &&
+                  this.state.btnMode === 'off' &&
+
+
+                  <MDBBtn
+                    className="mb-2 blue darken-2"
+                    disabled="true"
+
                     onClick={this.handlerDeleteMentor}>
                     Delete
                   <MDBIcon icon="trash" className="ml-1" />
