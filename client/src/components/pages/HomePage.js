@@ -19,11 +19,11 @@ class HomePage extends React.Component {
           <HomePageForMentor></HomePageForMentor>
             
         );
-    else if(this.state.role === 3)
+    if(this.state.role === 3)
         return (
           null
         );
-    else{
+    if(this.state.role === 1)
         return (
           null
         );

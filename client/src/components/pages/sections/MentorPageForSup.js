@@ -131,7 +131,11 @@ class MentorPageForSup extends React.Component {
       mentorList: [],
       isUpdate: false,
       // checkValidate: true,
-      btnMode: 'off'
+      btnMode: 'off',
+      uname: JSON.parse(sessionStorage.getItem('user')).UserName,
+      mess: '',
+      uname: ''
+
     };
   }
 
@@ -183,7 +187,7 @@ class MentorPageForSup extends React.Component {
             this.notificationDOMRef.current.addNotification({
                 title: "Success",
                 message: "Delete mentor info successfully !",
-                type: "success", //success, danger, default, info, warning or custom
+                type: "danger", //success, danger, default, info, warning or custom
                 insert: "top",
                 container: "top-right",
                 animationIn: ["animated", "fadeIn"],
@@ -292,6 +296,35 @@ class MentorPageForSup extends React.Component {
 
   }
 
+  handleGetEmailState(){
+    if(this.state.email != ''){
+        fetch('http://localhost:8080/checkemail/'+this.state.email)
+    .then(response => response.json())
+    .then(data => {
+        this.setState({
+          mess: data
+        })
+      });
+    }
+    console.log(this.state.mess.message)
+
+}
+
+
+handlerCheckEmailExits = () =>{    
+
+  if(this.state.email != this.state.uname){
+      if (this.state.mess.message == "Error") {
+          this.addNotification("errEmail")
+          }
+      else {
+              this.handlerEditMentor()
+          }       
+   }   else {
+      this.handlerEditMentor()
+  }   
+}
+
 
   handlerDeleteMentor = () => {
     fetch("http://localhost:8080/mentor/" + this.state.id, {
@@ -299,6 +332,7 @@ class MentorPageForSup extends React.Component {
       mode: 'cors'
     })
     .then(this.addNotification("successDelete"))
+      .then(this.GetMentorList())
       .then(this.GetMentorList())
     this.toggleMentor()
 
@@ -329,6 +363,7 @@ class MentorPageForSup extends React.Component {
     })
       .then(this.addNotification("successUpdate"))
       .then(this.GetMentorList())
+      .then(this.GetMentorList())
 
     this.toggleMentor()
     // console.log(this.state.id)
@@ -348,7 +383,7 @@ class MentorPageForSup extends React.Component {
   };
   columnsMentor = [
     {
-      name: "#",
+      name: "NO",
       options: {
         filter: false,
         sort: false,
@@ -472,10 +507,10 @@ class MentorPageForSup extends React.Component {
         isUpdate: true,
         // checkValidate: true,
         btnMode: 'off',
-        
+        uname: this.state.email
 
       });
-      // console.log("day" + this.state.dob);
+      console.log(this.state.uname);
       this.toggleMentor()
     }
 
@@ -612,6 +647,7 @@ class MentorPageForSup extends React.Component {
           this.setState({
             doneEmail: true,
             })
+          this.handleGetEmailState()
           e.target.className += " valid"
         }
         // console.log(this.state.dob)
@@ -820,7 +856,7 @@ class MentorPageForSup extends React.Component {
                   this.state.isUpdate &&
                   <MDBBtn
                     className="mb-2 blue darken-2"
-                    onClick={this.handlerEditMentor}>
+                    onClick={this.handlerCheckEmailExits}>
                     Update
                   <MDBIcon icon="edit" className="ml-1" />
                   </MDBBtn>
