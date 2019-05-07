@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"time"
+
 	"../common"
 	"../models"
 	"github.com/gin-gonic/gin"
@@ -170,11 +171,48 @@ func GetIntern(c *gin.Context) {
 //list all intern in course
 func GetInternByCourse(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
-	internDb := models.Intern{}
-	errIntern := database.C(models.CollectionIntern).Find(bson.M{"CourseID": c.Param("course")}).All(&internDb)
-	common.CheckError(c, errIntern)
+	_, internDb := getInternByID(c, c.Param("id"))
+	query := []bson.M{
 
-	c.JSON(http.StatusOK, internDb)
+		// {
+		// 	"$unwind": "$MentorID",
+		// },
+		{
+			"$lookup": bson.M{
+				"from":         "course",
+				"localField":   "CourseID",
+				"foreignField": "_id",
+				"as":           "Course",
+			}},
+		{
+			"$unwind": "$Course",
+		},
+		{
+			"$match": bson.M{
+				"IsDeleted": false,
+				"CourseID":  internDb.CourseID,
+			}},
+		{
+			"$project": bson.M{
+				"Name":        1,
+				"PhoneNumber": 1,
+				"Email":       1,
+				"Gender":      1,
+				"DayofBirth":  1,
+				"University":  1,
+				"Faculty":     1,
+				"CourseID":    1,
+				"IsDeleted":   1,
+				"CourseName":  "$Course.CourseName",
+			}},
+	}
+
+	pipe := database.C(models.CollectionIntern).Pipe(query)
+	resp := []bson.M{}
+	err := pipe.All(&resp)
+
+	common.CheckError(c, err)
+	c.JSON(http.StatusOK, resp)
 }
 
 //list
