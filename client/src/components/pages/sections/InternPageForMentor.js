@@ -234,7 +234,6 @@ class InternPage extends React.Component {
         }
       }
     });
-    console.log(checkAdd)
     if (checkAdd == true) {
       this.toggleIntern()
       this.addNotification("successAdd")
@@ -425,7 +424,6 @@ class InternPage extends React.Component {
     },
     onRowClick: (rowData, rowState) => {
       let std = this.convertDate(rowData[6])
-      console.log(rowState.dataIndex, rowState.rowIndex)
       this.setState({
 
         id: rowData[1],
@@ -439,6 +437,7 @@ class InternPage extends React.Component {
         course: rowData[9],
         courseID: this.state.internList[rowState.rowIndex][10],
         icon: "edit",
+        btnUpdateMode: 'off',
         isUpdate: true,
         checkValidate: true
       });
@@ -701,6 +700,25 @@ class InternPage extends React.Component {
       this.setState({
         btnMode: "on"
       })
+    }else{
+      this.setState({
+        btnMode: "off"
+      })
+    }
+    if (this.state.doneName === true ||
+      this.state.donePhone === true ||
+      this.state.doneEmail === true ||
+      this.state.doneGender === true ||
+      this.state.doneDOB === true ||
+      this.state.doneUniversity === true ||
+      this.state.doneFaculty === true) {
+      this.setState({
+        btnUpdateMode: "on"
+      })
+    }else{
+      this.setState({
+        btnMode: "off"
+      })
     }
   }
 
@@ -789,61 +807,49 @@ class InternPage extends React.Component {
                   <MDBIcon icon="send" className="ml-1" />
                     </MDBBtn>
                   }
-
                   {
                     (this.state.isUpdate === false) &&
                     this.state.btnMode === 'off' &&
                     <MDBBtn
                       className="mb-2 blue darken-2"
                       onClick={this.handlerAddIntern}
-                    // disabled="true"
+                    disabled="true"
                     >
                       Create
                   <MDBIcon icon="send" className="ml-1" />
                     </MDBBtn>
                   }
-                  {/* {
-                    (this.state.isUpdate === false) &&
-                    this.state.btnMode === 'on' &&
-                    <MDBBtn
-                      className="mb-2 blue darken-2"
-                      onClick="#"
-                    >
-                      Close
-                  <MDBIcon icon="#" className="ml-1" />
-                    </MDBBtn>
-                  }
-
+                  
                   {
-                    (this.state.isUpdate === false) &&
-                    this.state.btnMode === 'off' &&
+                    (this.state.isUpdate && this.state.btnUpdateMode === 'on') ?
                     <MDBBtn
                       className="mb-2 blue darken-2"
-                      onClick="#"
-                    // disabled="true"
-                    >
-                      Close
-                  <MDBIcon icon="#" className="ml-1" />
-                    </MDBBtn>
-                  } */}
-                  {
-                    this.state.isUpdate &&
-                    <MDBBtn
-                      className="mb-2 blue darken-2"
-                      onClick={this.handlerEditIntern}>
+                      onClick={this.handlerEditIntern}
+                      >
                       Update
                   <MDBIcon icon="edit" className="ml-1" />
                     </MDBBtn>
-                  }
+                  : null}
                   {
-                    this.state.isUpdate &&
+                    (this.state.isUpdate && this.state.btnUpdateMode === 'off')?
+                    <MDBBtn
+                      className="mb-2 blue darken-2"
+                      onClick={this.handlerEditIntern}
+                      disabled="true">
+                      Update
+                  <MDBIcon icon="edit" className="ml-1" />
+                    </MDBBtn>
+                  : null}
+
+                  {
+                    (this.state.isUpdate )?
                     <MDBBtn
                       className="mb-2 blue darken-2"
                       onClick={this.handlerDeleteIntern}>
                       Delete
                   <MDBIcon icon="trash" className="ml-1" />
                     </MDBBtn>
-                  }
+                  : null}
                 </div>
               </div>
             </MDBModalBody>
