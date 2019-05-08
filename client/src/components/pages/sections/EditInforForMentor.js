@@ -305,11 +305,11 @@ class EditInforForMentor extends React.Component {
                         errorPhone: "Phone contains only numeric characters"
                     })
                     e.target.className += " invalid"
-                } else if (value.length > 10) {
+                } else if (value.length !== 10) {
                     this.setState({
                       phone: this.state.PhoneNumber,
                       btnMode: 'off',
-                      errorPhone: "Phone contains more than 10 number",
+                      errorPhone: "Phone not contains 10 number",
                     })
                     e.target.className += " invalid"
                   }else {
