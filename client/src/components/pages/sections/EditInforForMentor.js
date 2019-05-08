@@ -286,7 +286,6 @@ class EditInforForMentor extends React.Component {
                     })
                     e.target.className += " valid"
                 }
-                console.log(this.state.mentor)
 
                 break;
             case "phone":
@@ -306,7 +305,14 @@ class EditInforForMentor extends React.Component {
                         errorPhone: "Phone contains only numeric characters"
                     })
                     e.target.className += " invalid"
-                } else {
+                } else if (value.length > 10) {
+                    this.setState({
+                      phone: this.state.PhoneNumber,
+                      btnMode: 'off',
+                      errorPhone: "Phone contains more than 10 number",
+                    })
+                    e.target.className += " invalid"
+                  }else {
                     this.setState({
                         donePhone: true,
                     })
@@ -352,12 +358,28 @@ class EditInforForMentor extends React.Component {
 
                 break;
             case "dob":
+            var standard = new Date('1988/1/1').getTime();
+            var currentDate = new Date().getTime();
+            var valueofUser = new Date(value).getTime();
                 this.state.mentor.DoB = value
                 if (value.trim().length > 0) {
+                    if ((currentDate - valueofUser) < standard || valueofUser < 0) {
+                        this.setState({
+                          doneDOB: false,
+                        })
+                        e.target.className += " invalid"
+                      } else {
+                        this.setState({
+                          doneDOB: true,
+                        })
+                        e.target.className += " valid"
+                      }
+                }else {
                     this.setState({
-                        doneDOB: true,
+                      doneDOB: false,
                     })
-                }
+                    e.target.className += " invalid"
+                  }
                 break;
             // case "mentor":
             //     this.state.mentor.mentor = value
