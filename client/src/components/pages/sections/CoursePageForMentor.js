@@ -218,14 +218,12 @@ class CoursePageForMentor extends React.Component {
 
   addCourse = () => {
     let count =0 ;
-    if(this.state.isMentor){
-      this.state.mentorList.map((v ,i)=> {
-        if(this.state.user.ID === v.ID){
-          v.isChecked = true
-          count +=1
-        }
-      })
-    }
+    this.state.mentorList.map((v ,i)=> {
+      if(this.state.user.ID === v.ID){
+        v.isChecked = true
+        count +=1
+      }
+    })
     this.setState({
       courseName: "",
       startDate: '',
@@ -342,7 +340,7 @@ class CoursePageForMentor extends React.Component {
 
   columnsCourse = [
     {
-      name: "#",
+      name: "No.",
       options: {
         filter: false,
         sort: true,
@@ -510,6 +508,7 @@ class CoursePageForMentor extends React.Component {
 
     return false;
   }
+  
 
   onChangeDate = (e) => {
     const name = e.target.name
@@ -702,7 +701,7 @@ class CoursePageForMentor extends React.Component {
                     return (
                       <div key={index}>
                         <input type="checkbox" name="mentorID" value={mentor.ID} checked={mentor.isChecked} onChange={this.handleCheckChieldElement} />
-                        <span>{mentor.Name}</span>
+                        <span>{mentor.Name.trim()}</span>
                       </div>
                     )
                   })
@@ -750,8 +749,9 @@ class CoursePageForMentor extends React.Component {
                     this.state.isUpdate &&
                     <MDBBtn
                       className="mb-2 blue darken-2"
+                      href={`/course/${this.state.id}`}
                     >
-                      <Link to={`/course/${this.state.id}`} >Detail</Link>
+                     Detail
                     </MDBBtn>
                   }
                 </div>

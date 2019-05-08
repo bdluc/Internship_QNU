@@ -202,7 +202,7 @@ class CoursePage extends React.Component {
   // Value of header
   columnsHeader = [
     {
-      name: "No",
+      name: "No.",
       options: {
         filter: false,
         sort: true,

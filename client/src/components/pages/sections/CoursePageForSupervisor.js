@@ -218,14 +218,14 @@ class CoursePageForMentor extends React.Component {
 
   addCourse = () => {
     let count =0 ;
-    if(this.state.isMentor){
+    
       this.state.mentorList.map((v ,i)=> {
         if(this.state.user.ID === v.ID){
           v.isChecked = true
           count +=1
         }
       })
-    }
+    
     this.setState({
       courseName: "",
       startDate: '',
@@ -342,7 +342,7 @@ class CoursePageForMentor extends React.Component {
 
   columnsCourse = [
     {
-      name: "#",
+      name: "No.",
       options: {
         filter: false,
         sort: true,
@@ -560,16 +560,21 @@ class CoursePageForMentor extends React.Component {
         var edNumber = new Date(new Date(value).toLocaleString()).getTime();
         var sdNumber2 = new Date(new Date(this.state.startDate).toLocaleString()).getTime();
         var hieu = edNumber - sdNumber2;
-        if (hieu <= 0) {
+        if (value === "") {
+          endDateValid = 2;
           courseNameValid = this.state.courseNameValid;
-          endDateValid = 1;
+        }else{
+          if (hieu <= 0) {
+            courseNameValid = this.state.courseNameValid;
+            endDateValid = 1;
+          }
+          // end date is not after start date
+          else {
+            endDateValid = 0; //  end date is after start date
+            courseNameValid = this.state.courseNameValid;
+          }
         }
-        // end date is not after start date
-        else {
-          endDateValid = 0; //  end date is after start date
-          courseNameValid = this.state.courseNameValid;
-
-        }
+        
         break;
       case "courseName":
         if (value === ""){
@@ -702,7 +707,7 @@ class CoursePageForMentor extends React.Component {
                     return (
                       <div key={index}>
                         <input type="checkbox" name="mentorID" value={mentor.ID} checked={mentor.isChecked} onChange={this.handleCheckChieldElement} />
-                        <span>{mentor.Name}</span>
+                        <span>{mentor.Name.trim()}</span>
                       </div>
                     )
                   })
@@ -750,8 +755,9 @@ class CoursePageForMentor extends React.Component {
                     this.state.isUpdate &&
                     <MDBBtn
                       className="mb-2 blue darken-2"
+                      href={`/course/${this.state.id}`}
                     >
-                      <Link to={`/course/${this.state.id}`} >Detail</Link>
+                      Detail
                     </MDBBtn>
                   }
                 </div>
