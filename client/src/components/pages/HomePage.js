@@ -21,11 +21,11 @@ class HomePage extends React.Component {
         );
     if(this.state.role === 3)
         return (
-          <HomePageForIntern></HomePageForIntern>
+          null
         );
     if(this.state.role === 1)
         return (
-          null
+          <HomePageForIntern></HomePageForIntern>
         );
     }
   }
