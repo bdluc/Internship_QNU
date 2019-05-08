@@ -436,10 +436,17 @@ class InternPage extends React.Component {
         Faculty: rowData[8],
         course: rowData[9],
         courseID: this.state.internList[rowState.rowIndex][10],
-        icon: "edit",
-        btnUpdateMode: 'off',
         isUpdate: true,
-        checkValidate: true
+        checkValidate: true,
+        doneName: true,
+        donePhone: true,
+        doneEmail: true,
+        doneGender: true,
+        doneCourse: true,
+        doneDOB: true,
+        doneUniversity: true,
+        doneFaculty: true,
+        first: true
       });
       this.toggleIntern()
     }
@@ -558,39 +565,39 @@ class InternPage extends React.Component {
         }
         break;
       case "email":
-        this.setState({ email: value })
-        e.target.className = "form-control"
-        const regexEmail = (/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test($('#email').val()));
-        if (value.trim().length === 0) {
-          this.setState({
-            btnMode: 'off',
-            email: " ",
-            errorEmail: "Email can not be blank",
-            doneEmail: false
-          })
-          e.target.className += " invalid"
-        // } else if (!regexEmail.test(value.trim())) {
-        //   this.setState({
-        //     btnMode: 'off',
-        //     errorEmail: "Not a valid email address",
-        //     doneEmail: false
-        //   })
-        //   e.target.className += " invalid"
-        } else if (value.length > 50) {
-          this.setState({
-            email: this.state.email,
-            btnMode: 'off',
-            errorName: "Email may be very long",
-            doneEmail: false
-          })
-          e.target.className += " invalid"
-        } else {
-          this.setState({
-            doneEmail: true,
-          })
-          e.target.className += " valid"
-        }
-        break;
+      this.setState({ email: value })
+      e.target.className = "form-control"
+      const regexEmail = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+      if (value.trim().length === 0) {
+        this.setState({
+          btnMode: 'off',
+          email: " ",
+          errorEmail: "Email can not be blank",
+          doneEmail: false
+        })
+        e.target.className += " invalid"
+      } else if (!regexEmail.test(value.trim())) {
+        this.setState({
+          btnMode: 'off',
+          errorEmail: "Not a valid email address",
+          doneEmail: false
+        })
+        e.target.className += " invalid"
+      } else if (value.length > 50) {
+        this.setState({
+          email: this.state.email,
+          btnMode: 'off',
+          errorName: "Email may be very long",
+          doneEmail: false
+        })
+        e.target.className += " invalid"
+      } else {
+        this.setState({
+          doneEmail: true,
+        })
+        e.target.className += " valid"
+      }
+      break;
       case "gender":
         this.setState({ gender: value })
         if (value.trim().length > 0) {
@@ -690,36 +697,10 @@ class InternPage extends React.Component {
     doneUniversity
     doneFaculty
     */
-    if (this.state.doneName === true &&
-      this.state.donePhone === true &&
-      this.state.doneEmail === true &&
-      this.state.doneGender === true &&
-      this.state.doneDOB === true &&
-      this.state.doneUniversity === true &&
-      this.state.doneFaculty === true) {
+   if(this.state.first)
       this.setState({
-        btnMode: "on"
+        first: false
       })
-    }else{
-      this.setState({
-        btnMode: "off"
-      })
-    }
-    if (this.state.doneName === true ||
-      this.state.donePhone === true ||
-      this.state.doneEmail === true ||
-      this.state.doneGender === true ||
-      this.state.doneDOB === true ||
-      this.state.doneUniversity === true ||
-      this.state.doneFaculty === true) {
-      this.setState({
-        btnUpdateMode: "on"
-      })
-    }else{
-      this.setState({
-        btnMode: "off"
-      })
-    }
   }
 
   handleChanges() {
@@ -764,9 +745,9 @@ class InternPage extends React.Component {
             cascading>
 
             <MDBModalBody >
-              <MDBInput fullwidth="true" size="" label="Name" name="name" value={this.state.name} onChange={this.handleChangeValue.bind(this)} />
-              <MDBInput fullwidth="true" label="Phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
-              <MDBInput fullwidth="true" label="Email" iconClass="dark-grey" name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
+              <MDBInput fullwidth="true" size="" label="Name" name="name" value={this.state.name} onInput={this.handleChangeValue.bind(this)} />
+              <MDBInput fullwidth="true" label="Phone" name="phone" value={this.state.phone} onInput={this.handleChangeValue.bind(this)} />
+              <MDBInput fullwidth="true" label="Email" iconClass="dark-grey" name="email" value={this.state.email} onInput={this.handleChangeValue.bind(this)} />
               <FormControl fullWidth>
                 <InputLabel htmlFor="select-multiple">Gender</InputLabel>
                 <Select fullWidth label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)}>
@@ -786,19 +767,25 @@ class InternPage extends React.Component {
               <MDBInput
                 label="DOB" name="dob" id="date" type="date"
                 value={this.state.dob}
-                onChange={this.handleChangeValue.bind(this)}
+                onInput={this.handleChangeValue.bind(this)}
                 InputLabelProps={{
                   shrink: true,
                 }}
               />
-              <TextField fullWidth="true" label="University" name="text" name="University" value={this.state.University} onChange={this.handleChangeValue.bind(this)} />
+              <TextField fullWidth="true" label="University" name="text" name="University" value={this.state.University} onInput={this.handleChangeValue.bind(this)} />
               <div className="text-center mt-1-half">
-                <TextField fullWidth label="Faculty" name="text" name="Faculty" value={this.state.Faculty} onChange={this.handleChangeValue.bind(this)} />
+                <TextField fullWidth label="Faculty" name="text" name="Faculty" value={this.state.Faculty} onInput={this.handleChangeValue.bind(this)} />
                 <div className="text-center mt-1-half">
 
                   {
-                    (this.state.isUpdate === false) &&
-                    this.state.btnMode === 'on' &&
+                    (this.state.isUpdate === false &&
+                    this.state.doneName === true &&
+                    this.state.donePhone === true &&
+                    this.state.doneEmail === true &&
+                    this.state.doneGender === true &&
+                    this.state.doneDOB === true &&
+                    this.state.doneUniversity === true &&
+                    this.state.doneFaculty === true ) ?
                     <MDBBtn
                       className="mb-2 blue darken-2"
                       onClick={this.handlerAddIntern}
@@ -806,41 +793,42 @@ class InternPage extends React.Component {
                       Create
                   <MDBIcon icon="send" className="ml-1" />
                     </MDBBtn>
-                  }
-                  {
-                    (this.state.isUpdate === false) &&
-                    this.state.btnMode === 'off' &&
-                    <MDBBtn
-                      className="mb-2 blue darken-2"
-                      onClick={this.handlerAddIntern}
+                  : (this.state.isUpdate === false) ?
+                  <MDBBtn
+                    className="mb-2 blue darken-2"
+                    onClick={this.handlerAddIntern}
                     disabled="true"
-                    >
-                      Create
-                  <MDBIcon icon="send" className="ml-1" />
-                    </MDBBtn>
-                  }
-                  
-                  {
-                    (this.state.isUpdate && this.state.btnUpdateMode === 'on') ?
-                    <MDBBtn
-                      className="mb-2 blue darken-2"
-                      onClick={this.handlerEditIntern}
-                      >
-                      Update
-                  <MDBIcon icon="edit" className="ml-1" />
-                    </MDBBtn>
+                  >
+                  Create
+              <MDBIcon icon="send" className="ml-1" />
+                </MDBBtn>
                   : null}
                   {
-                    (this.state.isUpdate && this.state.btnUpdateMode === 'off')?
-                    <MDBBtn
-                      className="mb-2 blue darken-2"
-                      onClick={this.handlerEditIntern}
-                      disabled="true">
-                      Update
-                  <MDBIcon icon="edit" className="ml-1" />
-                    </MDBBtn>
+                    (this.state.isUpdate && 
+                      this.state.doneName === true &&
+                      this.state.donePhone === true &&
+                      this.state.doneEmail === true &&
+                      this.state.doneGender === true &&
+                      this.state.doneDOB === true &&
+                      this.state.doneUniversity === true &&
+                      this.state.doneFaculty === true &&
+                      this.state.first === false ) ?
+                      <MDBBtn
+                        className="mb-2 blue darken-2"
+                        onClick={this.handlerEditIntern}
+                        >
+                        Update
+                        <MDBIcon icon="edit" className="ml-1" />
+                      </MDBBtn>
+                  : (this.state.isUpdate) ?
+                      <MDBBtn
+                          className="mb-2 blue darken-2"
+                          onClick={this.handlerEditIntern}
+                          disabled="true">
+                          Update
+                        <MDBIcon icon="edit" className="ml-1" />
+                      </MDBBtn>
                   : null}
-
                   {
                     (this.state.isUpdate )?
                     <MDBBtn

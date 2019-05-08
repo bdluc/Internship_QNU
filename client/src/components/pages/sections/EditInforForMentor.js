@@ -66,7 +66,14 @@ class EditInforForMentor extends React.Component {
             mentor: [],
             isUpdate: false,
             // checkValidate: true,
-            btnMode: 'on',
+            btnMode: 'off',
+            doneName: true,
+            donePhone: true,
+            doneGender: true,
+            doneEmail: true,
+            doneDepartment: true,
+            doneDOB: true,
+            fisrt: true,
             mess : "",
             uname: JSON.parse(sessionStorage.getItem('user')).UserName
         };
@@ -202,7 +209,6 @@ class EditInforForMentor extends React.Component {
     handlerEditMentor() {
         var moment = require('moment');
         const date = moment.utc(this.state.mentor.DoB).format();
-        console.log("dt" + date);
         const data = {
             "Name": this.state.mentor.Name,
             "PhoneNumber": this.state.mentor.PhoneNumber,
@@ -239,8 +245,6 @@ class EditInforForMentor extends React.Component {
             })
           });
         }
-        
-          console.log(this.state.mess.message)
 
     }
 
@@ -264,19 +268,20 @@ class EditInforForMentor extends React.Component {
         const { name, value } = e.target;
         //  this.state.mentor.DoB = this.convertDate(this.state.mentor.DoB);
         e.target.className = "form-control"
+        var temp = false;
         switch (name) {
             case "name":
                 this.state.mentor.Name = value
                 if (value.trim().length === 0) {
                     this.setState({
-                        btnMode: 'off',
+                        doneName: false,
                         name: " ",
                         errorName: "Name can not be blank"
                     })
                     e.target.className += " invalid"
                 } else if (value.trim().length < 6) {
                     this.setState({
-                        btnMode: 'off',
+                        doneName: false,
                         errorName: "Name contains more than 5 characters"
                     })
                     e.target.className += " invalid"
@@ -284,6 +289,7 @@ class EditInforForMentor extends React.Component {
                     this.setState({
                         doneName: true,
                     })
+                    temp = true;
                     e.target.className += " valid"
                 }
 
@@ -294,21 +300,21 @@ class EditInforForMentor extends React.Component {
                 const regexPhone = /^[0-9\b]+$/
                 if (value.trim().length === 0) {
                     this.setState({
-                        btnMode: 'off',
+                        donePhone: false,
                         phone: " ",
                         errorPhone: "Phone can not be blank"
                     })
                     e.target.className += " invalid"
                 } else if (!regexPhone.test(value.trim())) {
                     this.setState({
-                        btnMode: 'off',
+                        donePhone: false,
                         errorPhone: "Phone contains only numeric characters"
                     })
                     e.target.className += " invalid"
                 } else if (value.length !== 10) {
                     this.setState({
                       phone: this.state.PhoneNumber,
-                      btnMode: 'off',
+                      donePhone: false,
                       errorPhone: "Phone not contains 10 number",
                     })
                     e.target.className += " invalid"
@@ -316,6 +322,7 @@ class EditInforForMentor extends React.Component {
                     this.setState({
                         donePhone: true,
                     })
+                    temp = true;
                     e.target.className += " valid"
                 }
                 break;
@@ -323,16 +330,17 @@ class EditInforForMentor extends React.Component {
                 this.state.mentor.Email = value
                 e.target.className = "form-control"
                 const regexEmail = /^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i;
+                console.log(value, value.trim().length === 0)
                 if (value.trim().length === 0) {
                     this.setState({
-                        btnMode: 'off',
+                        doneEmail: false,
                         email: " ",
                         errorEmail: "Email can not be blank"
                     })
                     e.target.className += " invalid"
                 } else if (!regexEmail.test(value.trim())) {
                     this.setState({
-                        btnMode: 'off',
+                        doneEmail: false,
                         errorEmail: "Not a valid email address"
                     })
                     e.target.className += " invalid"
@@ -341,7 +349,7 @@ class EditInforForMentor extends React.Component {
                         doneEmail: true,
                         errorEmail: null
                     })
-
+                    temp = true;
                     e.target.className += " valid"
                 }
                 // console.log(this.state.dob)
@@ -352,6 +360,11 @@ class EditInforForMentor extends React.Component {
                 if (value.trim().length > 0) {
                     this.setState({
                         doneGender: true,
+                    })
+                    temp = true;
+                }else{
+                    this.setState({
+                        doneGender: false,
                     })
                 }
                 // console.log(this.state.dob)
@@ -372,6 +385,7 @@ class EditInforForMentor extends React.Component {
                         this.setState({
                           doneDOB: true,
                         })
+                        temp = true;
                         e.target.className += " valid"
                       }
                 }else {
@@ -396,22 +410,20 @@ class EditInforForMentor extends React.Component {
                     this.setState({
                         doneDepartment: true,
                     })
+                    temp = true;
                     e.target.className += " valid"
+                }else{
+                    this.setState({
+                        doneDepartment: false,
+                    })
                 }
                 break;
             default:
                 break;
         }
-        // if (this.state.doneName === true &&
-        //     this.state.donePhone === true &&
-        //     this.state.doneGender === true &&
-        //     this.state.doneEmail === true &&
-        //     this.state.doneDepartment === true &&
-        //     this.state.doneDOB === true) {
-        //     this.setState({
-        //         btnMode: "on"
-        //     })
-        // }
+        this.setState({
+            fisrt: false,
+        })
         this.handleGetEmailState()
 
     }
@@ -440,12 +452,12 @@ class EditInforForMentor extends React.Component {
                             <p>{this.state.errorEmail}</p>
 
                             <form >
-                                <MDBInput label="Name" name="name" value={this.state.mentor.Name} onChange={this.handleChangeValue.bind(this)} ></MDBInput>
-                                <MDBInput label="Phone" name="phone" value={this.state.mentor.PhoneNumber} onChange={this.handleChangeValue.bind(this)} />
-                                <MDBInput label="Email" name="email" value={this.state.mentor.Email} onChange={this.handleChangeValue.bind(this)} />
+                                <MDBInput label="Name" name="name" value={this.state.mentor.Name} onInput={this.handleChangeValue.bind(this)} ></MDBInput>
+                                <MDBInput label="Phone" name="phone" value={this.state.mentor.PhoneNumber} onInput={this.handleChangeValue.bind(this)} />
+                                <MDBInput label="Email" name="email" value={this.state.mentor.Email} onInput={this.handleChangeValue.bind(this)} />
                                 <FormControl fullWidth >
                                     {/* <InputLabel htmlFor="select-multiple">Gendor</InputLabel> */}
-                                    <Select fullWidth label="Gender" name="gender" value={this.state.mentor.Gender} onChange={this.handleChangeValue.bind(this)}>
+                                    <Select fullWidth label="Gender" name="gender" value={this.state.mentor.Gender} onInput={this.handleChangeValue.bind(this)}>
                                         <MenuItem value="Male">Male</MenuItem>
                                         <MenuItem value="Female">Female</MenuItem>
                                     </Select>
@@ -458,28 +470,52 @@ class EditInforForMentor extends React.Component {
                                     id="date"
                                     type="date"
                                     value={this.state.mentor.DoB}
-                                    onChange={this.handleChangeValue.bind(this)}
+                                    onInput={this.handleChangeValue.bind(this)}
                                     InputLabelProps={{
                                         shrink: true,
                                     }}
                                 />
 
-                                <MDBInput label="Department" name="department" value={this.state.mentor.Department} onChange={this.handleChangeValue.bind(this)} />
+                                <MDBInput label="Department" name="department" value={this.state.mentor.Department} onInput={this.handleChangeValue.bind(this)} />
                                 <div className="text-center mt-1-half">
 
 
-
-                                    <MDBBtn
-                                        className="mb-2 blue darken-2"
-                                        onClick={this.handlerCheckEmailExits}
-                                    // disabled="true"
-                                    >
-                                        Change
-                  <MDBIcon icon="send" className="ml-1" />
-                                    </MDBBtn>
-
-
-
+                                    {
+                                        (this.state.doneName === true &&
+                                        this.state.donePhone === true &&
+                                        this.state.doneGender === true &&
+                                        this.state.doneEmail === true &&
+                                        this.state.doneDepartment === true &&
+                                        this.state.doneDOB === true && 
+                                        !this.state.fisrt) ?
+                                        <MDBBtn
+                                            className="mb-2 blue darken-2"
+                                            onClick={this.handlerCheckEmailExits}
+                                        // disabled="true"
+                                        >
+                                            Change
+                                            <MDBIcon icon="send" className="ml-1" />
+                                        </MDBBtn>
+                                        : null
+                                    }
+                                    {
+                                        (this.state.doneName === false||
+                                            this.state.donePhone === false ||
+                                            this.state.doneGender === false ||
+                                            this.state.doneEmail === false ||
+                                            this.state.doneDepartment === false ||
+                                            this.state.doneDOB === false || 
+                                            this.state.fisrt) ?
+                                        <MDBBtn
+                                            className="mb-2 blue darken-2"
+                                            onClick={this.handlerCheckEmailExits}
+                                            disabled="true"
+                                        >
+                                            Change
+                                            <MDBIcon icon="send" className="ml-1" />
+                                        </MDBBtn>
+                                        : null
+                                    }
                                 </div>
                             </form>
                         </MDBCol>
