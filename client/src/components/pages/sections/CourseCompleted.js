@@ -98,10 +98,10 @@ class CourseCompleted extends React.Component {
           {this.state.showCourseTime ? 
             this.state.role === 2 ?
             this.state.courses.map((data, index) => {
-              return <ProgressBar key = {index} variant="success" now={data.currentDays} max= {data.maxdays} label={data.name +" "+ Math.round((data.currentDays/data.maxdays) * 100) +"%"}/>;
+              return <ProgressBar key = {index} variant="success" now={data.currentDays} max= {data.maxdays} label={data.name +" "+ (data.currentDays < data.maxdays ? (Math.round((data.currentDays/data.maxdays) * 100) +"%"):"")}/>;
             })
             : 
-            <ProgressBar key = {0} variant="success" now={this.state.course.currentDays} max= {this.state.course.maxdays} label={this.state.course.name +" "+ Math.round((this.state.course.currentDays/this.state.course.maxdays) * 100) +"%"}/>
+            <ProgressBar key = {0} variant="success" now={this.state.course.currentDays} max= {this.state.course.maxdays} label={this.state.course.name +" "+ (this.state.course.currentDays < this.state.course.maxdays ? Math.round((this.state.course.currentDays/this.state.course.maxdays) * 100) +"%" : "")}/>
             :
             <div className="alert alert-danger custom-top">
               Not courses here
