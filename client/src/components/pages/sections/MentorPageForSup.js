@@ -146,53 +146,49 @@ class MentorPageForSup extends React.Component {
     switch (kind) {
         case "errEmail":
             this.notificationDOMRef.current.addNotification({
-                title: "Error",
                 message: "Email exist",
                 type: "danger",
                 insert: "top",
                 container: "top-right",
                 animationIn: ["animated", "fadeIn"],
                 animationOut: ["animated", "fadeOut"],
-                dismiss: { duration: 2000 },
+                dismiss: { duration: 5000 },
                 dismissable: { click: true }
             });
             break;
         case "successUpdate":
             this.notificationDOMRef.current.addNotification({
-                title: "Success",
                 message: "Update mentor info successfully !",
                 type: "success", //success, danger, default, info, warning or custom
                 insert: "top",
                 container: "top-right",
                 animationIn: ["animated", "fadeIn"],
                 animationOut: ["animated", "fadeOut"],
-                dismiss: { duration: 2000 },
+                dismiss: { duration: 5000 },
                 dismissable: { click: true }
             });
             break;
         case "successAdd":
             this.notificationDOMRef.current.addNotification({
-                title: "Success",
                 message: "Add mentor info successfully !",
                 type: "success", //success, danger, default, info, warning or custom
                 insert: "top",
                 container: "top-right",
                 animationIn: ["animated", "fadeIn"],
                 animationOut: ["animated", "fadeOut"],
-                dismiss: { duration: 2000 },
+                dismiss: { duration: 5000 },
                 dismissable: { click: true }
             });
             break;
         case "successDelete":
             this.notificationDOMRef.current.addNotification({
-                title: "Success",
                 message: "Delete mentor info successfully !",
-                type: "danger", //success, danger, default, info, warning or custom
+                type: "success", //success, danger, default, info, warning or custom
                 insert: "top",
                 container: "top-right",
                 animationIn: ["animated", "fadeIn"],
                 animationOut: ["animated", "fadeOut"],
-                dismiss: { duration: 2000 },
+                dismiss: { duration: 5000 },
                 dismissable: { click: true }
             });
             break;
@@ -853,7 +849,7 @@ handlerCheckEmailExits= () => {
               }
               <FormControl fullWidth >
               <InputLabel htmlFor="select-multiple">Gender</InputLabel>
-              <Select fullWidth label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)}>
+              <Select label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)}>
                 <MenuItem value="Male">Male</MenuItem>
                 <MenuItem value="Female">Female</MenuItem>
               </Select>
