@@ -60,13 +60,21 @@ class InternPage extends React.Component {
       checkValidate: true,
       CourseName: ''
     };
+    this.errorName = "";
+    this.errorPhone = "";
+    this.errorEmail = "";
+    this.errorGender = "";
+    this.errorCourse = "";
+    this.errorDOB = "";
+    this.errorUniversity = "";
+    this.errorFaculty = "";
+
   }
 
-  addNotification(kind) {
+  addNotification(kind, mess = "") {
     switch (kind) {
       case "successAdd":
         this.notificationDOMRef.current.addNotification({
-          title: "Success",
           message: "Add course successfully !",
           type: "success", //success, danger, default, info, warning or custom
           message: "This is a success message!",
@@ -74,20 +82,19 @@ class InternPage extends React.Component {
           container: "top-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
-          dismiss: { duration: 5000 },
+          dismiss: { duration: 3000 },
           dismissable: { click: true }
         });
         break;
-      case "errorAdd":
+      case "error":
         this.notificationDOMRef.current.addNotification({
-          title: "Error",
-          message: "Email has been duplicated ",
+          message: mess,
           type: "danger",
           insert: "top",
           container: "top-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
-          dismiss: { duration: 5000 },
+          dismiss: { duration: 3000 },
           dismissable: { click: true }
         });
         break;
@@ -106,27 +113,25 @@ class InternPage extends React.Component {
         // break;
       case "successUpdate":
         this.notificationDOMRef.current.addNotification({
-          title: "Success",
           message: "Update course successfully !",
           type: "success", //success, danger, default, info, warning or custom
           insert: "top",
           container: "top-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
-          dismiss: { duration: 5000 },
+          dismiss: { duration: 3000 },
           dismissable: { click: true }
         });
         break;
       case "successDelete":
         this.notificationDOMRef.current.addNotification({
-          title: "Success",
           message: "Delete course successfully !",
           type: "success", //success, danger, default, info, warning or custom
           insert: "top",
           container: "top-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
-          dismiss: { duration: 5000 },
+          dismiss: { duration: 3000 },
           dismissable: { click: true }
         });
         break;
@@ -192,6 +197,14 @@ class InternPage extends React.Component {
       doneUniversity: false,
       doneFaculty: false,
     });
+    this.errorName = "";
+    this.errorPhone = "";
+    this.errorEmail = "";
+    this.errorGender = "";
+    this.errorCourse = "";
+    this.errorDOB = "";
+    this.errorUniversity = "";
+    this.errorFaculty = "";
     this.toggleIntern()
   }
 
@@ -239,7 +252,7 @@ class InternPage extends React.Component {
       this.addNotification("successAdd")
     }
     else {
-      this.addNotification("errorAdd")
+      this.addNotification("error","Email has been duplicated")
     }
 
   }
@@ -449,6 +462,14 @@ class InternPage extends React.Component {
         doneFaculty: true,
         first: true
       });
+      this.errorName = "";
+      this.errorPhone = "";
+      this.errorEmail = "";
+      this.errorGender = "";
+      this.errorCourse = "";
+      this.errorDOB = "";
+      this.errorUniversity = "";
+      this.errorFaculty = "";
       this.toggleIntern()
     }
   }
@@ -496,30 +517,31 @@ class InternPage extends React.Component {
           this.setState({
             btnMode: 'off',
             name: " ",
-            errorName: "Name can not be blank",
             doneName: false
           })
+          this.errorName = "Name can not be blank";
           e.target.className += " invalid"
         } else if (value.trim().length < 3) {
           this.setState({
             btnMode: 'off',
-            errorName: "Name contains more than 5 characters",
             doneName: false
           })
+          this.errorName= "Name contains more than 5 characters";
           e.target.className += " invalid"
         } else if (value.length > 50) {
           this.setState({
             name: this.state.name,
             btnMode: 'off',
-            errorName: "Name may be very long",
             doneName: false
           })
+          this.errorName= "Name may be very long";
           e.target.className += " invalid"
         }
         else {
           this.setState({
             doneName: true,
           })
+          this.errorName= "";
           e.target.className += " valid"
         }
         break;
@@ -531,37 +553,38 @@ class InternPage extends React.Component {
           this.setState({
             btnMode: 'off',
             // phone: " ",
-            errorPhone: "Phone can not be blank",
             donePhone: false
           })
+          this.errorPhone= "Phone can not be blank";
           e.target.className += " invalid"
         } else if (!regexPhone.test(value.trim())) {
           this.setState({
             btnMode: 'off',
-            errorPhone: "Phone contains only numeric characters",
             donePhone: false
           })
+          this.errorPhone= "Phone contains only numeric characters";
           e.target.className += " invalid"
         }
           else if (value.trim().length < 10) {
             this.setState({
               btnMode: 'off',
-              errorName: "Phone contains more than 10 number",
-              doneName: false
+              donePhone: false
             })
+            this.errorPhone= "Phone contains more than 10 number";
             e.target.className += " invalid"
           } else if (value.length > 11) {
             this.setState({
               name: this.state.name,
               btnMode: 'off',
-              errorPhone: "Phone contains more than 10 number",
               donePhone: false
             })
+            this.errorPhone= "Phone contains more than 10 number";
             e.target.className += " invalid"
         } else {
           this.setState({
             donePhone: true,
           })
+          this.errorPhone= "";
           e.target.className += " valid"
         }
         break;
@@ -573,29 +596,30 @@ class InternPage extends React.Component {
         this.setState({
           btnMode: 'off',
           email: " ",
-          errorEmail: "Email can not be blank",
           doneEmail: false
         })
+        this.errorEmail= "Email can not be blank";
         e.target.className += " invalid"
       } else if (!regexEmail.test(value.trim())) {
         this.setState({
           btnMode: 'off',
-          errorEmail: "Not a valid email address",
           doneEmail: false
         })
+        this.errorEmail= "Not a valid email address";
         e.target.className += " invalid"
       } else if (value.length > 50) {
         this.setState({
           email: this.state.email,
           btnMode: 'off',
-          errorName: "Email may be very long",
           doneEmail: false
         })
+        this.errorEmail= "Email may be very long";
         e.target.className += " invalid"
       } else {
         this.setState({
           doneEmail: true,
         })
+        this.errorEmail= "";
         e.target.className += " valid"
       }
       break;
@@ -605,10 +629,13 @@ class InternPage extends React.Component {
           this.setState({
             doneGender: true,
           })
+          this.errorGender= "";
         } else {
           this.setState({
             doneGender: false,
           })
+          e.target.className += " invalid"
+          this.errorGender= "Gender can not be blank";
         }
         break;
       case "course":
@@ -617,10 +644,13 @@ class InternPage extends React.Component {
           this.setState({
             doneCourse: true,
           })
+          this.errorCourse= "";
         } else {
           this.setState({
             doneCourse: false,
           })
+          e.target.className += " invalid"
+          this.errorCourse= "Course can not be blank";
         }
         break;
       case "dob":
@@ -633,31 +663,21 @@ class InternPage extends React.Component {
             this.setState({
               doneDOB: false,
             })
+            this.errorDOB= "The age of the intern must be over 17";
             e.target.className += " invalid"
           } else {
             this.setState({
               doneDOB: true,
             })
+            this.errorDOB= "";
             e.target.className += " valid"
           }
         } else {
           this.setState({
             doneDOB: false,
           })
+          this.errorDOB= "DOB can not be blank";
           e.target.className += " invalid"
-        }
-        break;
-      case "intern":
-        this.setState({ Intern: value })
-        if (value.trim().length > 0) {
-          this.setState({
-            doneIntern: true,
-          })
-          e.target.className += " valid"
-        } else {
-          this.setState({
-            doneIntern: false,
-          })
         }
         break;
       case "University":
@@ -666,11 +686,14 @@ class InternPage extends React.Component {
           this.setState({
             doneUniversity: true,
           })
+          this.errorUniversity= ""
           e.target.className += " valid"
         } else {
           this.setState({
             doneUniversity: false,
           })
+          e.target.className += " invalid"
+          this.errorUniversity= "University can not be blank";
         }
         break;
       case "Faculty":
@@ -679,25 +702,43 @@ class InternPage extends React.Component {
           this.setState({
             doneFaculty: true,
           })
+          this.errorFaculty= "";
           e.target.className += " valid"
         } else {
           this.setState({
             doneFaculty: false,
           })
+          e.target.className += " invalid"
+          this.errorFaculty= "Faculty can not be blank";
         }
         break;
       default:
         break;
     }
-    /*
-    doneName
-    donePhone
-    doneEmail
-    doneGender
-    doneDOB
-    doneUniversity
-    doneFaculty
-    */
+    if (this.errorName != "" ){
+      this.addNotification("error",this.errorName)
+    }
+    if (this.errorPhone!= "" ){
+      this.addNotification("error",this.errorPhone)
+    }
+    if (this.errorEmail!= "" ){
+      this.addNotification("error",this.errorEmail)
+    }
+    if (this.errorGender!= "" ){
+      this.addNotification("error",this.errorGender)
+    }
+    if (this.errorCourse!= "" ){
+      this.addNotification("error",this.errorCourse)
+    }
+    if (this.errorDOB!= "" ){
+      this.addNotification("error",this.errorDOB)
+    }
+    if (this.errorUniversity!= "" ){
+      this.addNotification("error",this.errorUniversity)
+    }
+    if (this.errorFaculty!= "" ){
+      this.addNotification("error",this.errorFaculty)
+    }
    if(this.state.first)
       this.setState({
         first: false
@@ -773,9 +814,9 @@ class InternPage extends React.Component {
                   shrink: true,
                 }}
               />
-              <TextField fullWidth="true" label="University" name="text" name="University" value={this.state.University} onInput={this.handleChangeValue.bind(this)} />
+              <MDBInput fullWidth="true" label="University" name="University" value={this.state.University} onInput={this.handleChangeValue.bind(this)} />
               <div className="text-center mt-1-half">
-                <TextField fullWidth label="Faculty" name="text" name="Faculty" value={this.state.Faculty} onInput={this.handleChangeValue.bind(this)} />
+                <MDBInput fullWidth label="Faculty" name="Faculty" value={this.state.Faculty} onInput={this.handleChangeValue.bind(this)} />
                 <div className="text-center mt-1-half">
 
                   {
