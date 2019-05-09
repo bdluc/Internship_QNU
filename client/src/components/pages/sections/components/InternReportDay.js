@@ -7,6 +7,7 @@ import React from "react";
   import ReactNotification from "react-notifications-component";
   import "react-notifications-component/dist/theme.css";
 import './scroll.css';
+import $ from 'jquery';
 // import AttendanceDashboard from './AttendanceDashboard';
 class InternReportDay extends React.Component {
   constructor() {
@@ -17,6 +18,8 @@ class InternReportDay extends React.Component {
         count:0,
         countReport:0,
         countReportWeek:0,
+        showAtendance: false,
+        position: "mentor"
     };
     this.showModal = this.showModal.bind(this)
     this.handleAgree = this.handleAgree.bind(this)
@@ -175,6 +178,33 @@ class InternReportDay extends React.Component {
     }
 
   }
+
+  getAttendance(){
+    $.ajax({
+      url: "http://localhost:8080/" + "attendance/"+this.state.user.ID+"/"+this.state.position+"/daily",
+      type: "GET",
+      success: function (response) {
+        console.log(response)
+        var cur = 0 ;
+        for (var i = 0 ; i < response.length ; i++)
+          if(response[i].Attendances.length !== 0)
+            cur += 1;
+          this.setState({
+              max: response.length,
+              cur: cur,
+              showAtendance: true
+          });
+      }.bind(this),
+      error: function (xhr, status) {
+          this.setState({
+              max: 0,
+              cur: 0,
+              showAtendance: false,
+          });
+      }.bind(this)
+    });
+  }
+
   Getreason(){
     const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
     fetch("http://localhost:8080/absents")
@@ -239,6 +269,7 @@ class InternReportDay extends React.Component {
       })  
   }
   componentDidMount(){
+    this.getAttendance();
     this.Getreason();
     this.GetIntern();
     this.GetReported();
@@ -253,25 +284,28 @@ class InternReportDay extends React.Component {
         <div class="left">  
         <Row className="mb-4">
         
-        <Col xl="4" md="4" className="mb-r">
-            <Card className="cascading-admin-card">            <div className="admin-up">
-             <Fa icon="money" className="primary-color"/>
-             <div className="data">
-               <p>Attendance</p>
-               <h4>
-                 <strong>1/4</strong>
-               </h4>
-             </div>
-           </div>
-           <CardBody>
-             <div className="progress">
-               <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="25" className="progress-bar bg-primary" role="progressbar"
-                style={{width: '25%'}}></div>
-            </div>
-            <CardText>Complete 25%</CardText>
-          </CardBody>
-          </Card>
+        {this.state.showAtendance ?
+          <Col xl="3" md="4" className="mb-r">
+            <Card className="cascading-admin-card">
+                <div className="admin-up">
+                <Fa icon="line-chart" className="warning-color"/>
+                  <div className="data">
+                    <p>Attendance</p>
+                    <h4>
+                      <strong>{this.state.cur}/{this.state.max}</strong>
+                    </h4>
+                  </div>
+                </div>
+                <CardBody>
+                  <div className="progress">
+                    <div aria-valuemax={this.state.max} aria-valuemin="0" aria-valuenow={this.state.cur} className="progress-bar bg-primary" role="progressbar"
+                      style={{width: (this.state.cur/this.state.max) * 100 +"%"}}></div>
+                  </div>
+                  <CardText>Complete {(this.state.cur/this.state.max) * 100 +"%"}</CardText>
+                </CardBody>
+              </Card>
           </Col>
+          :null}
            <Col xl="4" md="4" className="mb-r">
        <Card className="cascading-admin-card">
          <div className="admin-up">
