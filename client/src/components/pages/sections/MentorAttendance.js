@@ -30,13 +30,13 @@ class MentorAttendance extends React.Component {
             currentStudentId: "",
             rightArrowClass: "fa fa-chevron-right",
             leftArrowClass: "fa fa-chevron-left",
-            show: 0,
+            show: 1,
             showSuccess: false,
             showError: false,
             showData: true,
-            now: null
+            now: new Date()
         };
-        this.getStudents();
+        this.getInterns();
   }
 
   addNotification(kind, mess) {
@@ -71,7 +71,7 @@ class MentorAttendance extends React.Component {
   }
   
 
-  getStudents() {
+  getInterns() {
     $.ajax({
         url: SERVER_NAME + "attendance/" + this.state.mentorId +"/" + this.state.position,
         type: "GET",
@@ -82,7 +82,7 @@ class MentorAttendance extends React.Component {
                 });
             }
             else{
-                var students = this.getStudentsByCourse(response, "All");
+                var students = this.getInternsByCourse(response, "All");
                 this.setState({traineesData: response, 
                     currentStudentId: response[0].Id, 
                     courses: this.getCourses(response),
@@ -123,7 +123,7 @@ class MentorAttendance extends React.Component {
       return courses;
   }
 
-  getStudentsByCourse(traineeData, course){
+  getInternsByCourse(traineeData, course){
     var students = [];
     if(course === "All")
         for(var i = 0 ; i < traineeData.length ; i++)
@@ -137,40 +137,35 @@ class MentorAttendance extends React.Component {
     return students;
   }
 
+ // handle change attendance
  handleCellChange(object){
       var check = false;
-      if(object.ID === "now" ){
-          console.log(object)
+      if(object.ID === "N.A" ){
          $.ajax({url:SERVER_NAME + 'attendance',
             type: "POST",
             async: false,
-            data: JSON.stringify({"InternID": object.InternID, "Status": object.Status}),
+            data: JSON.stringify({"InternID": object.InternID,"Date" : object.Date, "Status": object.Status}),
             success: function (response) {
-            if(response.status === "created"){
-                var intern = this.getStudentById(object.InternID);
-                intern.Attendances.push(response.attendance)
-                intern = this.getdailyStudentById(object.InternID);
-                intern.Attendances.push(response.attendance)
-                
-                var month = this.getCurrentMonth(this.state.currentStudentId);
-                this.setState({
-                    tableData: this.loadTableData(this.state.currentStudentId, month.MonthNow, month.YearNow),
-                    chartData: this.loadChartData(this.state.currentStudentId, month.MonthNow, month.YearNow),
-
-                });
-                check = true
-            }
-            else {
-                check = false
-            }
-        }.bind(this),
+                if(response.status === "created"){
+                    var intern = this.getInternById(object.InternID);
+                    intern.Attendances.push(response.attendance);
+                    intern = this.getdailyStudentById(object.InternID);
+                    intern.Attendances.push(response.attendance);
+                    var month = this.getCurrentMonth(this.state.currentStudentId);
+                    check = true
+                }
+                else {
+                    check = false
+                }
+            }.bind(this),
         error: function (xhr, status) {
-            this.setState({
-                showSuccess: false, showError: true
-            });
             check = false
         }.bind(this)
     });
+    if(check)
+        this.addNotification("successUpdate", "Create attendance successfully");
+    else
+        this.addNotification("errorUpdate", "Could not create attendance")
     }else{
         $.ajax({
             url: SERVER_NAME + "attendance",
@@ -179,16 +174,15 @@ class MentorAttendance extends React.Component {
             data: JSON.stringify(object),
             success: function (response) {
                 if(response.status === "updated"){
-                    this.setState({
-                        showSuccess: true, 
-                        showError: false
-                    });
+                    var intern = this.getInternById(object.InternID);
+                    this.replaceAttendancebyId(intern.Attendances, object.ID,  object.Status)
+                    intern = this.getdailyStudentById(object.InternID);
+                    this.replaceAttendancebyId(intern.Attendances, object.ID,  object.Status)
+                    console.log(intern)
+                    var month = this.getCurrentMonth(this.state.currentStudentId);
                     check = true
                 }
                 else{
-                    this.setState({
-                        showSuccess: false, showError: true
-                    });
                     check = false
                 }
             }.bind(this),
@@ -199,16 +193,13 @@ class MentorAttendance extends React.Component {
                 check = false
             }.bind(this)
         });
+        if(check)
+            this.addNotification("successUpdate", "Update attendance successfully");
+        else
+            this.addNotification("errorUpdate", "Could not update attendance")
     }
-    if(check)
-        this.addNotification("successUpdate", "Update attendance successfully");
-    else
-        this.addNotification("errorUpdate", "Could not update attendance")
     return check;
   }
-
-
-
   onSelectChange(event) {
     var curValue = event.target.value;
     var month = this.getCurrentMonth(this.state.currentStudentId);
@@ -218,7 +209,7 @@ class MentorAttendance extends React.Component {
                 tableData: this.loadTableData(this.state.currentStudentId, month.MonthNow, month.YearNow),
                 show: 0
             });
-        } else if(curValue === "Daily"){
+        } else if(curValue === "Today"){
             this.loadDailyData()
             this.setState({
                 show: 1
@@ -235,7 +226,7 @@ class MentorAttendance extends React.Component {
 
   onSelectStudentChange(event){
     var studentId = event.target.value;
-    var traineeData = this.getStudentById(studentId);
+    var traineeData = this.getInternById(studentId);
     var month = this.getCurrentMonth(traineeData.Id)
     this.setState({
         currentStudentId: traineeData.Id,
@@ -251,13 +242,14 @@ class MentorAttendance extends React.Component {
 
   onSelectCourseChange(event){
         var curValue = event.target.value;
-        var students = this.getStudentsByCourse(this.state.traineesData, curValue);
-        var traineeData = this.getStudentById(students[0].id);
+        var students = this.getInternsByCourse(this.state.traineesData, curValue);
+        var traineeData = this.getInternById(students[0].id);
         var month = this.getCurrentMonth(students[0].id)
         this.setState({
             currentStudentId: traineeData.Id,
             students: students,
             currentName: traineeData.Name,
+            currentCourse: curValue,
             months: this.createMonthsData(traineeData.StartDate, traineeData.EndDate),
             currentMonth: month.Month,
             tableData: this.loadTableData(traineeData.Id, month.MonthNow, month.YearNow),
@@ -328,6 +320,7 @@ class MentorAttendance extends React.Component {
     return days;
   }
 
+  // load attendance when change month
   loadMonthData(id, monthValue, type) {
     var curMonth = monthValue.substring(0, monthValue.lastIndexOf(" "));
     var curYear = monthValue.substring(monthValue.lastIndexOf(" "));
@@ -340,6 +333,7 @@ class MentorAttendance extends React.Component {
     }
   }
 
+ // load attendances with calendar
   loadTableData(id, month, year) {
     var days = this.getDaysInMonth(month, year);
     var tableData = [];
@@ -362,9 +356,7 @@ class MentorAttendance extends React.Component {
 
         if (weekDay !== "Sat" && weekDay !== "Sun") {
             var attendanceData = this.getAttendanceData(id, parseInt(day), month, year);
-            if (attendanceData === "N.A")
-                rowData[index].attendance = "N.A"
-            else {
+            if (attendanceData !== "N.A"){
                 rowData[index].attendance = attendanceData.attendance;
                 rowData[index].id = attendanceData.id;
                 rowData[index].InternID = attendanceData.InternID;
@@ -380,6 +372,7 @@ class MentorAttendance extends React.Component {
     return tableData;
   }
 
+  //// load attendances today
   loadDailyData(){
     $.ajax({
         url: SERVER_NAME + "attendance/"+this.state.mentorId+"/"+this.state.position+"/daily",
@@ -399,6 +392,7 @@ class MentorAttendance extends React.Component {
     });
   }
 
+  // load attendances with chart
   loadChartData(id, month, year) {
     var arr = [];
     var ppCount, pCount, paCount , aCount, arCount, a2rCount ,naCount;
@@ -449,6 +443,7 @@ class MentorAttendance extends React.Component {
     return arr;
   }
   
+  // create week attendances
   createEmptyRow() {
     var rowData = [];
     for(var i = 0; i < 7; i++){
@@ -457,7 +452,7 @@ class MentorAttendance extends React.Component {
             InternID:"",
             fullDate:"",
             date: "",
-            attendance: "N.A",
+            attendance: "",
             weekDay: this.getWeekDay(i)
         });
     }
@@ -469,7 +464,7 @@ class MentorAttendance extends React.Component {
       return weekDays[num];
   }
 
-  getStudentById(id) {
+  getInternById(id) {
       for (var i = 0; i < this.state.traineesData.length; i++) {
           if (this.state.traineesData[i].Id === id) {
               return this.state.traineesData[i];
@@ -487,11 +482,19 @@ class MentorAttendance extends React.Component {
     }
 
     return null;
-}
-  
+  }
 
+  replaceAttendancebyId(attendances, id, status ){
+    for (var i = 0; i < attendances.length; i++) {
+        if (attendances[i].ID === id) {
+            attendances[i].Status = status;
+        }
+    }
+  }
+  
+  //get attendance of date
   getAttendanceData(id, day, month, year) {
-    var traineeData = this.getStudentById(id);
+    var traineeData = this.getInternById(id);
     if (traineeData === null) {
         return "N.A";
     }
@@ -525,11 +528,15 @@ class MentorAttendance extends React.Component {
                     }  
                 }
             }
-            if(mid.getTime() === today.getTime()){
+            
+            // get day doesnt have attendance
+            if(mid.getTime() <= today.getTime()){
+                var month = mid.getMonth() + 1
+                var date = mid.getDate()
                 return {
-                    id: "now",
+                    id: "N.A",
                     InternID: id,
-                    fullDate: "",
+                    fullDate: mid.getFullYear() + "-" + (( month < 10) ? "0" + month : month)+ "-" + (( date < 10) ? "0" + date : date) + "T00:00:00+07:00",
                     attendance: "",
                 }
             }
@@ -543,7 +550,7 @@ class MentorAttendance extends React.Component {
   }
 
  
-
+  //create day in month
   createMonthsData(startDate, endDate) {
     var startMonth, startYear, endMonth, endYear;
     startMonth = this.getMonth(startDate);
@@ -583,11 +590,7 @@ class MentorAttendance extends React.Component {
       return parseInt(strDate.substring(8, 10));
   }
 
-  getSession(strDate) {
-    return parseInt(strDate.substring(11, 13));
-}
-
-
+  //get month string
   getMonthString(iMonth) {
       var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
       if (!(iMonth >= 1 && iMonth <= 12)) {
@@ -596,8 +599,9 @@ class MentorAttendance extends React.Component {
       return months[iMonth - 1];
   }
 
+  // get current string month with year and number month, year
   getCurrentMonth(id){
-    var trainee = this.getStudentById(id);
+    var trainee = this.getInternById(id);
     var now = new Date()
         var monthNow = now.getMonth();
         var yearNow = now.getFullYear();
@@ -625,8 +629,8 @@ class MentorAttendance extends React.Component {
             <div>
                 <div>
                     <select className="browser-default custom-select custom-dropdown" onChange={this.onSelectChange.bind(this)}>      
+                        <option>Today</option> 
                         <option>Calendar</option>
-                        <option>Daily</option> 
                         <option>Chart</option>         
                     </select>
                     {this.state.show === 1 ? 
@@ -643,12 +647,16 @@ class MentorAttendance extends React.Component {
 
                     {this.state.show !== 1 ?
                     <span>
-                        <select className="browser-default custom-select custom-dropdown custom-margin" onChange={this.onSelectCourseChange.bind(this)}>      
+                        <span className="browser-default custom-margin2">Course</span>
+                        <select className="custom-select custom-dropdown custom-margin" onChange={this.onSelectCourseChange.bind(this)}>      
+                            <option value='course' disabled>Course</option>
                             {this.state.courses.map(function(data, index){
                                 return <option key={index} value={data}>{data}</option>;
-                            })}      
+                            })}
                         </select>
+                        <span className="browser-default custom-margin2">Intern</span>
                         <select className="browser-default custom-select custom-dropdown custom-margin" value={this.state.currentStudentId} onChange={this.onSelectStudentChange.bind(this)}>      
+                            <option value='intern' disabled>Select</option>
                             {this.state.students.map(function(data, index){
                                     return <option key={index} value={data.id}>{data.name}</option>;
                             })}      

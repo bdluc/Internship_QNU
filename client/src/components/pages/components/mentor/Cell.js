@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Modal, ModalBody, ModalHeader, ModalFooter } from 'mdbreact';
+import { Button, Modal, ModalBody, ModalHeader, ModalFooter, Container, Row, Col } from 'mdbreact';
 import '../attendance.css';
 import $ from 'jquery';
 
@@ -50,8 +50,9 @@ class Cell extends React.Component {
     }
 
     onCellEnter() {
-        var date = new Date().getDate()
-        if (this.state.iconClass !== "" || this.state.date == date ) {
+        var fullDate = this.props.cellData.fullDate;
+        var attendanceID  = this.props.cellData.id;
+        if (this.state.iconClass !== "" || (attendanceID === "N.A" && fullDate !== "")  ) {
             this.setState({showEdit: true});
         }
         
@@ -62,22 +63,10 @@ class Cell extends React.Component {
     }
 
     onSelectChange(event){
-        if(this.state.date == this.state.now.getDate() && event.target.value == "AR")
-            if(this.state.selectDefaultValue === "PA")
-                this.setState({
-                    iconClass: this.getIconClass("P"),
-                    selectCurrentValue: "P"
-                });
-            else
-                    this.setState({
-                        iconClass: this.getIconClass("AR"),
-                        selectCurrentValue: "AR"
-                });
-        else 
-            this.setState({
-                iconClass: this.getIconClass(event.target.value),
-                selectCurrentValue : event.target.value
-            });
+        this.setState({
+            iconClass: this.getIconClass(event.target.value),
+            selectCurrentValue : event.target.value
+        });
     }
 
     onEditHover() {
@@ -89,16 +78,10 @@ class Cell extends React.Component {
     }
 
     onEditClick() {
-        if(this.state.date == this.state.now.getDate())
-            if(this.state.selectDefaultValue === "PA")
+        if(this.props.cellData.id === "N.A")
                 this.setState({
-                    iconClass: this.getIconClass("P"),
-                    selectCurrentValue: "P"
-                });
-            else
-                    this.setState({
-                        iconClass: this.getIconClass("AR"),
-                        selectCurrentValue: "AR"
+                    iconClass: this.getIconClass("PA"),
+                    selectCurrentValue: "PA"
                 });
         this.setState({
             showModal: true
@@ -115,21 +98,37 @@ class Cell extends React.Component {
     }
 
     onUpdateClick() {
-            var object = {
-                ID: this.props.cellData.id,
-                Date: this.props.cellData.fullDate,
-                InternID: this.props.cellData.InternID,
-                Status: this.state.selectCurrentValue,
-                IsDeleted: false
-            };
-            if (this.state.selectCurrentValue !== this.state.selectDefaultValue) {
-
-                var isChange = this.props.onCellChange(object);
-                if(isChange)
-                    this.setState({showModal: false, showEdit: false, selectDefaultValue: this.state.selectCurrentValue});   
-            }
+        var object = {
+            ID: this.props.cellData.id,
+            Date: this.props.cellData.fullDate,
+            InternID: this.props.cellData.InternID,
+            Status: this.state.selectCurrentValue,
+            IsDeleted: false
+        };
+        console.log(object)
+        // run when current value != default value 
+        if (this.state.selectCurrentValue !== this.state.selectDefaultValue) {
+            var isChange = this.props.onCellChange(object);
+            if(isChange)
+                this.setState({showModal: false, showEdit: false, selectDefaultValue: this.state.selectCurrentValue});   
+        }
     }
 
+    getYear(strDate) {
+        return parseInt(strDate.substring(0, 4));
+      }
+    
+      getMonth(strDate) {
+          return parseInt(strDate.substring(5, 7));
+      }
+    
+      getDay(strDate) {
+          return parseInt(strDate.substring(8, 10));
+      }
+
+      toggleIntern = () => {
+        
+      }
     render() {
         return (
             <td id={this.state.id} onMouseEnter={this.onCellEnter.bind(this)} onMouseLeave={this.onCellDeHover.bind(this)}>
@@ -140,33 +139,59 @@ class Cell extends React.Component {
                 onMouseOver={this.onEditHover.bind(this)}
                 onMouseLeave={this.onEditDeHover.bind(this)}
                 onClick={this.onEditClick.bind(this)}></i> : null}
-                <Modal isOpen={this.state.showModal}>
+                <Modal isOpen={this.state.showModal} size="lg" toggle={this.toggleIntern}>
                     <ModalHeader>Edit</ModalHeader>
                     <ModalBody>
-                        {this.state.date == this.state.now.getDate() ?
-                            <select className="browser-default custom-select td-dropdown" value={this.state.selectCurrentValue} onChange={this.onSelectChange.bind(this)}>
-                                <option value="AR" className="custom-icon-blue custom-bold">AR</option>
-                                <option value="ARR" className="custom-icon-green custom-bold">ARR</option>
-                                <option value="A" className="custom-icon-red custom-bold">A</option>
-                            </select>
-                        :
-                            <select className="browser-default custom-select td-dropdown" value={this.state.selectCurrentValue} onChange={this.onSelectChange.bind(this)}>
-                                { this.state.now.getHours() > 13 || this.state.date != this.state.now.getDate()? 
-                                <option value="PP" className="fa fa-check custom-icon-green custom-bold">PP</option>
-                                : null}
-                                { this.state.date != this.state.now.getDate()?
-                                <option value="P" className="custom-icon-blue custom-bold">P</option>
-                                : null}
-                                <option value="PA" className="custom-icon-red custom-bold">PA</option>
-                                <option value="AR" className="custom-icon-blue custom-bold">AR</option>
-                                <option value="ARR" className="custom-icon-green custom-bold">ARR</option>
-                                <option value="A" className="custom-icon-red custom-bold">A</option>
-                            </select>
-                        }
+                        <Container>
+                            <Row className="show-grid">
+                                    <Col xs={12} md={7} className="custom-align-left">
+                                    <Container>
+                                        <Row>
+                                            <Col xs md={2} className="custom-icon-green custom-bold">PP</Col>
+                                            <Col>: Present full day</Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs md={2} className="custom-icon-blue custom-bold">P</Col>
+                                            <Col>: Present 1 session, the rest is absent with reason</Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs md={2} className="custom-icon-red custom-bold">PA</Col>
+                                            <Col>: Present 1 session, the rest is absent</Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs md={2} className="custom-icon-green custom-bold">ARR</Col>
+                                            <Col>: Absent full day with reason</Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs md={2} className="custom-icon-blue custom-bold">AR</Col>
+                                            <Col>: Absent with reason 1 session</Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs md={2} className="custom-icon-red custom-bold">A</Col>
+                                            <Col>: Absent full day</Col>
+                                        </Row>
+                                    </Container>
+                                    </Col>
+                                    <Col xs={12} md={5} className = "center">
+                                        <select className="browser-default custom-select td-dropdown" value={this.state.selectCurrentValue} onChange={this.onSelectChange.bind(this)}>
+                                            { this.state.now.getHours() > 13 || this.state.date != this.state.now.getDate()? 
+                                            <option value="PP" className="custom-icon-green custom-bold">PP</option>
+                                            : null}
+                                            { this.state.now.getHours() > 13 || this.state.date != this.state.now.getDate()?
+                                            <option value="P" className="custom-icon-blue custom-bold">P</option>
+                                            : null}
+                                            <option value="PA" className="custom-icon-red custom-bold">PA</option>
+                                            <option value="ARR" className="custom-icon-green custom-bold">ARR</option>
+                                            <option value="AR" className="custom-icon-blue custom-bold">AR</option>
+                                            <option value="A" className="custom-icon-red custom-bold">A</option>
+                                        </select>
+                                    </Col>
+                            </Row>
+                        </Container>
                     </ModalBody>
                     <ModalFooter>
                         <Button color="secondary" onClick={this.onCloseClick.bind(this)}>Close</Button>
-                        <Button color="primary" onClick={this.onUpdateClick.bind(this)}>Update</Button>
+                        <Button color="primary" onClick={this.onUpdateClick.bind(this)}>{this.props.cellData.id === "N.A" ? "Create" : "Update" }</Button>
                     </ModalFooter>
                 </Modal>
             </td>

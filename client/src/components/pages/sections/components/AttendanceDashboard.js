@@ -80,7 +80,7 @@ class AttendanceDashboard extends React.Component {
     constructor() {
     super();
     this.state = {
-        date: '2019-04-15',
+        date: '',
         view: '31',
         labelWidth: 0,
         dataDash : [
@@ -116,7 +116,7 @@ class AttendanceDashboard extends React.Component {
     }
     
     componentDidMount() {
-        this.GetDashBoard()
+        // this.GetDashBoard()
       }
     handleChangeValue = (e) => {
         const { name, value } = e.target;

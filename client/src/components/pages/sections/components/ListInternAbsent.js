@@ -203,7 +203,7 @@ class ListInternAbsent extends React.Component {
                                 </div>
                                 <label>
                                     {/* <marquee > */}
-                                    <i>Intern Absent:</i>
+                                    <i>Intern Absent To Day:</i>
                                     {this.state.internName.map((value, k) => {
                                         return (<span> <b> {value.Name},   </b></span>)
                                     })

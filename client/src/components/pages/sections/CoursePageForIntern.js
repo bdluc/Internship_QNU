@@ -9,10 +9,9 @@ import {
   createBrowserHistory,
 } from 'history';
 
-
-class CoursePage extends React.Component {
-  constructor(props) {
-    super(props);
+class CoursePageForIntern extends React.Component {
+  constructor() {
+    super();
     this.state = {
       courseName: "",
       startDateCourse: "",
@@ -20,17 +19,11 @@ class CoursePage extends React.Component {
       detailList: [],
       mentorList: [],
       mentorNameList: [],
-      objectvalid : "",
-      traniningvalid : "",
-      progressvalid : "",
-      notevalid : "",
       user: JSON.parse(sessionStorage.getItem('user')),
     };
 
   }
-  static defaultProps = {
-    showConditionalColumn: true
-  }
+
   // Get data of course from DB
   GetCourse(id) {
     const history = createBrowserHistory();
@@ -43,8 +36,7 @@ class CoursePage extends React.Component {
           response.json()
             .then(result => {
               let DetailSchedule = []
-              let cnt = 0;
-        
+              let cnt = 0
               result.Detail.map(row => {
                 DetailSchedule.push([cnt, row.TrainingOutline, row.Content, row.DurationPlan, row.DurationActual, row.Objectives, row.TrainingMethod,
                   (new Date(row.StartDate)).toLocaleDateString('en-US', DATE_OPTIONS), (new Date(row.EndDate)).toLocaleDateString('en-US', DATE_OPTIONS),
@@ -52,7 +44,6 @@ class CoursePage extends React.Component {
                 cnt++
                 return DetailSchedule
               })
-              
               this.setState({
                 courseName: result.CourseName,
                 // Format date time
@@ -67,6 +58,7 @@ class CoursePage extends React.Component {
       )
 
   }
+
   // Show modal popup to edit data
   toggle = () => {
     this.setState({
@@ -248,7 +240,6 @@ class CoursePage extends React.Component {
       options: {
         filter: true,
         sort: false,
-        display: "true",
       }
     },
     {
@@ -270,7 +261,6 @@ class CoursePage extends React.Component {
       options: {
         filter: true,
         sort: false,
-        display : "true",
       }
     },
     {
@@ -278,7 +268,6 @@ class CoursePage extends React.Component {
       options: {
         filter: true,
         sort: false,
-        display : "true",
       }
     },
   ]
@@ -381,8 +370,7 @@ class CoursePage extends React.Component {
   }
   componentWillMount() {
     this.handlerListMentor()
-    const { match: { params } } = this.props
-    this.GetCourse(params.id)
+    this.handlerGetIntern()
   }
   handlerListMentor() {
     fetch('http://localhost:8080/mentors')
@@ -397,7 +385,13 @@ class CoursePage extends React.Component {
         })
       });
   }
-
+  handlerGetIntern() {
+    fetch('http://localhost:8080/intern/'+this.state.user.ID)
+      .then(response => response.json())
+      .then(result => {
+        this.GetCourse(result.CourseID) 
+      });
+  }
   addDetailCourse = () => {
     this.setState({
       trainingOutline: "",
@@ -415,41 +409,6 @@ class CoursePage extends React.Component {
       isUpdate: false
     });
     this.toggle()
-  }
-
-  handlerAddCourse = (e) => {
-    e.preventDefault();
-
-    const { match: { params } } = this.props
-
-    var moment = require('moment');
-    const std = moment.utc(this.state.startDate).format(); //=> "2013-10-06T00:00:00+00:00"
-    const etd = moment.utc(this.state.endDate).format();
-
-    const data = {
-      "TrainingOutline": this.state.trainingOutline,
-      "Content": this.state.content,
-      "DurationPlan": this.state.durationPlan,
-      "DurationActual": this.state.durationActual,
-      "Objectives": this.state.objectives,
-      "TrainingMethod": this.state.trainingMethod,
-      "StartDate": std,
-      "EndDate": etd,
-      "Progress": this.state.progress,
-      "Note": this.state.note
-    }
-    fetch("http://localhost:8080/coursedetailindex/" + params.id,
-      {
-        method: "PUT",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      })
-      .then(this.GetCourse(params.id))
-    this.toggle()
-
   }
 
   handlerUpdate = (e) => {
@@ -483,15 +442,6 @@ class CoursePage extends React.Component {
       .then(this.GetCourse(params.id))
     this.toggle()
   }
-  handlerDelete = () => {
-    const { match: { params } } = this.props
-    fetch("http://localhost:8080/coursedetailindex/" + params.id + "/" + this.state.cnt, {
-      method: 'DELETE',
-      mode: 'cors'
-    })
-      .then(this.GetCourse(params.id))
-    this.toggle()
-  }
 
   render() {
     return (
@@ -503,14 +453,6 @@ class CoursePage extends React.Component {
                 <h3 className="h3 text-white"><strong>Schedule Training</strong></h3>
               </View>
               <CardBody>
-                {
-                  this.state.isIntern === false &&
-                  <MDBBtn
-                    className="mb-3 blue darken-2"
-                    onClick={this.addDetailCourse}>
-                    Add
-                     </MDBBtn>
-                }
                 <hr></hr>
                 <h4 className="mt-2 text-center">Course Name: {this.state.courseName}</h4>
                 <h5 className="text-center">From: {this.state.startDateCourse} To: {this.state.endDateCourse}</h5>
@@ -557,17 +499,17 @@ class CoursePage extends React.Component {
           </MDBModalHeader>
           <form>
             <MDBModalBody>
-              <MDBInput label="Training Outline" icon="subway" name="trainingOutline" value={this.state.trainingOutline} onChange={this.handleChangeValue.bind(this)} />
+              <MDBInput label="Training Outline" icon="subway" name="trainingOutline" value={this.state.trainingOutline} onChange={this.handleChangeValue.bind(this)} disabled />
               {
                 this.state.trainingOutlineValid === 1 &&
                 <div className="alert alert-danger custom-top"> Training outline must be not blank</div>
               }
-              <MDBInput label="Content" icon="clipboard" name="content" value={this.state.content} onChange={this.handleChangeValue.bind(this)} />
+              <MDBInput label="Content" icon="clipboard" name="content" value={this.state.content} onChange={this.handleChangeValue.bind(this)} disabled/>
               {
                 this.state.contentValid === 1 &&
                 <div className="alert alert-danger custom-top"> Content must be not blank</div>
               }
-              <MDBInput label="Duration Plan" icon="clock-o" name="durationPlan" value={this.state.durationPlan} onChange={this.handleChangeValue.bind(this)} />
+              <MDBInput label="Duration Plan" icon="clock-o" name="durationPlan" value={this.state.durationPlan} onChange={this.handleChangeValue.bind(this)} disabled/>
               {
                 this.state.dplanvalid === 1 &&
                 <div className="alert alert-danger custom-top"> Duration Plan must be not blank</div>
@@ -576,7 +518,7 @@ class CoursePage extends React.Component {
                   this.state.dplanvalid === 2 &&
                   <div className="alert alert-danger custom-top"> Duration Plan must be number</div>
               } */}
-              <MDBInput label="Duration Actual" icon="clock-o" name="durationActual" value={this.state.durationActual} onChange={this.handleChangeValue.bind(this)} />
+              <MDBInput label="Duration Actual" icon="clock-o" name="durationActual" value={this.state.durationActual} onChange={this.handleChangeValue.bind(this)} disabled />
               {
                 this.state.dactualvalid === 1 &&
                 <div className="alert alert-danger custom-top"> Duration Actual must be not blank</div>
@@ -585,12 +527,12 @@ class CoursePage extends React.Component {
                   this.state.dactualvalid === 2 &&
                   <div className="alert alert-danger custom-top"> Duration Actual must be number</div>
               } */}
-              <MDBInput label="Objectives" icon="paper-plane" name="objectives" value={this.state.objectives} onChange={this.handleChangeValue.bind(this)} />
-              <MDBInput label="Training Method" icon="suitcase" name="trainingmethod" value={this.state.trainingMethod} onChange={this.handleChangeValue.bind(this)} />
+              <MDBInput label="Objectives" icon="paper-plane" name="objectives" value={this.state.objectives} onChange={this.handleChangeValue.bind(this)} disabled/>
+              <MDBInput label="Training Method" icon="suitcase" name="trainingmethod" value={this.state.trainingMethod} onChange={this.handleChangeValue.bind(this)} disabled/>
               {/* <MDBInput label="Start Date" icon="calendar" iconClass="dark-grey" name="startdate" value={this.state.startDate} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput label="End Date" icon="calendar" name="enddate" value={this.state.endDate} onChange={this.handleChangeValue.bind(this)} /> */}
               <label>Start Date</label>
-              <input type="date" className="form-control" name="startDate" value={this.state.startDate} onChange={this.handleChangeValue.bind(this)} />
+              <input type="date" className="form-control" name="startDate" value={this.state.startDate} onChange={this.handleChangeValue.bind(this)} disabled/>
               {
                 this.state.stdvalid === 1 &&
                 <div className="alert alert-danger custom-top"> Start date is undefined</div>
@@ -604,7 +546,7 @@ class CoursePage extends React.Component {
                 <div className="alert alert-danger custom-top"> Start date must be not after Course's EndDate</div>
               }
               <label>End Date</label>
-              <input type="date" className="form-control" name="endDate" value={this.state.endDate} onChange={this.handleChangeValue.bind(this)} />
+              <input type="date" className="form-control" name="endDate" value={this.state.endDate} onChange={this.handleChangeValue.bind(this)} disabled/>
               {
                 this.state.etdvalid === 1 &&
                 <div className="alert alert-danger custom-top"> End date is undefined</div>
@@ -621,16 +563,6 @@ class CoursePage extends React.Component {
               <MDBInput label="Note" icon="address-book" name="note" value={this.state.note} onChange={this.handleChangeValue.bind(this)} />
               <div className="text-center mt-1-half">
                 {
-                  this.state.isUpdate === false &&
-                  <MDBBtn
-                    className="mb-2 blue darken-2"
-                    onClick={this.handlerAddCourse}
-                  >
-                    Create
-                  <MDBIcon icon="send" className="ml-1" />
-                  </MDBBtn>
-                }
-                {
                   this.state.isUpdate &&
                   <MDBBtn
                     className="mb-2 blue darken-2"
@@ -640,16 +572,8 @@ class CoursePage extends React.Component {
                   <MDBIcon icon="send" className="ml-1" />
                   </MDBBtn>
                 }
-                {
-                  this.state.isUpdate &&
-                  <MDBBtn
-                    className="mb-2 blue darken-2"
-                    onClick={this.handlerDelete}>
-                    delete
-                  <MDBIcon icon="trash" className="ml-1" />
-                  </MDBBtn>
-                }
               </div>
+              
             </MDBModalBody>
           </form>
         </MDBModal>
@@ -660,4 +584,4 @@ class CoursePage extends React.Component {
 
 }
 
-export default CoursePage;
+export default CoursePageForIntern;
