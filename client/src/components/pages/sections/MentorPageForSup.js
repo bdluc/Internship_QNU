@@ -146,7 +146,6 @@ class MentorPageForSup extends React.Component {
     switch (kind) {
         case "errEmail":
             this.notificationDOMRef.current.addNotification({
-                title: "Error",
                 message: "Email exist",
                 type: "danger",
                 insert: "top",
@@ -159,7 +158,6 @@ class MentorPageForSup extends React.Component {
             break;
         case "successUpdate":
             this.notificationDOMRef.current.addNotification({
-                title: "Success",
                 message: "Update mentor info successfully !",
                 type: "success", //success, danger, default, info, warning or custom
                 insert: "top",
@@ -172,7 +170,6 @@ class MentorPageForSup extends React.Component {
             break;
         case "successAdd":
             this.notificationDOMRef.current.addNotification({
-                title: "Success",
                 message: "Add mentor info successfully !",
                 type: "success", //success, danger, default, info, warning or custom
                 insert: "top",
@@ -185,9 +182,8 @@ class MentorPageForSup extends React.Component {
             break;
         case "successDelete":
             this.notificationDOMRef.current.addNotification({
-                title: "Success",
                 message: "Delete mentor info successfully !",
-                type: "danger", //success, danger, default, info, warning or custom
+                type: "success", //success, danger, default, info, warning or custom
                 insert: "top",
                 container: "top-right",
                 animationIn: ["animated", "fadeIn"],
