@@ -628,7 +628,8 @@ class MentorAttendance extends React.Component {
             {this.state.showData ?
             <div>
                 <div>
-                    <select className="browser-default custom-select custom-dropdown" onChange={this.onSelectChange.bind(this)}>      
+                    <span className="browser-default custom-margin2">Mode</span>
+                    <select className="browser-default custom-select custom-dropdown custom-margin" onChange={this.onSelectChange.bind(this)}>      
                         <option>Today</option> 
                         <option>Calendar</option>
                         <option>Chart</option>         
@@ -648,15 +649,13 @@ class MentorAttendance extends React.Component {
                     {this.state.show !== 1 ?
                     <span>
                         <span className="browser-default custom-margin2">Course</span>
-                        <select className="custom-select custom-dropdown custom-margin" onChange={this.onSelectCourseChange.bind(this)}>      
-                            <option value='course' disabled>Course</option>
+                        <select className="custom-select custom-dropdown custom-margin" onChange={this.onSelectCourseChange.bind(this)}>
                             {this.state.courses.map(function(data, index){
                                 return <option key={index} value={data}>{data}</option>;
                             })}
                         </select>
                         <span className="browser-default custom-margin2">Intern</span>
-                        <select className="browser-default custom-select custom-dropdown custom-margin" value={this.state.currentStudentId} onChange={this.onSelectStudentChange.bind(this)}>      
-                            <option value='intern' disabled>Select</option>
+                        <select className="browser-default custom-select custom-dropdown custom-margin" value={this.state.currentStudentId} onChange={this.onSelectStudentChange.bind(this)}>
                             {this.state.students.map(function(data, index){
                                     return <option key={index} value={data.id}>{data.name}</option>;
                             })}      
