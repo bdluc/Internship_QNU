@@ -14,7 +14,6 @@ import Login from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage';
 import InternshipInfor from './pages/InternshipInfor';
 import ReportPage from './pages/sections/components/ReportPage';
-import InternReportDay from './pages/sections/components/InternReportDay';
 
 class Routes extends React.Component {
   constructor() {
@@ -24,7 +23,6 @@ class Routes extends React.Component {
     return (
       <Switch>
         <Route path='/mentor' exact component={MentorPage} />
-        <Route path='/reportperday' exact component={InternReportDay} />
         <Route path='/internship' exact component={InternshipPage}  />
         <Route path='/course/:id' exact component={CoursePage}  />
         <Route path='/courses' exact component={CoursePages}  />
