@@ -283,9 +283,10 @@ class MentorPageForMentor extends React.Component {
     filterType: "dropdown",
     responsive: "scroll",
     download: false,
+    viewColumns: false,
     print: false,
     rowsPerPage: 5,
-    rowsPerPageOptions: [5,10,20],
+    rowsPerPageOptions: [5, 10, 20],
     selectableRows: false,
     textLabels: {
       body: {

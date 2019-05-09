@@ -148,6 +148,7 @@ class ListInternAbsent extends React.Component {
         filterType: "dropdown",
         responsive: "scroll",
         download: false,
+    viewColumns: false,
         print: false,
         selectableRows: false,
         textLabels: {

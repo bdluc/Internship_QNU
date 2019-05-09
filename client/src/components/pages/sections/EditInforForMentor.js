@@ -457,7 +457,7 @@ class EditInforForMentor extends React.Component {
                                 <MDBInput label="Email" name="email" value={this.state.mentor.Email} onInput={this.handleChangeValue.bind(this)} />
                                 <FormControl fullWidth >
                                     {/* <InputLabel htmlFor="select-multiple">Gendor</InputLabel> */}
-                                    <Select fullWidth label="Gender" name="gender" value={this.state.mentor.Gender} onInput={this.handleChangeValue.bind(this)}>
+                                    <Select  label="Gender" name="gender" value={this.state.mentor.Gender} onInput={this.handleChangeValue.bind(this)}>
                                         <MenuItem value="Male">Male</MenuItem>
                                         <MenuItem value="Female">Female</MenuItem>
                                     </Select>
