@@ -152,7 +152,7 @@ class MentorPageForSup extends React.Component {
                 container: "top-right",
                 animationIn: ["animated", "fadeIn"],
                 animationOut: ["animated", "fadeOut"],
-                dismiss: { duration: 2000 },
+                dismiss: { duration: 5000 },
                 dismissable: { click: true }
             });
             break;
@@ -164,7 +164,7 @@ class MentorPageForSup extends React.Component {
                 container: "top-right",
                 animationIn: ["animated", "fadeIn"],
                 animationOut: ["animated", "fadeOut"],
-                dismiss: { duration: 2000 },
+                dismiss: { duration: 5000 },
                 dismissable: { click: true }
             });
             break;
@@ -176,7 +176,7 @@ class MentorPageForSup extends React.Component {
                 container: "top-right",
                 animationIn: ["animated", "fadeIn"],
                 animationOut: ["animated", "fadeOut"],
-                dismiss: { duration: 2000 },
+                dismiss: { duration: 5000 },
                 dismissable: { click: true }
             });
             break;
@@ -188,7 +188,7 @@ class MentorPageForSup extends React.Component {
                 container: "top-right",
                 animationIn: ["animated", "fadeIn"],
                 animationOut: ["animated", "fadeOut"],
-                dismiss: { duration: 2000 },
+                dismiss: { duration: 5000 },
                 dismissable: { click: true }
             });
             break;
@@ -849,7 +849,7 @@ handlerCheckEmailExits= () => {
               }
               <FormControl fullWidth >
               <InputLabel htmlFor="select-multiple">Gender</InputLabel>
-              <Select fullWidth label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)}>
+              <Select label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)}>
                 <MenuItem value="Male">Male</MenuItem>
                 <MenuItem value="Female">Female</MenuItem>
               </Select>
