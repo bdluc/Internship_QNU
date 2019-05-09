@@ -16,7 +16,6 @@ class CoursePages extends React.Component {
         role: JSON.parse(sessionStorage.getItem('user')).Role
     };
   }
-
     render() {
     if(this.state.role === 3)
         return (

@@ -358,6 +358,7 @@ class MentorPageForIntern extends React.Component {
     filterType: "dropdown",
     responsive: "scroll",
     download: false,
+    viewColumns: false,
     print: false,
     selectableRows: false,
     textLabels: {
@@ -654,7 +655,7 @@ class MentorPageForIntern extends React.Component {
               <MDBInput label="Email" name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
               <FormControl fullWidth >
               <InputLabel htmlFor="select-multiple">Gender</InputLabel>
-              <Select fullWidth label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)}>
+              <Select  label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)}>
                 <MenuItem value="Male">Male</MenuItem>
                 <MenuItem value="Female">Female</MenuItem>
               </Select>

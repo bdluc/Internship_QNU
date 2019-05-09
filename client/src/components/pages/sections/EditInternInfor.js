@@ -168,7 +168,7 @@ class EditInternInfor extends React.Component {
                     container: "top-right",
                     animationIn: ["animated", "fadeIn"],
                     animationOut: ["animated", "fadeOut"],
-                    dismiss: { duration: 2000 },
+                    dismiss: { duration: 5000 },
                     dismissable: { click: true }
                 });
                 break;
@@ -181,7 +181,7 @@ class EditInternInfor extends React.Component {
                     container: "top-right",
                     animationIn: ["animated", "fadeIn"],
                     animationOut: ["animated", "fadeOut"],
-                    dismiss: { duration: 2000 },
+                    dismiss: { duration: 5000 },
                     dismissable: { click: true }
                 });
                 break;
@@ -410,7 +410,7 @@ class EditInternInfor extends React.Component {
                                 <MDBInput label="Phone" name="phone" value={this.state.intern.PhoneNumber} onChange={this.handleChangeValue.bind(this)} />
                                 <MDBInput label="Email" name="email" value={this.state.intern.Email} onChange={this.handleChangeValue.bind(this)} />
                                 <FormControl fullWidth >
-                                    <Select fullWidth label="Gender" name="gender" value={this.state.intern.Gender} onChange={this.handleChangeValue.bind(this)}>
+                                    <Select  label="Gender" name="gender" value={this.state.intern.Gender} onChange={this.handleChangeValue.bind(this)}>
                                         <MenuItem value="Male">Male</MenuItem>
                                         <MenuItem value="Female">Female</MenuItem>
                                     </Select>

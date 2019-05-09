@@ -72,7 +72,7 @@ class Internshipfor extends React.Component {
           container: "top-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
-          dismiss: { duration: 2000 },
+          dismiss: { duration: 5000 },
           dismissable: { click: true }
         });
         break;
@@ -85,7 +85,7 @@ class Internshipfor extends React.Component {
           container: "top-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
-          dismiss: { duration: 2000 },
+          dismiss: { duration: 5000 },
           dismissable: { click: true }
         });
         break;
@@ -98,7 +98,7 @@ class Internshipfor extends React.Component {
           container: "top-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
-          dismiss: { duration: 2000 },
+          dismiss: { duration: 5000 },
           dismissable: { click: true }
         });
         break;
@@ -111,7 +111,7 @@ class Internshipfor extends React.Component {
           container: "top-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
-          dismiss: { duration: 2000 },
+          dismiss: { duration: 5000 },
           dismissable: { click: true }
         });
         break;
@@ -281,6 +281,7 @@ class Internshipfor extends React.Component {
     rowsPerPage: 4,
     rowsPerPageOptions: [5, 5, 5],
     download: false,
+    viewColumns: false,
     print: false,
     selectableRows: false,
     textLabels: {
@@ -503,7 +504,7 @@ class Internshipfor extends React.Component {
               <MDBInput fullwidth="true" label="Email" iconClass="dark-grey" name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
               <FormControl fullWidth>
                 <InputLabel htmlFor="select-multiple">Gender</InputLabel>
-                <Select fullWidth label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)}>
+                <Select  label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)}>
                   <MenuItem value="Male">Male</MenuItem>
                   <MenuItem value="Female">Female</MenuItem>
                 </Select>

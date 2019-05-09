@@ -146,53 +146,49 @@ class MentorPageForSup extends React.Component {
     switch (kind) {
         case "errEmail":
             this.notificationDOMRef.current.addNotification({
-                title: "Error",
                 message: "Email exist",
                 type: "danger",
                 insert: "top",
                 container: "top-right",
                 animationIn: ["animated", "fadeIn"],
                 animationOut: ["animated", "fadeOut"],
-                dismiss: { duration: 2000 },
+                dismiss: { duration: 5000 },
                 dismissable: { click: true }
             });
             break;
         case "successUpdate":
             this.notificationDOMRef.current.addNotification({
-                title: "Success",
                 message: "Update mentor info successfully !",
                 type: "success", //success, danger, default, info, warning or custom
                 insert: "top",
                 container: "top-right",
                 animationIn: ["animated", "fadeIn"],
                 animationOut: ["animated", "fadeOut"],
-                dismiss: { duration: 2000 },
+                dismiss: { duration: 5000 },
                 dismissable: { click: true }
             });
             break;
         case "successAdd":
             this.notificationDOMRef.current.addNotification({
-                title: "Success",
                 message: "Add mentor info successfully !",
                 type: "success", //success, danger, default, info, warning or custom
                 insert: "top",
                 container: "top-right",
                 animationIn: ["animated", "fadeIn"],
                 animationOut: ["animated", "fadeOut"],
-                dismiss: { duration: 2000 },
+                dismiss: { duration: 5000 },
                 dismissable: { click: true }
             });
             break;
         case "successDelete":
             this.notificationDOMRef.current.addNotification({
-                title: "Success",
                 message: "Delete mentor info successfully !",
-                type: "danger", //success, danger, default, info, warning or custom
+                type: "success", //success, danger, default, info, warning or custom
                 insert: "top",
                 container: "top-right",
                 animationIn: ["animated", "fadeIn"],
                 animationOut: ["animated", "fadeOut"],
-                dismiss: { duration: 2000 },
+                dismiss: { duration: 5000 },
                 dismissable: { click: true }
             });
             break;
@@ -300,33 +296,32 @@ class MentorPageForSup extends React.Component {
   }
 
   handleGetEmailState(){
-    if(this.state.email != ''){
-        fetch('http://localhost:8080/checkemail/'+this.state.email)
+    const em = this.state.email
+    if(em != ''){
+        fetch('http://localhost:8080/checkemail/'+ em)
     .then(response => response.json())
     .then(data => {
         this.setState({
           mess: data
         })
       });
+      console.log(this.state.mess)
+
     }
-    console.log(this.state.mess.message)
+    // console.log("2")
 
 }
 
 
-handlerCheckEmailExits = () =>{    
-
-  if(this.state.email != this.state.uname){
+handlerCheckEmailExits= () => {    
       if (this.state.mess.message == "Error") {
           this.addNotification("errEmail")
-          }
-      else {
-              this.handlerEditMentor()
+          } else {
+              this.handlerAddMentor() 
+              // console.log("Ok")
           }       
-   }   else {
-      this.handlerEditMentor()
-  }   
-}
+   }
+
 
 
   handlerDeleteMentor = () => {
@@ -462,7 +457,9 @@ handlerCheckEmailExits = () =>{
     filterType: "dropdown",
     responsive: "scroll",
     rowsPerPage: 5,
+    rowsPerPageOptions: [5, 10, 20],
     download: false,
+    viewColumns: false,
     print: false,
     selectableRows: false,
     textLabels: {
@@ -478,9 +475,9 @@ handlerCheckEmailExits = () =>{
       },
       toolbar: {
         search: "Search",
-        downloadCsv: "Download CSV",
-        print: "Print",
-        viewColumns: "View Columns",
+        // downloadCsv: "Download CSV",
+        // print: "Print",
+        // viewColumns: "View Columns",
         filterTable: "Filter Table",
       },
       filter: {
@@ -488,10 +485,10 @@ handlerCheckEmailExits = () =>{
         title: "FILTERS",
         reset: "RESET",
       },
-      viewColumns: {
-        title: "Show Columns",
-        titleAria: "Show/Hide Table Columns",
-      },
+      // viewColumns: {
+      //   title: "Show Columns",
+      //   titleAria: "Show/Hide Table Columns",
+      // },
       selectedRows: {
         text: "rows(s) selected",
         delete: "Delete",
@@ -514,8 +511,8 @@ handlerCheckEmailExits = () =>{
         icon: "edit",
         isUpdate: true,
         // checkValidate: true,
-        btnMode: 'on',
-        uname: this.state.email,
+        btnMode: 'off',
+        uname: rowData[4],
         doneName: true,
         donePhone: true,
         doneGender: true,
@@ -605,45 +602,61 @@ handlerCheckEmailExits = () =>{
         }
         break;
       case "phone":
-        this.setState({ phone: value, btnMode: 'off', donePhone: false})
+        this.setState({ phone: value})
+        // this.state.phone = value
+        // this.state.btnMode = "off"
+        
         e.target.className = "form-control"
         const regexPhone = /^[0-9\b]+$/
         if (value.trim().length != 10 ) {
           this.setState({
-            btnMode: 'off',
             // phone: "",
             errorPhone: "Phone must have 10 number!",
-            donePhone: false
+            donePhone: false,
+            btnMode: 'off'
           })
+          // this.state.btnMode = 'off'
+
           e.target.className += " invalid"
         } else if (!regexPhone.test(value.trim())) {
           this.setState({
-            btnMode: 'off',
             errorPhone: "Phone contains only numeric characters",
             donePhone: false
           })
+          this.state.btnMode = 'off'
           e.target.className += " invalid"
         } else {
-          this.setState({
-            errorPhone: "",
-            donePhone: true,
-            btnMode: 'on',
-
-            })
+          // this.setState({
+          //   donePhone: true,
+          //     // btnMode: 'on',
+          //   })
+          this.state.errorPhone = ""
+          if(this.state.doneDOB == true &&
+            this.state.doneDepartment == true &&
+            this.state.doneEmail == true &&
+            this.state.doneName == true &&
+            this.state.doneGender == true )
+            {
+              this.state.btnMode = 'on'
+            }
+          this.state.donePhone = true
           e.target.className += " valid"
         }
         break;
       case "email":
-        this.setState({ email: value, doneEmail:false })
+
+        // this.setState({ email: value, doneEmail:false })
+        this.state.email = value
         e.target.className = "form-control"
         const regexEmail = /^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i;
         if (value.trim().length === 0) {
           this.setState({
             btnMode: 'off',
             doneEmail: false,
-            // email: "",
+            email: "",
             errorEmail: "Email can not be blank",
           })
+
           e.target.className += " invalid"
         } else if (!regexEmail.test(value.trim())) {
           this.setState({
@@ -651,6 +664,7 @@ handlerCheckEmailExits = () =>{
             errorEmail: "Not a valid email address",
             doneEmail: false
           })
+
           e.target.className += " invalid"
         }else if(value.length > 50){
           this.setState({
@@ -664,10 +678,10 @@ handlerCheckEmailExits = () =>{
           this.setState({
             doneEmail: true,
             })
-          this.handleGetEmailState()
           e.target.className += " valid"
         }
-        // console.log(this.state.dob)
+
+        // console.log(this.state.email, this.state.uname)
 
         break;
       case "gender":
@@ -681,44 +695,43 @@ handlerCheckEmailExits = () =>{
             doneGender: false,            
           })
         }
-        // console.log(this.state.dob)
 
         break;
       case "dob":
-        var standard = new Date('1988/1/1').getTime();
-        var currentDate = new Date().getTime();
-        var valueofUser = new Date(value).getTime();
+      var currentDate = new Date().getFullYear();
+      var valueofUser = new Date(value).getFullYear();
+        var min = 1905
+        var max = currentDate - 18;
+        console.log(valueofUser - max)
         this.setState({ dob: value })
         if (value.trim().length > 0) {
-          if((currentDate - valueofUser) < standard){
+          if(valueofUser > max){
             this.setState({
+              btnMode: 'off',
               doneDOB: false,            
             })
             e.target.className += " invalid"
-          }else {
+          } 
+          else if(valueofUser < min ){
             this.setState({
-              doneDOB: true,            
+              btnMode: 'off',
+              doneDOB: false,            
             })
+            e.target.className += " invalid"
+          }
+          else {
+            // this.setState({
+            //   doneDOB: true,            
+            // })
+            this.state.doneDOB = true
             e.target.className += " valid"
           }
         }else {
           this.setState({
+            btnMode: 'off',
             doneDOB: false,            
           })
           e.target.className += " invalid"
-        }
-        break;
-      case "mentor":
-        this.setState({ mentor: value })
-        if (value.trim().length > 0) {
-          this.setState({
-            doneMentor: true,            
-          })
-          e.target.className += " valid"
-        }else{
-          this.setState({
-            doneMentor: false,            
-          })
         }
         break;
       case "department":
@@ -746,17 +759,24 @@ handlerCheckEmailExits = () =>{
     doneDepartment
     doneDOB
     */
-    if(this.state.doneName ===  true && 
-      this.state.donePhone ===  true && 
-      this.state.doneGender ===  true && 
-      this.state.doneEmail ===  true && 
-      this.state.doneDepartment ===  true && 
-      this.state.doneDOB ===  true )
+
+    if(this.state.doneName == true && 
+      this.state.donePhone ==  true && 
+      this.state.doneGender ==  true && 
+      this.state.doneEmail ==  true && 
+      this.state.doneDepartment ==  true && 
+      this.state.doneDOB ==  true )
     {
-      this.setState({
-        btnMode: "on"
-      })
+      // this.setState({
+      //   btnMode: "on"
+      // })
+      this.state.btnMode = 'on'
     }
+  this.handleGetEmailState()
+  
+
+
+
   }
 
 
@@ -816,14 +836,21 @@ handlerCheckEmailExits = () =>{
             size="md"
             cascading>
 
-            <MDBModalBody>        <p>{this.state.errorPhone}</p>
+            <MDBModalBody>
 
               <MDBInput label="Name" name="name" value={this.state.name} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput label="Phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
+              {
+                  !this.state.isUpdate &&
               <MDBInput label="Email" name="email" value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
+              }
+               {
+                  this.state.isUpdate &&
+              <MDBInput label="Email" name="email" disabled='true' value={this.state.email} onChange={this.handleChangeValue.bind(this)} />
+              }
               <FormControl fullWidth >
               <InputLabel htmlFor="select-multiple">Gender</InputLabel>
-              <Select fullWidth label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)}>
+              <Select label="Gender" name="gender" value={this.state.gender} onChange={this.handleChangeValue.bind(this)}>
                 <MenuItem value="Male">Male</MenuItem>
                 <MenuItem value="Female">Female</MenuItem>
               </Select>
@@ -849,7 +876,7 @@ handlerCheckEmailExits = () =>{
                   this.state.btnMode === 'on' &&
                   <MDBBtn
                     className="mb-2 blue darken-2"
-                    onClick={this.handlerAddMentor}
+                    onClick={this.handlerCheckEmailExits}
                   >
                     Create
                   <MDBIcon icon="send" className="ml-1" />
@@ -861,7 +888,7 @@ handlerCheckEmailExits = () =>{
                   this.state.btnMode === 'off' &&
                   <MDBBtn
                     className="mb-2 blue darken-2"
-                    onClick={this.handlerAddMentor}
+                    onClick={this.handlerCheckEmailExits}
                     disabled="true"
                   >
                     Create
@@ -876,7 +903,7 @@ handlerCheckEmailExits = () =>{
 
                   <MDBBtn
                     className="mb-2 blue darken-2"
-                    onClick={this.handlerCheckEmailExits}>
+                    onClick={this.handlerEditMentor}>
                     Update
                   <MDBIcon icon="edit" className="ml-1" />
                   </MDBBtn>
@@ -900,8 +927,7 @@ handlerCheckEmailExits = () =>{
                   <MDBBtn
                     className="mb-2 blue darken-2"
                     disabled="true"
-
-                    onClick={this.handlerCheckEmailExits}>
+                    onClick={this.handlerEditMentor}>
                     Update
                   <MDBIcon icon="edit" className="ml-1" />
                   </MDBBtn>
@@ -913,8 +939,6 @@ handlerCheckEmailExits = () =>{
 
                   <MDBBtn
                     className="mb-2 blue darken-2"
-                    disabled="true"
-
                     onClick={this.handlerDeleteMentor}>
                     Delete
                   <MDBIcon icon="trash" className="ml-1" />
