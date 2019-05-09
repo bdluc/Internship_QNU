@@ -463,6 +463,7 @@ handlerCheckEmailExits= () => {
     rowsPerPage: 5,
     download: false,
     print: false,
+    viewColumns: false,
     selectableRows: false,
     textLabels: {
       body: {
@@ -477,9 +478,9 @@ handlerCheckEmailExits= () => {
       },
       toolbar: {
         search: "Search",
-        downloadCsv: "Download CSV",
-        print: "Print",
-        viewColumns: "View Columns",
+        // downloadCsv: "Download CSV",
+        // print: "Print",
+        // viewColumns: "View Columns",
         filterTable: "Filter Table",
       },
       filter: {
@@ -487,10 +488,10 @@ handlerCheckEmailExits= () => {
         title: "FILTERS",
         reset: "RESET",
       },
-      viewColumns: {
-        title: "Show Columns",
-        titleAria: "Show/Hide Table Columns",
-      },
+      // viewColumns: {
+      //   title: "Show Columns",
+      //   titleAria: "Show/Hide Table Columns",
+      // },
       selectedRows: {
         text: "rows(s) selected",
         delete: "Delete",
@@ -838,7 +839,7 @@ handlerCheckEmailExits= () => {
             size="md"
             cascading>
 
-            <MDBModalBody>        <p>{this.state.errorPhone}</p>
+            <MDBModalBody>
 
               <MDBInput label="Name" name="name" value={this.state.name} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput label="Phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
