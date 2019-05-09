@@ -17,3 +17,23 @@
     overflow-x: hidden;
     overflow-y: scroll;
 }
+.clear { clear: both }
+.container {
+    width: 960px;
+    border: 1px solid #333;
+    padding: 10px;
+ }
+ .left {
+    float: left;
+    width: 620px;
+    height: 150px;
+    background: #e8e8e8;
+ }
+ .right {
+    float: right;
+    width: 350px;
+    height: 200px;
+    background: #ffffff;
+    overflow: auto;
+    border: 1px solid #ffffff;
+   }
