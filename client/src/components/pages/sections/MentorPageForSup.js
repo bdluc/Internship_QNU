@@ -457,9 +457,10 @@ handlerCheckEmailExits= () => {
     filterType: "dropdown",
     responsive: "scroll",
     rowsPerPage: 5,
+    rowsPerPageOptions: [5, 10, 20],
     download: false,
-    print: false,
     viewColumns: false,
+    print: false,
     selectableRows: false,
     textLabels: {
       body: {
