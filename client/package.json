@@ -26,6 +26,7 @@
     "npm": "^6.9.0",
     "prop-types": "^15.7.2",
     "react": "^16.4.2",
+    "react-bootstrap": "^1.0.0-beta.8",
     "react-calendar-heatmap": "^1.8.0",
     "react-dom": "^16.4.2",
     "react-notifications": "^1.4.3",

@@ -9,14 +9,15 @@ class HomePage extends React.Component {
   constructor(props) {
         super(props);   
         this.state = {
-            role: JSON.parse(sessionStorage.getItem('user')).Role
+            role: JSON.parse(sessionStorage.getItem('user')).Role,
+            id: JSON.parse(sessionStorage.getItem('user')).ID
         };
   }
 
   render() {
     if(this.state.role === 2)
         return (
-          <HomePageForMentor></HomePageForMentor>
+          <HomePageForMentor id = {this.state.id} role = {this.state.role}></HomePageForMentor>
             
         );
     if(this.state.role === 3)
@@ -25,7 +26,7 @@ class HomePage extends React.Component {
         );
     if(this.state.role === 1)
         return (
-          <HomePageForIntern></HomePageForIntern>
+          <HomePageForIntern id = {this.state.id} role = {this.state.role}></HomePageForIntern>
         );
     }
   }
