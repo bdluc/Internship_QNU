@@ -13,6 +13,7 @@
     "@material-ui/icons": "^3.0.2",
     "@material-ui/styles": "^4.0.0-alpha.8",
     "@types/date-fns": "^2.6.0",
+    "bootstrap": "^4.3.1",
     "date-fns": "^2.0.0-alpha.27",
     "font-awesome": "^4.7.0",
     "google-map-react": "^1.0.6",
