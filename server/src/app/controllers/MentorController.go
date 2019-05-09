@@ -157,8 +157,8 @@ func getInternStatusByDay(c *gin.Context, internID string, date string) *models.
 	mi, _ := strconv.Atoi(m)
 	di, _ := strconv.Atoi(d)
 
-	date1 := time.Date(yi, time.Month(mi), di, 1, 0, 0, 0, time.Local)
-	date2 := time.Date(yi, time.Month(mi), di, 2, 0, 0, 0, time.Local)
+	date1 := time.Date(yi, time.Month(mi), di, 0, 0, 0, 0, time.Local)
+	date2 := time.Date(yi, time.Month(mi), di, 0, 0, 0, 0, time.Local)
 
 	// err := database.C(models.CollectionAttendance).FindId(bson.M{"InternID": oID} && bson.M{"Date": date})
 	// err := database.C(models.CollectionAttendance).Find(bson.M{"InternID": id, "Date": date}).One(&attendance)
