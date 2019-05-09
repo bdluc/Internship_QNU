@@ -127,7 +127,7 @@ class InternPageForIntern extends React.Component {
                 let stt = 1
                 data.map(row => {
                     NewData.push([stt, row.ID, row.Name, row.PhoneNumber, row.Email, row.Gender ? "Male" : "Female",
-                        (new Date(row.DayofBirth)).toLocaleDateString('en-US', options),
+                        this.convertDate2((new Date(row.DayofBirth)).toLocaleDateString('en-US', options)),
                         row.University, row.Faculty, row.CourseName, row.CourseID,
                         // format datetime,
                     ])
@@ -244,7 +244,7 @@ class InternPageForIntern extends React.Component {
 
     columnsIntern = [
         {
-            name: "NO",
+            name: "NO.",
             options: {
                 filter: false,
                 sort: true,
@@ -386,6 +386,35 @@ class InternPageForIntern extends React.Component {
         let strDate = ""
         let strMon = ""
         let strYea = ""
+        let ye = moment(rowData, "DD-MM-YYYY").get('year');
+        let mo = moment(rowData, "DD-MM-YYYY").get('month') + 1;  // 0 to 11
+        let da = moment(rowData, "DD-MM-YYYY").get('date');
+        if (da < 10)
+            strDate = "0" + da
+        else
+            strDate = '' + da
+        if (mo < 10)
+            strMon = "0" + mo
+        else
+            strMon = '' + mo
+        if (ye < 1000) {
+            strYea = "0" + ye
+            if (ye < 100) {
+                strYea = "0" + strYea
+                if (ye < 10)
+                    strYea = "0" + strYea
+            }
+        }
+        else
+            strYea = '' + ye
+        return strYea + "-" + strMon + "-" + strDate
+    }
+
+    convertDate2(rowData) {
+        var moment = require('moment')
+        let strDate = ""
+        let strMon = ""
+        let strYea = ""
         let ye = moment(rowData).get('year');
         let mo = moment(rowData).get('month') + 1;  // 0 to 11
         let da = moment(rowData).get('date');
@@ -407,8 +436,9 @@ class InternPageForIntern extends React.Component {
         }
         else
             strYea = '' + ye
-        return strYea + "-" + strMon + "-" + strDate
+        return strDate + "/" + strMon + "/" + strYea
     }
+
     checkValidate() {
 
         return false;

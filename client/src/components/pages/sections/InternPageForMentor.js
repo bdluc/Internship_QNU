@@ -147,7 +147,7 @@ class InternPage extends React.Component {
         let stt = 1
         data.map(row => {
           NewData.push([stt, row.Intern.ID, row.Intern.Name, row.Intern.PhoneNumber, row.Intern.Email, row.Intern.Gender ? "Male" : "Female",
-            (new Date(row.Intern.DoB)).toLocaleDateString('en-US', options),
+            this.convertDate2((new Date(row.Intern.DoB)).toLocaleDateString('en-US', options)),
             row.Intern.University, row.Intern.Faculty, row.Course, row.Intern.CourseID,
             // format datetime,
           ])
@@ -321,7 +321,7 @@ class InternPage extends React.Component {
 
   columnsIntern = [
     {
-      name: "NO",
+      name: "NO.",
       options: {
         filter: false,
         sort: true,
@@ -479,6 +479,35 @@ class InternPage extends React.Component {
     let strDate = ""
     let strMon = ""
     let strYea = ""
+    let ye = moment(rowData, "DD-MM-YYYY").get('year');
+    let mo = moment(rowData, "DD-MM-YYYY").get('month') + 1;  // 0 to 11
+    let da = moment(rowData, "DD-MM-YYYY").get('date');
+    if (da < 10)
+      strDate = "0" + da
+    else
+      strDate = '' + da
+    if (mo < 10)
+      strMon = "0" + mo
+    else
+      strMon = '' + mo
+    if (ye < 1000) {
+      strYea = "0" + ye
+      if (ye < 100) {
+        strYea = "0" + strYea
+        if (ye < 10)
+          strYea = "0" + strYea
+      }
+    }
+    else
+      strYea = '' + ye
+    return strYea + "-" + strMon + "-" + strDate
+  }
+
+  convertDate2(rowData) {
+    var moment = require('moment')
+    let strDate = ""
+    let strMon = ""
+    let strYea = ""
     let ye = moment(rowData).get('year');
     let mo = moment(rowData).get('month') + 1;  // 0 to 11
     let da = moment(rowData).get('date');
@@ -500,7 +529,7 @@ class InternPage extends React.Component {
     }
     else
       strYea = '' + ye
-    return strYea + "-" + strMon + "-" + strDate
+    return strDate + "/" + strMon + "/" + strYea
   }
   checkValidate() {
 
@@ -659,7 +688,7 @@ class InternPage extends React.Component {
         var valueofUser = new Date(value).getTime();
         this.setState({ dob: value })
         if (value.trim().length > 0) {
-          if ((currentDate - valueofUser) < standard) {
+          if ((currentDate - valueofUser) < standard || valueofUser < 0) {
             this.setState({
               doneDOB: false,
             })

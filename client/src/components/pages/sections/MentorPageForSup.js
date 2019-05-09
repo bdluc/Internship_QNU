@@ -135,14 +135,19 @@ class MentorPageForSup extends React.Component {
       uname: JSON.parse(sessionStorage.getItem('user')).UserName,
       mess: '',
       uname: ''
-
     };
+    this.errorName = "";
+    this.errorPhone = "";
+    this.errorEmail = "";
+    this.errorGender = "";
+    this.errorDOB = "";
+    this.errorDepartment = "";
   }
 
 
 
 
-  addNotification(kind) {
+  addNotification(kind,  mess="") {
     switch (kind) {
         case "errEmail":
             this.notificationDOMRef.current.addNotification({
@@ -156,6 +161,18 @@ class MentorPageForSup extends React.Component {
                 dismissable: { click: true }
             });
             break;
+        case "error":
+          this.notificationDOMRef.current.addNotification({
+            message: mess,
+            type: "danger",
+            insert: "top",
+            container: "top-right",
+            animationIn: ["animated", "fadeIn"],
+            animationOut: ["animated", "fadeOut"],
+            dismiss: { duration: 3000 },
+            dismissable: { click: true }
+          });
+          break;
         case "successUpdate":
             this.notificationDOMRef.current.addNotification({
                 message: "Update mentor info successfully !",
@@ -204,12 +221,14 @@ class MentorPageForSup extends React.Component {
         let NewData = []
         let cnt = 1
         data.map(row => {
+          console.log(this.convertDate2((new Date(row.DoB)).toLocaleDateString('en-US', options)))
           NewData.push([cnt, row.ID, row.Name, row.PhoneNumber, row.Email, row.Gender ? "Male" : "Female",
-            (new Date(row.DoB)).toLocaleDateString('en-US', options), row.Department])
+            (this.convertDate2((new Date(row.DoB)).toLocaleDateString('en-US', options))), row.Department])
           //, row.SupervisorID
           cnt++
           return NewData
         })
+
         this.setState({
           mentorList: NewData
         })
@@ -256,6 +275,12 @@ class MentorPageForSup extends React.Component {
       
 
     });
+    this.errorName = "";
+    this.errorPhone = "";
+    this.errorEmail = "";
+    this.errorGender = "";
+    this.errorDOB = "";
+    this.errorDepartment = "";
     // const dateInForm =
     this.toggleMentor()
   }
@@ -386,7 +411,7 @@ handlerCheckEmailExits= () => {
   };
   columnsMentor = [
     {
-      name: "NO",
+      name: "NO.",
       options: {
         filter: false,
         sort: false,
@@ -521,7 +546,12 @@ handlerCheckEmailExits= () => {
         doneDOB: true
 
       });
-      console.log(this.state.uname);
+      this.errorName = "";
+      this.errorPhone = "";
+      this.errorEmail = "";
+      this.errorGender = "";
+      this.errorDOB = "";
+      this.errorDepartment = "";
       this.toggleMentor()
     }
 
@@ -533,6 +563,35 @@ handlerCheckEmailExits= () => {
   //   return false;
   // }
   convertDate(rowData) {
+    var moment = require('moment')
+    let strDate = ""
+    let strMon = ""
+    let strYea = ""
+    let ye = moment(rowData, "DD-MM-YYYY").get('year');
+    let mo = moment(rowData, "DD-MM-YYYY").get('month') + 1;  
+    let da = moment(rowData, "DD-MM-YYYY").get('date');
+    if (da < 10)
+      strDate = "0" + da
+    else
+      strDate = '' + da
+    if (mo < 10)
+      strMon = "0" + mo
+    else
+      strMon = '' + mo
+    if (ye < 1000) {
+      strYea = "0" + ye
+      if (ye < 100) {
+        strYea = "0" + strYea
+        if (ye < 10)
+          strYea = "0" + strYea
+      }
+    }
+    else
+      strYea = '' + ye
+    return strYea + "-" + strMon + "-" + strDate
+  }
+
+  convertDate2(rowData) {
     var moment = require('moment')
     let strDate = ""
     let strMon = ""
@@ -558,7 +617,7 @@ handlerCheckEmailExits= () => {
     }
     else
       strYea = '' + ye
-    return strYea + "-" + strMon + "-" + strDate
+    return strDate + "/" + strMon + "/" + strYea
   }
   // checkValidate() {
 
@@ -574,30 +633,31 @@ handlerCheckEmailExits= () => {
           this.setState({
             btnMode: 'off',
             name: "",
-            errorName: "Name can not be blank",
             doneName: false
           })
+          this.errorName= "Name can not be blank";
           e.target.className += " invalid"
         } else if(value.length > 50){
           this.setState({
             name: this.state.name,
             btnMode: 'off',
-            errorName: "Name may be very long",
             doneName: false
           })
+          this.errorName= "Name may be very long";
           e.target.className += " invalid"
         }
         else if (value.trim().length < 6) {
           this.setState({
             btnMode: 'off',
-            errorName: "Name contains more than 5 characters",
             doneName: false
           })
+          this.errorName= "Name contains more than 5 characters";
           e.target.className += " invalid"
         } else {
           this.setState({
             doneName: true,
-            })
+          })
+          this.errorName= "";
           e.target.className += " valid"
         }
         break;
@@ -608,29 +668,29 @@ handlerCheckEmailExits= () => {
         
         e.target.className = "form-control"
         const regexPhone = /^[0-9\b]+$/
-        if (value.trim().length != 10 ) {
+         if (!regexPhone.test(value.trim())) {
+          this.setState({
+            donePhone: false
+          })
+          this.errorPhone= "Phone contains only numeric characters";
+          this.state.btnMode = 'off'
+          e.target.className += " invalid"
+        }else if (value.trim().length != 10 ) {
           this.setState({
             // phone: "",
-            errorPhone: "Phone must have 10 number!",
             donePhone: false,
             btnMode: 'off'
           })
+          this.errorPhone= "Phone must have 10 number!";
           // this.state.btnMode = 'off'
 
-          e.target.className += " invalid"
-        } else if (!regexPhone.test(value.trim())) {
-          this.setState({
-            errorPhone: "Phone contains only numeric characters",
-            donePhone: false
-          })
-          this.state.btnMode = 'off'
           e.target.className += " invalid"
         } else {
           // this.setState({
           //   donePhone: true,
           //     // btnMode: 'on',
           //   })
-          this.state.errorPhone = ""
+          this.errorPhone = ""
           if(this.state.doneDOB == true &&
             this.state.doneDepartment == true &&
             this.state.doneEmail == true &&
@@ -654,25 +714,24 @@ handlerCheckEmailExits= () => {
             btnMode: 'off',
             doneEmail: false,
             email: "",
-            errorEmail: "Email can not be blank",
           })
-
+          this.errorEmail= "Email can not be blank";
           e.target.className += " invalid"
         } else if (!regexEmail.test(value.trim())) {
           this.setState({
             btnMode: 'off',
-            errorEmail: "Not a valid email address",
             doneEmail: false
           })
+          this.errorEmail= "Not a valid email address";
 
           e.target.className += " invalid"
         }else if(value.length > 50){
           this.setState({
             email: this.state.email,
             btnMode: 'off',
-            errorName: "Email may be very long",
             doneEmail: false
           })
+          this.errorName= "Email may be very long";
           e.target.className += " invalid"
         } else {
           this.setState({
@@ -690,10 +749,12 @@ handlerCheckEmailExits= () => {
           this.setState({
             doneGender: true,            
           })
+          this.errorGender = ""
         }else{
           this.setState({
             doneGender: false,            
           })
+          this.errorGender = "Email can not be blank"
         }
 
         break;
@@ -702,7 +763,6 @@ handlerCheckEmailExits= () => {
       var valueofUser = new Date(value).getFullYear();
         var min = 1905
         var max = currentDate - 18;
-        console.log(valueofUser - max)
         this.setState({ dob: value })
         if (value.trim().length > 0) {
           if(valueofUser > max){
@@ -710,6 +770,7 @@ handlerCheckEmailExits= () => {
               btnMode: 'off',
               doneDOB: false,            
             })
+            this.errorDOB= "The age of the mentor must be over 17";
             e.target.className += " invalid"
           } 
           else if(valueofUser < min ){
@@ -717,6 +778,7 @@ handlerCheckEmailExits= () => {
               btnMode: 'off',
               doneDOB: false,            
             })
+            this.errorDOB= "DOB is invalid";
             e.target.className += " invalid"
           }
           else {
@@ -724,6 +786,7 @@ handlerCheckEmailExits= () => {
             //   doneDOB: true,            
             // })
             this.state.doneDOB = true
+            this.errorDOB= "";
             e.target.className += " valid"
           }
         }else {
@@ -731,6 +794,7 @@ handlerCheckEmailExits= () => {
             btnMode: 'off',
             doneDOB: false,            
           })
+          this.errorDOB= "DOB can not be blank"
           e.target.className += " invalid"
         }
         break;
@@ -740,12 +804,14 @@ handlerCheckEmailExits= () => {
           this.setState({
             doneDepartment: true,            
           })
+          this.errorDepartment= ""
           e.target.className += " valid"
         }else{
           this.setState({
             btnMode: 'off',
             doneDepartment: false,            
           })
+          this.errorDepartment= "Department is invalid"
         }
         break;
       default:
@@ -759,7 +825,24 @@ handlerCheckEmailExits= () => {
     doneDepartment
     doneDOB
     */
-
+    if (this.errorName != "" ){
+      this.addNotification("error",this.errorName)
+    }
+    if (this.errorPhone!= "" ){
+      this.addNotification("error",this.errorPhone)
+    }
+    if (this.errorEmail!= "" ){
+      this.addNotification("error",this.errorEmail)
+    }
+    if (this.errorGender!= "" ){
+      this.addNotification("error",this.errorGender)
+    }
+    if (this.errorDOB!= "" ){
+      this.addNotification("error",this.errorDOB)
+    }
+    if (this.errorDepartment!= "" ){
+      this.addNotification("error",this.errorDepartment)
+    }
     if(this.state.doneName == true && 
       this.state.donePhone ==  true && 
       this.state.doneGender ==  true && 
