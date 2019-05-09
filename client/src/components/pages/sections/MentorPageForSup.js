@@ -839,7 +839,7 @@ handlerCheckEmailExits= () => {
             size="md"
             cascading>
 
-            <MDBModalBody>        <p>{this.state.errorPhone}</p>
+            <MDBModalBody>
 
               <MDBInput label="Name" name="name" value={this.state.name} onChange={this.handleChangeValue.bind(this)} />
               <MDBInput label="Phone" name="phone" value={this.state.phone} onChange={this.handleChangeValue.bind(this)} />
