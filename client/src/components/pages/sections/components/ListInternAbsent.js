@@ -101,12 +101,13 @@ class ListInternAbsent extends React.Component {
             options: {
                 filter: false,
                 sort: true,
+                display: 'export',
             }
         },
         {
             name: "ID",
             options: {
-                filter: true,
+                filter: false,
                 sort: false,
                 display: 'export',
             }
@@ -202,15 +203,6 @@ class ListInternAbsent extends React.Component {
                                 <div className="app-content">
                                     <ReactNotification ref={this.notificationDOMRef} />
                                 </div>
-                                <label>
-                                    {/* <marquee > */}
-                                    <i>Intern Absent To Day:</i>
-                                    {this.state.internName.map((value, k) => {
-                                        return (<span> <b> {value.Name},   </b></span>)
-                                    })
-                                    }
-                                    {/* </marquee> */}
-                                </label>
                                 <MUIDataTable
                                     title={<b><i>Intern List Absent</i></b>}
                                     data={this.state.internList}

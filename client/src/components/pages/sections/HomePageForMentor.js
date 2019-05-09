@@ -1,7 +1,8 @@
 import React from 'react';
 import AttendanceDashboard from './components/AttendanceDashboard'
 import ListInternAbsent from './components/ListInternAbsent'
-
+import CourseCompleted from './CourseCompleted';
+import { Container, Row, Col } from 'react-bootstrap';
 
 class HomePageForMentor extends React.Component {
 
@@ -9,8 +10,13 @@ class HomePageForMentor extends React.Component {
     return (
 
       <div>
-        <AttendanceDashboard></AttendanceDashboard>
-        <ListInternAbsent></ListInternAbsent>
+      <CourseCompleted id = {this.props.id} role = {this.props.role}/>
+        <Container>
+          <Row className="show-grid">
+            <Col xs={12} md={6} className="custom-align-left"><AttendanceDashboard></AttendanceDashboard></Col>
+            <Col xs={12} md={6} className="custom-align-left"><ListInternAbsent></ListInternAbsent></Col>
+          </Row>
+        </Container>
       </div>
 
     );

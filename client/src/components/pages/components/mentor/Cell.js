@@ -15,7 +15,8 @@ class Cell extends React.Component {
             selectDefaultValue: props.cellData.attendance,
             selectCurrentValue: props.cellData.attendance,
             editClass: "fa fa-edit custom-edit",
-            now: new Date()
+            now: new Date(),
+            isCreate: this.props.cellData.id === "N.A"
         }
     }
 
@@ -105,12 +106,15 @@ class Cell extends React.Component {
             Status: this.state.selectCurrentValue,
             IsDeleted: false
         };
-        console.log(object)
         // run when current value != default value 
         if (this.state.selectCurrentValue !== this.state.selectDefaultValue) {
             var isChange = this.props.onCellChange(object);
             if(isChange)
-                this.setState({showModal: false, showEdit: false, selectDefaultValue: this.state.selectCurrentValue});   
+                this.setState({
+                    showModal: false, 
+                    showEdit: false, 
+                    selectDefaultValue: this.state.selectCurrentValue
+                });   
         }
     }
 
@@ -140,7 +144,7 @@ class Cell extends React.Component {
                 onMouseLeave={this.onEditDeHover.bind(this)}
                 onClick={this.onEditClick.bind(this)}></i> : null}
                 <Modal isOpen={this.state.showModal} size="lg" toggle={this.toggleIntern}>
-                    <ModalHeader>Edit</ModalHeader>
+                    <ModalHeader>{this.props.cellData.id === "N.A" ? "Create" : "Update" }</ModalHeader>
                     <ModalBody>
                         <Container>
                             <Row className="show-grid">

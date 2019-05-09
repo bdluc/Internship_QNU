@@ -169,7 +169,7 @@ class DailyRow extends React.Component {
                     onMouseLeave={this.onEditDeHover.bind(this)}
                     onClick={this.onEditClick.bind(this)}></i> : null}
                     <Modal isOpen={this.state.showModal} size="lg" toggle={this.toggleIntern}>
-                        <ModalHeader>Edit</ModalHeader>
+                        <ModalHeader>{this.state.attendances.length === 0 ? "Create" : "Update" }</ModalHeader>
                         <ModalBody>
                         <Container>
                             <Row className="show-grid">
