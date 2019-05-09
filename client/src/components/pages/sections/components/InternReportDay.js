@@ -13,7 +13,10 @@ class InternReportDay extends React.Component {
     super();
     this.state = {
         absentList : [],
-        
+        user: JSON.parse(sessionStorage.getItem('user')),
+        count:0,
+        countReport:0,
+        countReportWeek:0,
     };
     this.showModal = this.showModal.bind(this)
     this.handleAgree = this.handleAgree.bind(this)
@@ -189,8 +192,57 @@ class InternReportDay extends React.Component {
         })
       })
   }
+  GetIntern(){
+    // const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+    let c = 0;
+    fetch("http://localhost:8080/course/"+this.state.user.ID+"/mentorid")
+    .then(response => response.json())
+      .then(result => {
+          c = result.length
+          this.setState({
+            count : c
+        })
+      })
+  }
+  GetReported(){
+    let c = 0;
+    fetch("http://localhost:8080/report/today/"+this.state.user.ID)
+    .then(response => response.json())
+      .then(result => {
+        result.map(r=> {
+          if(r.Reports.length !== 0)
+            c +=1
+        })
+        this.setState({
+          countReport : c
+        })
+      })  
+  }
+  GetReportedWeek(){
+    let c = 0;
+    var today = new Date();
+    var day = today.getDay() || 7; 
+    if( day !== 1 )                
+      today.setHours(-24 * (day - 1)); 
+    var moment = require('moment');
+    const std = moment.utc(today).format();
+    fetch("http://localhost:8080/report/week/"+this.state.user.ID+"/"+std)
+    .then(response => response.json())
+      .then(result => {
+        result.map(r=> {
+          if(r.Reports.length !== 0)
+            c +=1
+        })
+        this.setState({
+          countReportWeek : c
+        })
+      })  
+  }
   componentDidMount(){
     this.Getreason();
+    this.GetIntern();
+    this.GetReported();
+    this.GetReportedWeek();
   }
     render() {
         return (
@@ -227,16 +279,16 @@ class InternReportDay extends React.Component {
             <div className="data">
               <p>Day RP</p>
               <h4>
-               <strong>1/4</strong>
+               <strong>{this.state.countReport}/{this.state.count}</strong>
               </h4>
            </div>
          </div>
           <CardBody>
             <div className="progress">
              <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="25" className="progress-bar bg grey" role="progressbar"
-                style={{width: '25%'}}></div>
+                style={{width: `${parseFloat(this.state.countReport/this.state.count).toFixed(2)*100}%`}}></div>
             </div>
-            <CardText>Complete 25%</CardText>
+            <CardText>Complete {parseFloat(this.state.countReport/this.state.count).toFixed(2)*100}%</CardText>
           </CardBody>
         </Card>
     </Col>
@@ -247,16 +299,16 @@ class InternReportDay extends React.Component {
             <div className="data">
               <p>Week RP</p>
               <h4>
-                <strong>1/4</strong>
+                <strong>{this.state.countReportWeek}/{this.state.count}</strong>
               </h4>
             </div>
           </div>
           <CardBody>
             <div className="progress">
               <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="25" className="progress-bar grey darken-2" role="progressbar"
-                style={{width: '75%'}}></div>
+                style={{width:  `${parseFloat(this.state.countReportWeek/this.state.count).toFixed(2)*100}%`}}></div>
             </div>
-            <CardText>Complete 75%</CardText>
+            <CardText>Complete {parseFloat(this.state.countReportWeek/this.state.count).toFixed(2)*100}%</CardText>
           </CardBody>
         </Card>
     </Col>
@@ -303,7 +355,7 @@ class InternReportDay extends React.Component {
               <input type="hidden" name="id" value={this.state.ID} />
               <input type="hidden" name="id" value={this.state.InternID} />
               <MDBInput fullwidth="true" size="" label="From" name="internName" value={this.state.InternName} disabled/>
-              <MDBInput fullwidth="true" size="" label="Date" name="date" value={this.state.Date} disabled/>
+              <MDBInput fullwidth="true" size="" label="Want to absent on" name="date" value={this.state.Date} disabled/>
               <MDBInput fullwidth="true" size="" label="Reason" name="message" value={this.state.Message} disabled/>
               <div className="text-center mt-1-half">
                     <MDBBtn

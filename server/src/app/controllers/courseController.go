@@ -258,7 +258,102 @@ func GetCoursesByMentorID(c *gin.Context) {
 	common.CheckError(c, err)
 	c.JSON(http.StatusOK, resp)
 }
+func getCourseByMentorID(c *gin.Context, id string) []models.Course {
+	database := c.MustGet("db").(*mgo.Database)
+	collection := database.C(models.CollectionCourse)
 
+	err, mentor := getMentorByID(c, id)
+	common.CheckError(c, err)
+
+	query := []bson.M{
+		{
+			"$lookup": bson.M{ // lookup the documents table here
+				"from":         "mentor",
+				"localField":   "MentorID",
+				"foreignField": "_id",
+				"as":           "Mentor",
+			}},
+		// {
+		// 	"$unwind": "$Mentor",
+		// },
+		{"$match": bson.M{
+			"IsDeleted": false,
+			"MentorID":  mentor.ID,
+		}},
+		{
+			"$group": bson.M{
+				"_id":        "$_id",
+				"CourseName": bson.M{"$first": "$CourseName"},
+				"StartDate":  bson.M{"$first": "$StartDate"},
+				"EndDate":    bson.M{"$first": "$EndDate"},
+				"Detail":     bson.M{"$first": "$Detail"},
+				"IsDeleted":  bson.M{"$first": "$IsDeleted"},
+				"MentorID":   bson.M{"$first": "$MentorID"},
+				"MentorName": bson.M{"$first": "$Mentor.Name"},
+			},
+		},
+		{
+			"$project": bson.M{
+				"CourseName": 1,
+				"StartDate":  1,
+				"EndDate":    1,
+				"Detail":     1,
+				"MentorID":   1,
+				"IsDeleted":  1,
+				"MentorName": "$MentorName",
+			},
+		},
+	}
+	pipe := collection.Pipe(query)
+	course := []models.Course{}
+	err = pipe.All(&course)
+	common.CheckError(c, err)
+	return course
+}
+func getInternByCourseID(c *gin.Context, id string) *[]models.Intern {
+	database := c.MustGet("db").(*mgo.Database)
+	query := []bson.M{
+
+		// {
+		// 	"$unwind": "$MentorID",
+		// },
+		{
+			"$lookup": bson.M{
+				"from":         "course",
+				"localField":   "CourseID",
+				"foreignField": "_id",
+				"as":           "Course",
+			}},
+		{
+			"$unwind": "$Course",
+		},
+		{
+			"$match": bson.M{
+				"IsDeleted": false,
+				"CourseID":  bson.ObjectIdHex(id),
+			}},
+		{
+			"$project": bson.M{
+				"Name":        1,
+				"PhoneNumber": 1,
+				"Email":       1,
+				"Gender":      1,
+				"DayofBirth":  1,
+				"University":  1,
+				"Faculty":     1,
+				"CourseID":    1,
+				"IsDeleted":   1,
+				"CourseName":  "$Course.CourseName",
+			}},
+	}
+
+	pipe := database.C(models.CollectionIntern).Pipe(query)
+	resp := []models.Intern{}
+	err := pipe.All(&resp)
+
+	common.CheckError(c, err)
+	return &resp
+}
 func GetCourseByName(c *gin.Context) {
 	database := c.MustGet("db").(*mgo.Database)
 	course := models.Course{}
@@ -311,4 +406,15 @@ func GetMentorByInternID(c *gin.Context) {
 		mentorList = append(mentorList, *mentor)
 	}
 	c.JSON(http.StatusOK, mentorList)
+}
+func GetInternByMentorID(c *gin.Context) {
+	course := getCourseByMentorID(c, c.Param("id"))
+	internList := []models.Intern{}
+	for _, v := range course {
+		iidd := v.ID.Hex()
+		intern := getInternByCourseID(c, iidd)
+		internList = append(internList, *intern...)
+	}
+	// count := len(internList)
+	c.JSON(http.StatusOK, internList)
 }
