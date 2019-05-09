@@ -6,7 +6,7 @@ import React from "react";
   import MUIDataTable from "mui-datatables";
   import ReactNotification from "react-notifications-component";
   import "react-notifications-component/dist/theme.css";
-import './report.css';
+import './scroll.css';
 // import AttendanceDashboard from './AttendanceDashboard';
 class InternReportDay extends React.Component {
   constructor() {
@@ -318,8 +318,10 @@ class InternReportDay extends React.Component {
             
 
         <div class="right">
-          
+          <label><b>List Intern want to absent</b></label>
+          <div class="scroll">
           <ul class="list-group">
+                      
             {
               this.state.absentList.map((v , k) => {
                 if(v.Status === 1){
@@ -346,6 +348,7 @@ class InternReportDay extends React.Component {
               })
             }
           </ul>
+          </div>
           <MDBModal
               isOpen={this.state.modalReason}
               toggle={this.toggleCourse}
