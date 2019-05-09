@@ -137,8 +137,8 @@ class CoursePageForMentor extends React.Component {
         let NewData = []
         let cnt = 1
         data.map(row => {
-          NewData.push([cnt, row._id, row.CourseName, (new Date(row.StartDate)).toLocaleDateString('en-US', options),
-            (new Date(row.EndDate)).toLocaleDateString('en-US', options),
+          NewData.push([cnt, row._id, row.CourseName, this.convertDate2((new Date(row.StartDate)).toLocaleDateString('en-US', options)),
+            this.convertDate2((new Date(row.EndDate)).toLocaleDateString('en-US', options)),
             // format datetime
             row.MentorName, row.MentorID])
           cnt++
@@ -149,34 +149,7 @@ class CoursePageForMentor extends React.Component {
         })
       });
   }
-  GetCourseByMentor(id) {
-    const history = createBrowserHistory();
-    const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
-    fetch('http://localhost:8080/courses/' + id)
-      .then(response => {
-        if (!response.ok) {
-          history.push({ pathname: '/404' })
-        } else {
-          response.json()
-            .then(result => {
-              let NewData = []
-              let cnt = 1
-              result.map(row => {
-                NewData.push([cnt, row._id, row.CourseName, (new Date(row.StartDate)).toLocaleDateString('en-US', options),
-                  (new Date(row.EndDate)).toLocaleDateString('en-US', options),
-                  // format datetime
-                  row.MentorName, row.MentorID])
-                cnt++
-                return NewData
-              })
-              this.setState({
-                courseList: NewData,
-              })
-            });
-        }
-      }
-      )
-  }
+  
 
   handleChangeTab = (event, value) => {
     this.setState({ value });
@@ -483,6 +456,35 @@ class CoursePageForMentor extends React.Component {
     let strDate = ""
     let strMon = ""
     let strYea = ""
+    let ye = moment(rowData, "DD-MM-YYYY").get('year');
+    let mo = moment(rowData, "DD-MM-YYYY").get('month') + 1;  // 0 to 11
+    let da = moment(rowData, "DD-MM-YYYY").get('date');
+    if (da < 10)
+      strDate = "0" + da
+    else
+      strDate = '' + da
+    if (mo < 10)
+      strMon = "0" + mo
+    else
+      strMon = '' + mo
+    if (ye < 1000) {
+      strYea = "0" + ye
+      if (ye < 100) {
+        strYea = "0" + strYea
+        if (ye < 10)
+          strYea = "0" + strYea
+      }
+    }
+    else
+      strYea = '' + ye
+    return strYea + "-" + strMon + "-" + strDate
+  }
+
+  convertDate2(rowData) {
+    var moment = require('moment')
+    let strDate = ""
+    let strMon = ""
+    let strYea = ""
     let ye = moment(rowData).get('year');
     let mo = moment(rowData).get('month') + 1;  // 0 to 11
     let da = moment(rowData).get('date');
@@ -504,7 +506,7 @@ class CoursePageForMentor extends React.Component {
     }
     else
       strYea = '' + ye
-    return strYea + "-" + strMon + "-" + strDate
+    return strDate + "/" + strMon + "/" + strYea
   }
 
   checkValidate() {

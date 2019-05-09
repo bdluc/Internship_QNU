@@ -39,7 +39,7 @@ class CoursePageForIntern extends React.Component {
               let cnt = 0
               result.Detail.map(row => {
                 DetailSchedule.push([cnt, row.TrainingOutline, row.Content, row.DurationPlan, row.DurationActual, row.Objectives, row.TrainingMethod,
-                  (new Date(row.StartDate)).toLocaleDateString('en-US', DATE_OPTIONS), (new Date(row.EndDate)).toLocaleDateString('en-US', DATE_OPTIONS),
+                  this.convertDate2((new Date(row.StartDate)).toLocaleDateString('en-US', DATE_OPTIONS)), this.convertDate2((new Date(row.EndDate)).toLocaleDateString('en-US', DATE_OPTIONS)),
                   row.Progress, row.Note])
                 cnt++
                 return DetailSchedule
@@ -344,6 +344,35 @@ class CoursePageForIntern extends React.Component {
     let strDate = ""
     let strMon = ""
     let strYea = ""
+    let ye = moment(rowData, "DD-MM-YYYY").get('year');
+    let mo = moment(rowData, "DD-MM-YYYY").get('month') + 1;  // 0 to 11
+    let da = moment(rowData, "DD-MM-YYYY").get('date');
+    if (da < 10)
+      strDate = "0" + da
+    else
+      strDate = '' + da
+    if (mo < 10)
+      strMon = "0" + mo
+    else
+      strMon = '' + mo
+    if (ye < 1000) {
+      strYea = "0" + ye
+      if (ye < 100) {
+        strYea = "0" + strYea
+        if (ye < 10)
+          strYea = "0" + strYea
+      }
+    }
+    else
+      strYea = '' + ye
+    return strYea + "-" + strMon + "-" + strDate
+  }
+
+  convertDate2(rowData) {
+    var moment = require('moment')
+    let strDate = ""
+    let strMon = ""
+    let strYea = ""
     let ye = moment(rowData).get('year');
     let mo = moment(rowData).get('month') + 1;  // 0 to 11
     let da = moment(rowData).get('date');
@@ -365,8 +394,9 @@ class CoursePageForIntern extends React.Component {
     }
     else
       strYea = '' + ye
-    return strYea + "-" + strMon + "-" + strDate
+    return strDate + "/" + strMon + "/" + strYea
   }
+
   componentDidMount() {
   }
   componentWillMount() {

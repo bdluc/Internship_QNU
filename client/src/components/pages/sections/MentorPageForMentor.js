@@ -144,7 +144,7 @@ class MentorPageForMentor extends React.Component {
         let cnt = 1
         data.map(row => {
           NewData.push([cnt, row.ID, row.Name, row.PhoneNumber, row.Email, row.Gender ? "Male" : "Female",
-            (new Date(row.DoB)).toLocaleDateString('en-US', options), row.Department])
+            this.convertDate2((new Date(row.DoB)).toLocaleDateString('en-US', options)), row.Department])
           //, row.SupervisorID
           cnt++
           return NewData
@@ -212,7 +212,7 @@ class MentorPageForMentor extends React.Component {
   };
   columnsMentor = [
     {
-      name: "No",
+      name: "NO.",
       options: {
         filter: false,
         sort: false,
@@ -341,9 +341,9 @@ class MentorPageForMentor extends React.Component {
     let strDate = ""
     let strMon = ""
     let strYea = ""
-    let ye = moment(rowData).get('year');
-    let mo = moment(rowData).get('month') + 1;  
-    let da = moment(rowData).get('date');
+    let ye = moment(rowData, "DD-MM-YYYY").get('year');
+    let mo = moment(rowData, "DD-MM-YYYY").get('month') + 1;  
+    let da = moment(rowData, "DD-MM-YYYY").get('date');
     if (da < 10)
       strDate = "0" + da
     else
@@ -368,7 +368,34 @@ class MentorPageForMentor extends React.Component {
 
   //   return false;
   // }
- 
+  convertDate2(rowData) {
+    var moment = require('moment')
+    let strDate = ""
+    let strMon = ""
+    let strYea = ""
+    let ye = moment(rowData).get('year');
+    let mo = moment(rowData).get('month') + 1;  
+    let da = moment(rowData).get('date');
+    if (da < 10)
+      strDate = "0" + da
+    else
+      strDate = '' + da
+    if (mo < 10)
+      strMon = "0" + mo
+    else
+      strMon = '' + mo
+    if (ye < 1000) {
+      strYea = "0" + ye
+      if (ye < 100) {
+        strYea = "0" + strYea
+        if (ye < 10)
+          strYea = "0" + strYea
+      }
+    }
+    else
+      strYea = '' + ye
+    return strDate + "/" + strMon + "/" + strYea
+  }
 
 
   render() {
