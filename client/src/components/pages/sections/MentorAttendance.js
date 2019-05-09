@@ -151,8 +151,12 @@ class MentorAttendance extends React.Component {
                     intern.Attendances.push(response.attendance);
                     intern = this.getdailyStudentById(object.InternID);
                     intern.Attendances.push(response.attendance);
-                    var month = this.getCurrentMonth(this.state.currentStudentId);
+
                     check = true
+                    this.setState({
+                        tableData: this.loadMonthData(this.state.currentStudentId, this.state.currentMonth, "table"),
+                        chartData: this.loadMonthData(this.state.currentStudentId, this.state.currentMonth, "chart"),
+                    });
                 }
                 else {
                     check = false
@@ -436,8 +440,8 @@ class MentorAttendance extends React.Component {
     arr.push(ppCount);
     arr.push(pCount);
     arr.push(paCount);
-    arr.push(arCount);
     arr.push(a2rCount);
+    arr.push(arCount);
     arr.push(aCount);
     arr.push(naCount);
     return arr;

@@ -7,26 +7,26 @@ class ChartsPage extends React.Component {
         super(props);
         this.state = {
             dataBar: {
-                labels: ["2Present", "Present", "Present (absent)" , "Absent (reason)", "Absent (2reason)","Absent", "N.A"],
+                labels: ["2Present", "Present", "Present (absent)", "Absent (2reason)" , "Absent (reason)","Absent", "N.A"],
                 datasets: [
                     {
                         label: 'Statistic',
                         data: props.arr,
                         backgroundColor: [
                             'rgba(0, 255, 25, 0.2)',
-                            'rgba(255, 255, 0, 0.2)',
-                            'rgba(255, 0, 0, 0.2)',
                             'rgba(0, 0, 255, 0.2)',
+                            'rgba(255, 0, 0, 0.2)',
                             'rgba(0, 255, 25, 0.2)',
+                            'rgba(0, 0, 255, 0.2)',
                             'rgba(255, 0, 0, 0.2)',
                         ],
                         borderColor: [
-                            'rgba(0, 255, 25, 1)',
-                            'rgba(255, 255, 0, 1)',
-                            'rgba(255, 0, 0, 1)',
-                            'rgba(0, 0, 255, 1)',
-                            'rgba(0, 255, 25, 1)',
-                            'rgba(255, 0, 0, 1)',
+                            'rgba(0, 255, 25, 0.1)',
+                            'rgba(0, 0, 255, 0.1)',
+                            'rgba(255, 0, 0, 0.1)',
+                            'rgba(0, 255, 25, 0.1)',
+                            'rgba(0, 0, 255, 0.1)',
+                            'rgba(255, 0, 0, 0.1)',
                         ],
                         borderWidth: 1
                     }
@@ -47,26 +47,26 @@ class ChartsPage extends React.Component {
     componentWillReceiveProps(newProps) {
         this.setState({
            dataBar: {
-                labels: ["2Present", "Present", "Present (absent)" , "Absent (reason)", "Absent (2reason)","Absent", "N.A"],
+                labels: ["2Present", "Present", "Present (absent)", "Absent (2reason)", "Absent (reason)","Absent", "N.A"],
                 datasets: [
                     {
                         label: 'Statistic',
                         data: newProps.arr,
                         backgroundColor: [
                             'rgba(0, 255, 25, 0.2)',
-                            'rgba(255, 255, 0, 0.2)',
-                            'rgba(255, 0, 0, 0.2)',
                             'rgba(0, 0, 255, 0.2)',
+                            'rgba(255, 0, 0, 0.2)',
                             'rgba(0, 255, 25, 0.2)',
+                            'rgba(0, 0, 255, 0.2)',
                             'rgba(255, 0, 0, 0.2)',
                         ],
                         borderColor: [
-                            'rgba(0, 255, 25, 1)',
-                            'rgba(255, 255, 0, 1)',
-                            'rgba(255, 0, 0, 1)',
-                            'rgba(0, 0, 255, 1)',
-                            'rgba(0, 255, 25, 1)',
-                            'rgba(255, 0, 0, 1)',
+                            'rgba(0, 255, 25, 0.1)',
+                            'rgba(0, 0, 255, 0.1)',
+                            'rgba(255, 0, 0, 0.1)',
+                            'rgba(0, 255, 25, 0.1)',
+                            'rgba(0, 0, 255, 0.1)',
+                            'rgba(255, 0, 0, 0.1)',
                         ],
                         borderWidth: 1
                     }

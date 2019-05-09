@@ -202,7 +202,7 @@ class AttendanceDashboard extends React.Component {
                     </FormControl>
                 </div>
                 <div>
-                    <LineChart width={500} height={300}>
+                    <LineChart width={400} height={300}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="category" type="category" allowDuplicatedCategory={false} />
                         <YAxis dataKey="value" />
