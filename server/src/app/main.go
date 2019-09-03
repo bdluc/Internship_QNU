@@ -106,6 +106,16 @@ func setupRouter() *gin.Engine {
 	r.GET("/report/today/:id", controllers.GetTodayReportByMentor)
 	r.GET("/report/week/:id/:startday", controllers.GetWeekReportByMentor)
 
+	// examination
+	r.POST("/examination", controllers.CreateExamination)
+	r.PUT("/examination/:id", controllers.UpdateExamination)
+	r.GET("/examinations", controllers.ListExamination)
+	r.POST("/upload", controllers.UpFile)
+	r.GET("/getfile", controllers.GetFile)
+	r.POST("/resultexamination", controllers.CreateResultExamination)
+	r.PUT("/resultexamition/:id", controllers.UpdateResult)
+	r.GET("/resultexaminations", controllers.ListResultExamination)
+
 	return r
 }
 
